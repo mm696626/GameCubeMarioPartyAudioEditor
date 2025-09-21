@@ -1,7 +1,6 @@
 package ui;
 
 import constants.MarioPartySongNames;
-import io.SongDumper;
 import io.SongModifier;
 
 import javax.swing.*;
@@ -18,7 +17,7 @@ import java.util.Date;
 
 public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, dumpSong, modifySong;
+    private JButton pickLeftChannel, pickRightChannel, modifySong;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -43,9 +42,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         pickRightChannel = new JButton("Select Right DSP Channel");
         pickRightChannel.addActionListener(this);
-
-        dumpSong = new JButton("Dump Selected Song");
-        dumpSong.addActionListener(this);
 
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
@@ -80,10 +76,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         add(rightChannelLabel, gridBagConstraints);
-
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        add(dumpSong, gridBagConstraints);
 
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
@@ -197,10 +189,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         if (e.getSource() == pickRightChannel) {
             chooseRightChannelPath();
-        }
-
-        if (e.getSource() == dumpSong) {
-            SongDumper.extractSong(new File(pdtPath), songNames.getSelectedIndex());
         }
 
         if (e.getSource() == modifySong) {
