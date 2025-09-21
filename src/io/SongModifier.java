@@ -9,6 +9,9 @@ import java.nio.file.StandardCopyOption;
 
 public class SongModifier {
 
+    //This code is largely derived from Yoshimaster96's C PDT dumping code, so huge credit and kudos to them!
+    //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
+
     public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex) {
         try (RandomAccessFile pdtRaf = new RandomAccessFile(pdtFile, "rw")) {
             int unk00 = BinaryIO.readU16BE(pdtRaf);
