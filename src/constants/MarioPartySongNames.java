@@ -2,6 +2,32 @@ package constants;
 
 public class MarioPartySongNames {
 
+    public static final String[] MARIO_PARTY_4_TRACK_NAMES = {
+            "Empty",
+            "Minigame Win",
+            "Item Get",
+            "Bowser Game Lose",
+            "Draw",
+            "Board Intro",
+            "Star Get",
+            "Jingle",
+            "Empty",
+            "Doubles",
+            "Lottery Win",
+            "Mario Speedwagons Start",
+            "Party Mode Intro",
+            "Jingle",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Title Screen",
+            "Opening Cutscene Audio",
+            "Credits"
+    };
+
     public static final String[] MARIO_PARTY_5_TRACK_NAMES = {
             "Empty",
             "Everybody Party (Duplicate?)",

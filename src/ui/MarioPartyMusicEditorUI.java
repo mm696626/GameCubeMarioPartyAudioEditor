@@ -116,8 +116,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                     "Game Selection",
                     JOptionPane.QUESTION_MESSAGE,
                     null,
-                    new String[]{"Mario Party 5", "Mario Party 6", "Mario Party 7"},
-                    "Mario Party 5"
+                    new String[]{"Mario Party 4", "Mario Party 5", "Mario Party 6", "Mario Party 7"},
+                    "Mario Party 4"
             );
 
             if (selectedGame == null) {
@@ -166,6 +166,9 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
     private void updateSongList(String selectedGame) {
         switch (selectedGame) {
+            case "Mario Party 4":
+                songNames.setModel(new DefaultComboBoxModel<>(MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES));
+                break;
             case "Mario Party 5":
                 songNames.setModel(new DefaultComboBoxModel<>(MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES));
                 break;
