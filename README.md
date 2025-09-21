@@ -15,3 +15,5 @@
 ### Special Thanks
 * This project wouldn't be possible without the work of Yoshimaster96. Huge props to them!
 * https://github.com/Yoshimaster96/mpgc-sound-tools
+* Also, this documentation on the DSP format helped a lot too
+* https://www.metroid2002.com/retromodding/wiki/DSP_(File_Format)
