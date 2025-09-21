@@ -108,23 +108,23 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         pdtFilePathLabel.setText("Selected PDT: " + pdtPath);
 
-        // Now prompt the user to select the game
-        String selectedGame = (String) JOptionPane.showInputDialog(
-                this,
-                "Select Game",
-                "Game Selection",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                new String[]{"Mario Party 5", "Mario Party 6", "Mario Party 7"},
-                "Mario Party 5"  // Default value
-        );
+        String selectedGame = null;
+        while (selectedGame == null) {
+            selectedGame = (String) JOptionPane.showInputDialog(
+                    this,
+                    "Select Game",
+                    "Game Selection",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    new String[]{"Mario Party 5", "Mario Party 6", "Mario Party 7"},
+                    "Mario Party 5"
+            );
 
-        if (selectedGame == null) {
-            System.out.println("No game selected. Exiting.");
-            return;
+            if (selectedGame == null) {
+                JOptionPane.showMessageDialog(this, "You must select a game. Please choose one.");
+            }
         }
 
-        // Update the song list based on the selected game
         updateSongList(selectedGame);
     }
 
