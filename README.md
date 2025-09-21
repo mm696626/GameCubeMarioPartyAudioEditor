@@ -9,6 +9,7 @@
 ### Note
 * Music audio must be in DSP format and must have the end of the loop be the end of the song
 * This is due to Mario Parties 5-7 not using end loop points
+* Unfortunately, this tool cannot replace the last song in the file due to not knowing how (it's random garbage at where the file points for it)
 
 ### Special Thanks
 * This project wouldn't be possible without the work of Yoshimaster96. Huge props to them!
