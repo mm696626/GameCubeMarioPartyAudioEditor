@@ -14,7 +14,7 @@ public class SongModifier {
     //This code is largely derived from Yoshimaster96's C PDT dumping code, so huge credit and kudos to them!
     //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
-    public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex) {
+    public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, String songName) {
         try (RandomAccessFile pdtRaf = new RandomAccessFile(pdtFile, "rw")) {
             int unk00 = PDTFileIO.readU16BE(pdtRaf);
             int numFiles = PDTFileIO.readU16BE(pdtRaf);
@@ -146,7 +146,7 @@ public class SongModifier {
 
             backupFile.delete();
 
-            JOptionPane.showMessageDialog(null, "Finished modifying PDT file for song index: " + songIndex);
+            JOptionPane.showMessageDialog(null, "Finished modifying PDT file for " + songName);
 
         } catch (Exception e) {
             e.printStackTrace();

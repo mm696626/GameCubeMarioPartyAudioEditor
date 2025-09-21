@@ -211,7 +211,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 }
             }
 
-            SongModifier.modifySong(new File(pdtPath), new File(leftChannelPath), new File(rightChannelPath), songNames.getSelectedIndex());
+            String songName = (String) songNames.getSelectedItem();
+            SongModifier.modifySong(new File(pdtPath), new File(leftChannelPath), new File(rightChannelPath), songNames.getSelectedIndex(), songName);
         }
     }
 
