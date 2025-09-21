@@ -120,12 +120,11 @@ public class SongModifier {
 
             //modify song
 
+            //size check
             long newDSPSize = ((long) ((dspNibbleCount[0] & 0xFF) << 24)
                     | ((dspNibbleCount[1] & 0xFF) << 16)
                     | ((dspNibbleCount[2] & 0xFF) << 8)
                     | (dspNibbleCount[3] & 0xFF));
-
-            //size check
 
             if (newDSPSize > nibbleCount) {
                 JOptionPane.showMessageDialog(null, "Your song is too big! Try again!");

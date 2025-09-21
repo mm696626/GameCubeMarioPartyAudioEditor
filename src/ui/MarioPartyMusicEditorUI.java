@@ -133,7 +133,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         else {
             leftChannelPath = fileChooser.getSelectedFile().getAbsolutePath();
-            leftChannelLabel.setText("Left Channel: " + leftChannelPath);
+            String leftChannelName = fileChooser.getSelectedFile().getName();
+            leftChannelLabel.setText("Left Channel: " + leftChannelName);
         }
     }
 
@@ -152,7 +153,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         else {
             rightChannelPath = fileChooser.getSelectedFile().getAbsolutePath();
-            rightChannelLabel.setText("Right Channel: " + rightChannelPath);
+            String rightChannelName = fileChooser.getSelectedFile().getName();
+            rightChannelLabel.setText("Right Channel: " + rightChannelName);
         }
     }
 
