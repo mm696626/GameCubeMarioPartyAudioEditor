@@ -13,7 +13,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 
 public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
@@ -21,8 +24,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
+    private String selectedGame = "";
     private JComboBox<String> songNames;
-    private JComboBox<String> gameSelect;
 
     private JLabel leftChannelLabel, rightChannelLabel;
     private JLabel pdtFilePathLabel; // New label for PDT path
@@ -105,7 +108,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         pdtFilePathLabel.setText("Selected PDT: " + pdtPath);
 
-        String selectedGame = null;
+        selectedGame = null;
         while (selectedGame == null) {
             selectedGame = (String) JOptionPane.showInputDialog(
                     this,
@@ -162,22 +165,30 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     }
 
     private void updateSongList(String selectedGame) {
-        switch (selectedGame) {
-            case "Mario Party 4":
-                songNames.setModel(new DefaultComboBoxModel<>(MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES));
-                break;
-            case "Mario Party 5":
-                songNames.setModel(new DefaultComboBoxModel<>(MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES));
-                break;
-            case "Mario Party 6":
-                songNames.setModel(new DefaultComboBoxModel<>(MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES));
-                break;
-            case "Mario Party 7":
-                songNames.setModel(new DefaultComboBoxModel<>(MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES));
-                break;
-            default:
-                songNames.setModel(new DefaultComboBoxModel<>(new String[]{}));
-                break;
+        Map<Integer, String> trackMap = null;
+
+        if ("Mario Party 4".equals(selectedGame)) {
+            trackMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
+        } else if ("Mario Party 5".equals(selectedGame)) {
+            trackMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
+        } else if ("Mario Party 6".equals(selectedGame)) {
+            trackMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
+        } else if ("Mario Party 7".equals(selectedGame)) {
+            trackMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
+        }
+
+        if (trackMap != null) {
+            ArrayList<Integer> sortedKeys = new ArrayList<>(trackMap.keySet());
+            Collections.sort(sortedKeys);
+
+            ArrayList<String> songList = new ArrayList<>();
+            for (Integer key : sortedKeys) {
+                songList.add(trackMap.get(key));
+            }
+
+            songNames.setModel(new DefaultComboBoxModel<>(songList.toArray(new String[0])));
+        } else {
+            songNames.setModel(new DefaultComboBoxModel<>(new String[]{}));
         }
     }
 
@@ -197,7 +208,12 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            int response = JOptionPane.showConfirmDialog(null, "Do you want to make a backup of the PDT file?", "Backup PDT", JOptionPane.YES_NO_OPTION);
+            int response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Do you want to make a backup of the PDT file?",
+                    "Backup PDT",
+                    JOptionPane.YES_NO_OPTION
+            );
 
             if (response == JOptionPane.YES_OPTION) {
                 try {
@@ -211,8 +227,45 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 }
             }
 
-            String songName = (String) songNames.getSelectedItem();
-            SongModifier.modifySong(new File(pdtPath), new File(leftChannelPath), new File(rightChannelPath), songNames.getSelectedIndex(), songName);
+            String selectedSongName = (String) songNames.getSelectedItem();
+
+            Map<Integer, String> trackMap;
+
+            if ("Mario Party 4".equals(selectedGame)) {
+                trackMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
+            } else if ("Mario Party 5".equals(selectedGame)) {
+                trackMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
+            } else if ("Mario Party 6".equals(selectedGame)) {
+                trackMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
+            } else if ("Mario Party 7".equals(selectedGame)) {
+                trackMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
+            } else {
+                return;
+            }
+
+            int actualSongIndex = -1;
+
+            if (trackMap != null && selectedSongName != null) {
+                for (Map.Entry<Integer, String> entry : trackMap.entrySet()) {
+                    if (selectedSongName.equals(entry.getValue())) {
+                        actualSongIndex = entry.getKey();
+                        break;
+                    }
+                }
+            }
+
+            if (actualSongIndex == -1) {
+                JOptionPane.showMessageDialog(this, "Could not determine song index.");
+                return;
+            }
+
+            SongModifier.modifySong(
+                    new File(pdtPath),
+                    new File(leftChannelPath),
+                    new File(rightChannelPath),
+                    actualSongIndex,
+                    selectedSongName
+            );
         }
     }
 
