@@ -18,8 +18,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private String leftChannelPath = "";
     private String rightChannelPath = "";
     private JComboBox<String> songNames;
-    private JComboBox<String> gameSelect;  // New JComboBox for selecting game
-    private JCheckBox enableSizeChecks;
+    private JComboBox<String> gameSelect;
+
+    private JLabel leftChannelLabel, rightChannelLabel;
+
     GridBagConstraints gridBagConstraints = null;
 
     public MarioPartyMusicEditorUI()
@@ -45,35 +47,39 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         songNames = new JComboBox<>();
 
-        enableSizeChecks = new JCheckBox("DSP Size Checks (only disable this if you know what you're doing. Only for speed if you know the song is smaller byte wise)");
-        enableSizeChecks.setSelected(true);
+        leftChannelLabel = new JLabel("No file selected for Left Channel");
+        rightChannelLabel = new JLabel("No file selected for Right Channel");
 
         setLayout(new GridBagLayout());
         gridBagConstraints = new GridBagConstraints();
 
-        gridBagConstraints.gridx=0;
-        gridBagConstraints.gridy=0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         add(songNames, gridBagConstraints);
 
-        gridBagConstraints.gridx=0;
-        gridBagConstraints.gridy=1;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
         add(pickLeftChannel, gridBagConstraints);
 
-        gridBagConstraints.gridx=1;
-        gridBagConstraints.gridy=1;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        add(leftChannelLabel, gridBagConstraints);
+
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
         add(pickRightChannel, gridBagConstraints);
 
-        gridBagConstraints.gridx=0;
-        gridBagConstraints.gridy=2;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        add(rightChannelLabel, gridBagConstraints);
+
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
         add(dumpSong, gridBagConstraints);
 
-        gridBagConstraints.gridx=1;
-        gridBagConstraints.gridy=2;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
         add(modifySong, gridBagConstraints);
-
-        gridBagConstraints.gridx=0;
-        gridBagConstraints.gridy=3;
-        add(enableSizeChecks, gridBagConstraints);
     }
 
     private void initPDTPath() {
@@ -127,6 +133,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         else {
             leftChannelPath = fileChooser.getSelectedFile().getAbsolutePath();
+            leftChannelLabel.setText("Left Channel: " + leftChannelPath);
         }
     }
 
@@ -145,6 +152,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         else {
             rightChannelPath = fileChooser.getSelectedFile().getAbsolutePath();
+            rightChannelLabel.setText("Right Channel: " + rightChannelPath);
         }
     }
 
@@ -176,7 +184,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == dumpSong) {
-            SongDumper.extractSong(new File(pdtPath), songNames.getSelectedIndex(), true);
+            SongDumper.extractSong(new File(pdtPath), songNames.getSelectedIndex());
         }
 
         if (e.getSource() == modifySong) {
@@ -185,7 +193,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            SongModifier.modifySong(new File(pdtPath), new File(leftChannelPath), new File(rightChannelPath), songNames.getSelectedIndex(), enableSizeChecks.isSelected());
+            SongModifier.modifySong(new File(pdtPath), new File(leftChannelPath), new File(rightChannelPath), songNames.getSelectedIndex());
         }
     }
 }

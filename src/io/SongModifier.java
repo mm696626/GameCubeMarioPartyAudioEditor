@@ -6,7 +6,7 @@ import java.io.RandomAccessFile;
 
 public class SongModifier {
 
-    public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, boolean doSizeChecks) {
+    public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex) {
         try (RandomAccessFile pdtRaf = new RandomAccessFile(pdtFile, "rw")) {
             int unk00 = BinaryIO.readU16BE(pdtRaf);
             int numFiles = BinaryIO.readU16BE(pdtRaf);
@@ -120,23 +120,16 @@ public class SongModifier {
 
             //modify song
 
-            if (doSizeChecks) {
-                //size check
-                SongDumper.extractSong(pdtFile, songIndex, false);
-                File songFile = new File("temp.dsp");
+            long newDSPSize = ((long) ((dspNibbleCount[0] & 0xFF) << 24)
+                    | ((dspNibbleCount[1] & 0xFF) << 16)
+                    | ((dspNibbleCount[2] & 0xFF) << 8)
+                    | (dspNibbleCount[3] & 0xFF));
 
-                if (!songFile.exists()) {
-                    JOptionPane.showMessageDialog(null, "Song is empty! Try again!");
-                    return;
-                }
+            //size check
 
-                if (leftChannel.length() > songFile.length()) {
-                    JOptionPane.showMessageDialog(null, "Your song is too big! Try again!");
-                    deleteTempFile(songFile);
-                    return;
-                }
-
-                deleteTempFile(songFile);
+            if (newDSPSize > nibbleCount) {
+                JOptionPane.showMessageDialog(null, "Your song is too big! Try again!");
+                return;
             }
 
             long newSampleRateOffset = thisHeaderOffs + 4;
@@ -172,12 +165,6 @@ public class SongModifier {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
-        }
-    }
-
-    private static void deleteTempFile(File songFile) {
-        if (songFile.exists()) {
-            songFile.delete();
         }
     }
 }

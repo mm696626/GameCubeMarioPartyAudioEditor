@@ -19,7 +19,7 @@ public class SongDumper {
     }
 
     // Method to extract a specific song based on the index and input file
-    public static void extractSong(File selectedFile, int songIndex, boolean fromUI) {
+    public static void extractSong(File selectedFile, int songIndex) {
         try (RandomAccessFile raf = new RandomAccessFile(selectedFile, "r")) {
             int unk00 = BinaryIO.readU16BE(raf);
             int numFiles = BinaryIO.readU16BE(raf);
@@ -71,26 +71,19 @@ public class SongDumper {
 
             for (int j = 0; j < chanCount; j++) {
 
-                if (j == 1 && !fromUI) {
-                    break;
-                }
-
                 String fname;
 
-                if (fromUI) {
-                    if (chanCount == 2) {
-                        if (j == 0) {
-                            fname = String.format("%04d_L.dsp", songIndex);
-                        } else {
-                            fname = String.format("%04d_R.dsp", songIndex);
-                        }
+
+                if (chanCount == 2) {
+                    if (j == 0) {
+                        fname = String.format("%04d_L.dsp", songIndex);
                     } else {
-                        fname = String.format("%04d.dsp", songIndex);
+                        fname = String.format("%04d_R.dsp", songIndex);
                     }
+                } else {
+                    fname = String.format("%04d.dsp", songIndex);
                 }
-                else {
-                    fname = "temp.dsp";
-                }
+
 
                 try (FileOutputStream out = new FileOutputStream(fname)) {
                     BinaryIO.writeU32BE(out, nibblesToSamples(nibbleCount));
@@ -150,9 +143,7 @@ public class SongDumper {
                 }
             }
 
-            if (fromUI) {
-                JOptionPane.showMessageDialog(null, "Finished extracting DSP file for song index: " + songIndex);
-            }
+            JOptionPane.showMessageDialog(null, "Finished extracting DSP file for song index: " + songIndex);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
