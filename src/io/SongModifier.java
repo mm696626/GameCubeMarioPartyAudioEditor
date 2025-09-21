@@ -121,6 +121,17 @@ public class SongModifier {
 
             //modify song
 
+            //size check
+            SongDumper.extractSong(pdtFile, songIndex, false);
+            File songFile = new File("temp.dsp");
+            if (leftChannel.length() > songFile.length()) {
+                JOptionPane.showMessageDialog(null, "Your song is too big! Try again!");
+                deleteTempFile(songFile);
+                return;
+            }
+
+            deleteTempFile(songFile);
+
             long newSampleRateOffset = thisHeaderOffs + 4;
             long newNibbleCount = thisHeaderOffs + 8;
             long newLoopStartOffset = thisHeaderOffs + 12;
@@ -154,6 +165,12 @@ public class SongModifier {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
+        }
+    }
+
+    private static void deleteTempFile(File songFile) {
+        if (songFile.exists()) {
+            songFile.delete();
         }
     }
 }

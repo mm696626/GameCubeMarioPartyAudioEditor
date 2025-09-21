@@ -168,7 +168,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == dumpSong) {
-            SongDumper.extractSong(new File(pdtPath), songNames.getSelectedIndex());
+            SongDumper.extractSong(new File(pdtPath), songNames.getSelectedIndex(), true);
         }
 
         if (e.getSource() == modifySong) {
