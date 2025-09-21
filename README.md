@@ -22,7 +22,7 @@
 * I use this program to create DSPs
   * https://github.com/libertyernie/LoopingAudioConverter
 
-### Special Thanks
+### Special Thanks/Credits
 * This project wouldn't be possible without the work of Yoshimaster96. Huge props to them!
 * https://github.com/Yoshimaster96/mpgc-sound-tools
 * Also, this documentation on the DSP format helped a lot too
