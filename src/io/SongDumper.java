@@ -1,11 +1,14 @@
 package io;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.RandomAccessFile;
 
 public class SongDumper {
 
     //This code is largely derived from Yoshimaster96's C PDT dumping code, so huge credit and kudos to them!
+    //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
     // Method to convert nibbles to samples
     private static long nibblesToSamples(long nibbles) {
