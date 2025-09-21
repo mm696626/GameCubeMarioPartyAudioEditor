@@ -19,6 +19,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private String rightChannelPath = "";
     private JComboBox<String> songNames;
     private JComboBox<String> gameSelect;  // New JComboBox for selecting game
+    private JCheckBox enableSizeChecks;
     GridBagConstraints gridBagConstraints = null;
 
     public MarioPartyMusicEditorUI()
@@ -44,6 +45,9 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         songNames = new JComboBox<>();
 
+        enableSizeChecks = new JCheckBox("DSP Size Checks (only disable this if you know what you're doing. Only for speed if you know the song is smaller byte wise)");
+        enableSizeChecks.setSelected(true);
+
         setLayout(new GridBagLayout());
         gridBagConstraints = new GridBagConstraints();
 
@@ -66,6 +70,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         gridBagConstraints.gridx=1;
         gridBagConstraints.gridy=2;
         add(modifySong, gridBagConstraints);
+
+        gridBagConstraints.gridx=0;
+        gridBagConstraints.gridy=3;
+        add(enableSizeChecks, gridBagConstraints);
     }
 
     private void initPDTPath() {
@@ -177,7 +185,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            SongModifier.modifySong(new File(pdtPath), new File(leftChannelPath), new File(rightChannelPath), songNames.getSelectedIndex());
+            SongModifier.modifySong(new File(pdtPath), new File(leftChannelPath), new File(rightChannelPath), songNames.getSelectedIndex(), enableSizeChecks.isSelected());
         }
     }
 }

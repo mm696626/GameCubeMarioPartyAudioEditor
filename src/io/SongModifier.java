@@ -2,12 +2,11 @@ package io;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 
 public class SongModifier {
 
-    public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex) {
+    public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, boolean doSizeChecks) {
         try (RandomAccessFile pdtRaf = new RandomAccessFile(pdtFile, "rw")) {
             int unk00 = BinaryIO.readU16BE(pdtRaf);
             int numFiles = BinaryIO.readU16BE(pdtRaf);
@@ -121,16 +120,24 @@ public class SongModifier {
 
             //modify song
 
-            //size check
-            SongDumper.extractSong(pdtFile, songIndex, false);
-            File songFile = new File("temp.dsp");
-            if (leftChannel.length() > songFile.length()) {
-                JOptionPane.showMessageDialog(null, "Your song is too big! Try again!");
-                deleteTempFile(songFile);
-                return;
-            }
+            if (doSizeChecks) {
+                //size check
+                SongDumper.extractSong(pdtFile, songIndex, false);
+                File songFile = new File("temp.dsp");
 
-            deleteTempFile(songFile);
+                if (!songFile.exists()) {
+                    JOptionPane.showMessageDialog(null, "Song is empty! Try again!");
+                    return;
+                }
+
+                if (leftChannel.length() > songFile.length()) {
+                    JOptionPane.showMessageDialog(null, "Your song is too big! Try again!");
+                    deleteTempFile(songFile);
+                    return;
+                }
+
+                deleteTempFile(songFile);
+            }
 
             long newSampleRateOffset = thisHeaderOffs + 4;
             long newNibbleCount = thisHeaderOffs + 8;
