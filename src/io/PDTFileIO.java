@@ -3,7 +3,7 @@ package io;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-public class BinaryIO {
+public class PDTFileIO {
 
     public static int readU16BE(RandomAccessFile raf) throws IOException {
         int b0 = raf.readUnsignedByte();

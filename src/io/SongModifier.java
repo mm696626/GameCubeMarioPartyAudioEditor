@@ -1,5 +1,7 @@
 package io;
 
+import constants.DSPFileConstants;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -14,24 +16,23 @@ public class SongModifier {
 
     public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex) {
         try (RandomAccessFile pdtRaf = new RandomAccessFile(pdtFile, "rw")) {
-            int unk00 = BinaryIO.readU16BE(pdtRaf);
-            int numFiles = BinaryIO.readU16BE(pdtRaf);
-            long unk04 = BinaryIO.readU32BE(pdtRaf);
-            long unk08 = BinaryIO.readU32BE(pdtRaf);
-            long unk0C = BinaryIO.readU32BE(pdtRaf);
-            long entryOffs = BinaryIO.readU32BE(pdtRaf);
-            long coeffOffs = BinaryIO.readU32BE(pdtRaf);
-            long headerOffs = BinaryIO.readU32BE(pdtRaf);
-            long streamOffs = BinaryIO.readU32BE(pdtRaf);
+            int unk00 = PDTFileIO.readU16BE(pdtRaf);
+            int numFiles = PDTFileIO.readU16BE(pdtRaf);
+            long unk04 = PDTFileIO.readU32BE(pdtRaf);
+            long unk08 = PDTFileIO.readU32BE(pdtRaf);
+            long unk0C = PDTFileIO.readU32BE(pdtRaf);
+            long entryOffs = PDTFileIO.readU32BE(pdtRaf);
+            long coeffOffs = PDTFileIO.readU32BE(pdtRaf);
+            long headerOffs = PDTFileIO.readU32BE(pdtRaf);
+            long streamOffs = PDTFileIO.readU32BE(pdtRaf);
 
             if (songIndex < 0 || songIndex >= numFiles) {
                 JOptionPane.showMessageDialog(null, "Invalid song index.");
                 return;
             }
 
-            // Seek to the specific song entry
             pdtRaf.seek(entryOffs + (songIndex << 2));
-            long thisHeaderOffs = BinaryIO.readU32BE(pdtRaf);
+            long thisHeaderOffs = PDTFileIO.readU32BE(pdtRaf);
             if (thisHeaderOffs == 0) {
                 JOptionPane.showMessageDialog(null, "No song data found for this index.");
                 return;
@@ -39,13 +40,13 @@ public class SongModifier {
 
             pdtRaf.seek(thisHeaderOffs);
 
-            long flags = BinaryIO.readU32BE(pdtRaf);
-            long sampleRate = BinaryIO.readU32BE(pdtRaf);
-            long nibbleCount = BinaryIO.readU32BE(pdtRaf);
-            long loopStart = BinaryIO.readU32BE(pdtRaf);
-            long ch1Start = BinaryIO.readU32BE(pdtRaf);
-            int ch1CoefEntry = BinaryIO.readU16BE(pdtRaf);
-            int unk116 = BinaryIO.readU16BE(pdtRaf);
+            long flags = PDTFileIO.readU32BE(pdtRaf);
+            long sampleRate = PDTFileIO.readU32BE(pdtRaf);
+            long nibbleCount = PDTFileIO.readU32BE(pdtRaf);
+            long loopStart = PDTFileIO.readU32BE(pdtRaf);
+            long ch1Start = PDTFileIO.readU32BE(pdtRaf);
+            int ch1CoefEntry = PDTFileIO.readU16BE(pdtRaf);
+            int unk116 = PDTFileIO.readU16BE(pdtRaf);
             long ch1CoefOffs = coeffOffs + (ch1CoefEntry << 5);
 
             long ch2Start = ch1Start;
@@ -54,43 +55,43 @@ public class SongModifier {
             int chanCount = 1;
 
             if ((flags & 0x01000000) != 0) {
-                ch2Start = BinaryIO.readU32BE(pdtRaf);
-                ch2CoefEntry = BinaryIO.readU16BE(pdtRaf);
-                int unk11A = BinaryIO.readU16BE(pdtRaf);
+                ch2Start = PDTFileIO.readU32BE(pdtRaf);
+                ch2CoefEntry = PDTFileIO.readU16BE(pdtRaf);
+                int unk11A = PDTFileIO.readU16BE(pdtRaf);
                 ch2CoefOffs = coeffOffs + (ch2CoefEntry << 5);
                 chanCount = 2;
             }
 
-            //read song info from left DSP channel (same for right)
-            byte[] dspSampleRate = new byte[4];
+            //read song info from left DSP channel (same for right, so only have to read from the left channel)
+            byte[] dspSampleRate = new byte[DSPFileConstants.SAMPLE_RATE_LENGTH_IN_BYTES];
             try (RandomAccessFile leftChannelRaf = new RandomAccessFile(leftChannel, "r")) {
-                leftChannelRaf.seek(0x8);
+                leftChannelRaf.seek(DSPFileConstants.SAMPLE_RATE_OFFSET);
                 leftChannelRaf.read(dspSampleRate);
             }
 
-            byte[] dspNibbleCount = new byte[4];
+            byte[] dspNibbleCount = new byte[DSPFileConstants.NIBBLE_COUNT_LENGTH_IN_BYTES];
             try (RandomAccessFile leftChannelRaf = new RandomAccessFile(leftChannel, "r")) {
-                leftChannelRaf.seek(0x4);
+                leftChannelRaf.seek(DSPFileConstants.NIBBLE_COUNT_OFFSET);
                 leftChannelRaf.read(dspNibbleCount);
             }
 
-            byte[] dspLoopStart = new byte[4];
+            byte[] dspLoopStart = new byte[DSPFileConstants.LOOP_START_LENGTH_IN_BYTES];
             try (RandomAccessFile leftChannelRaf = new RandomAccessFile(leftChannel, "r")) {
-                leftChannelRaf.seek(0x10);
+                leftChannelRaf.seek(DSPFileConstants.LOOP_START_OFFSET);
                 leftChannelRaf.read(dspLoopStart);
             }
 
             //read left decode coeffs data
-            byte[] leftChannelDecodingCoeffs = new byte[32];
+            byte[] leftChannelDecodingCoeffs = new byte[DSPFileConstants.DECODE_COEFFS_LENGTH_IN_BYTES];
             try (RandomAccessFile leftChannelRaf = new RandomAccessFile(leftChannel, "r")) {
-                leftChannelRaf.seek(0x1C);
+                leftChannelRaf.seek(DSPFileConstants.DECODE_COEFFS_OFFSET);
                 leftChannelRaf.read(leftChannelDecodingCoeffs);
             }
 
             //read right decode coeffs data
-            byte[] rightChannelDecodingCoeffs = new byte[32];
+            byte[] rightChannelDecodingCoeffs = new byte[DSPFileConstants.DECODE_COEFFS_LENGTH_IN_BYTES];
             try (RandomAccessFile rightChannelRaf = new RandomAccessFile(rightChannel, "r")) {
-                rightChannelRaf.seek(0x1C);
+                rightChannelRaf.seek(DSPFileConstants.DECODE_COEFFS_OFFSET);
                 rightChannelRaf.read(rightChannelDecodingCoeffs);
             }
 
@@ -98,44 +99,25 @@ public class SongModifier {
             byte[] leftChannelAudio;
 
             try (RandomAccessFile raf = new RandomAccessFile(leftChannel, "r")) {
-                // Seek to the specified offset
-                raf.seek(0x60);
-
-                // Get the remaining bytes from current position to EOF
-                long remainingBytes = raf.length() - 0x60;
-
-                // Read the remaining bytes into a byte array
+                raf.seek(DSPFileConstants.AUDIO_DATA_OFFSET);
+                long remainingBytes = raf.length() - DSPFileConstants.AUDIO_DATA_OFFSET;
                 leftChannelAudio = new byte[(int) remainingBytes];
-                raf.readFully(leftChannelAudio);  // Reads the bytes from current position to EOF
+                raf.readFully(leftChannelAudio);
             }
 
             //read right channel audio data
             byte[] rightChannelAudio;
 
             try (RandomAccessFile raf = new RandomAccessFile(rightChannel, "r")) {
-                // Seek to the specified offset
-                raf.seek(0x60);
-
-                // Get the remaining bytes from current position to EOF
-                long remainingBytes = raf.length() - 0x60;
-
-                // Read the remaining bytes into a byte array
+                raf.seek(DSPFileConstants.AUDIO_DATA_OFFSET);
+                long remainingBytes = raf.length() - DSPFileConstants.AUDIO_DATA_OFFSET;
                 rightChannelAudio = new byte[(int) remainingBytes];
-                raf.readFully(rightChannelAudio);  // Reads the bytes from current position to EOF
+                raf.readFully(rightChannelAudio);
             }
 
             //modify song
 
-            //size check
-            long newDSPSize = ((long) ((dspNibbleCount[0] & 0xFF) << 24)
-                    | ((dspNibbleCount[1] & 0xFF) << 16)
-                    | ((dspNibbleCount[2] & 0xFF) << 8)
-                    | (dspNibbleCount[3] & 0xFF));
-
-            if (newDSPSize > nibbleCount) {
-                JOptionPane.showMessageDialog(null, "Your song is too big! Try again!");
-                return;
-            }
+            if (checkInvalidSize(dspNibbleCount, nibbleCount)) return;
 
             long newSampleRateOffset = thisHeaderOffs + 4;
             long newNibbleCount = thisHeaderOffs + 8;
@@ -150,26 +132,7 @@ public class SongModifier {
                 JOptionPane.showMessageDialog(null, "Failed to create backup: " + ex.getMessage());
             }
 
-            pdtRaf.seek(newSampleRateOffset);
-            pdtRaf.write(dspSampleRate);
-
-            pdtRaf.seek(newNibbleCount);
-            pdtRaf.write(dspNibbleCount);
-
-            pdtRaf.seek(newLoopStartOffset);
-            pdtRaf.write(dspLoopStart);
-
-            pdtRaf.seek(ch1CoefOffs);
-            pdtRaf.write(leftChannelDecodingCoeffs);
-
-            pdtRaf.seek(ch2CoefOffs);
-            pdtRaf.write(rightChannelDecodingCoeffs);
-
-            pdtRaf.seek(ch1Start);
-            pdtRaf.write(leftChannelAudio);
-
-            pdtRaf.seek(ch2Start);
-            pdtRaf.write(rightChannelAudio);
+            writeDSPToPDT(pdtRaf, newSampleRateOffset, dspSampleRate, newNibbleCount, dspNibbleCount, newLoopStartOffset, dspLoopStart, ch1CoefOffs, leftChannelDecodingCoeffs, ch2CoefOffs, rightChannelDecodingCoeffs, ch1Start, leftChannelAudio, ch2Start, rightChannelAudio);
 
 
             pdtRaf.close();
@@ -189,6 +152,43 @@ public class SongModifier {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
         }
+    }
+
+    private static boolean checkInvalidSize(byte[] dspNibbleCount, long nibbleCount) {
+        //size check
+        long newDSPSize = ((long) ((dspNibbleCount[0] & 0xFF) << 24)
+                | ((dspNibbleCount[1] & 0xFF) << 16)
+                | ((dspNibbleCount[2] & 0xFF) << 8)
+                | (dspNibbleCount[3] & 0xFF));
+
+        if (newDSPSize > nibbleCount) {
+            JOptionPane.showMessageDialog(null, "Your song is too big! Try again!");
+            return true;
+        }
+        return false;
+    }
+
+    private static void writeDSPToPDT(RandomAccessFile pdtRaf, long newSampleRateOffset, byte[] dspSampleRate, long newNibbleCount, byte[] dspNibbleCount, long newLoopStartOffset, byte[] dspLoopStart, long ch1CoefOffs, byte[] leftChannelDecodingCoeffs, long ch2CoefOffs, byte[] rightChannelDecodingCoeffs, long ch1Start, byte[] leftChannelAudio, long ch2Start, byte[] rightChannelAudio) throws IOException {
+        pdtRaf.seek(newSampleRateOffset);
+        pdtRaf.write(dspSampleRate);
+
+        pdtRaf.seek(newNibbleCount);
+        pdtRaf.write(dspNibbleCount);
+
+        pdtRaf.seek(newLoopStartOffset);
+        pdtRaf.write(dspLoopStart);
+
+        pdtRaf.seek(ch1CoefOffs);
+        pdtRaf.write(leftChannelDecodingCoeffs);
+
+        pdtRaf.seek(ch2CoefOffs);
+        pdtRaf.write(rightChannelDecodingCoeffs);
+
+        pdtRaf.seek(ch1Start);
+        pdtRaf.write(leftChannelAudio);
+
+        pdtRaf.seek(ch2Start);
+        pdtRaf.write(rightChannelAudio);
     }
 
     private static File getPDTFileName(File pdtFile) {
