@@ -2,6 +2,7 @@ package ui;
 
 import constants.MarioPartySongNames;
 import io.SongDumper;
+import io.SongModifier;
 
 import javax.swing.*;
 import java.awt.*;
@@ -71,7 +72,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         if (userSelection != JFileChooser.APPROVE_OPTION) {
             System.out.println("No file selected. Exiting.");
-            return;
         }
 
         else {
@@ -79,14 +79,55 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         }
     }
 
+    private void chooseLeftChannelPath() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select DSP Left Channel");
+        int userSelection = fileChooser.showOpenDialog(null);
+
+        if (userSelection != JFileChooser.APPROVE_OPTION) {
+            System.out.println("No file selected. Exiting.");
+        }
+
+        else {
+            leftChannelPath = fileChooser.getSelectedFile().getAbsolutePath();
+        }
+    }
+
+    private void chooseRightChannelPath() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select DSP Right Channel");
+        int userSelection = fileChooser.showOpenDialog(null);
+
+        if (userSelection != JFileChooser.APPROVE_OPTION) {
+            System.out.println("No file selected. Exiting.");
+        }
+
+        else {
+            rightChannelPath = fileChooser.getSelectedFile().getAbsolutePath();
+        }
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == pickLeftChannel) {
+            chooseLeftChannelPath();
+        }
 
+        if (e.getSource() == pickRightChannel) {
+            chooseRightChannelPath();
         }
 
         if (e.getSource() == dumpSong) {
             SongDumper.extractSong(new File(pdtPath), songNames.getSelectedIndex());
+        }
+
+        if (e.getSource() == modifySong) {
+            if (leftChannelPath.isEmpty() || rightChannelPath.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Either the left or right channel wasn't chosen!");
+                return;
+            }
+
+            SongModifier.modifySong(new File(pdtPath), new File(leftChannelPath), new File(rightChannelPath), songNames.getSelectedIndex());
+
         }
     }
 }
