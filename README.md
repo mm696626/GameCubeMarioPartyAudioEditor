@@ -13,7 +13,7 @@
 * Unfortunately, this tool cannot replace the last song in the file due to not knowing how (it's random garbage at where the file points for it)
   * Only real loss is not being to be able to replace Magma Flows for Party 6 (which is a Mic minigame track anyway)
 * I may have gotten some song names wrong due to duplicates or just me not knowing certain songs in these OSTs (especially with 5)
-* As of now, it's not possible to have songs that are larger in file size be the replacement (There's a size check in place)
+* As of now, it's not possible to have songs that are larger than the original be the replacement (There's a size check in place)
 
 ### Tip for Quality vs Size
 * I recommend changing the sample rate of your track to either 32,000 (what Hudson used) or 24,000
