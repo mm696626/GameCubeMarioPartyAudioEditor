@@ -249,8 +249,7 @@ public class MarioPartySongNames {
             "Fun Times",
             "Old School",
             "Meadow Road",
-            "Dark Path",
-            "Magma Flow (assuming since it broke?)"
+            "Dark Path"
     };
 
     public static final String[] MARIO_PARTY_7_TRACK_NAMES = {
