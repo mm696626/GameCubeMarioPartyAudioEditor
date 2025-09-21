@@ -17,6 +17,7 @@
 
 ### Tip for Quality vs Size
 * I recommend changing the sample rate of your track to either 32,000 (what Hudson used) or 24,000
+* Keep your songs around the same length for higher quality (else you sacrifice sample rate for length)
 * File size limitations are pretty strict and this tool doesn't rewrite the file's pointers
 * I use this program to create DSPs
   * https://github.com/libertyernie/LoopingAudioConverter
