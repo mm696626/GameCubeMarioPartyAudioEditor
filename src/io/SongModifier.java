@@ -119,7 +119,7 @@ public class SongModifier {
                 raf.readFully(rightChannelAudio);  // Reads the bytes from current position to EOF
             }
 
-            //modify left channel
+            //modify song
 
             long newSampleRateOffset = thisHeaderOffs + 4;
             long newNibbleCount = thisHeaderOffs + 8;
