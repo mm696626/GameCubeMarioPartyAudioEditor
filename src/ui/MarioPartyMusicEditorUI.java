@@ -21,11 +21,11 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private JComboBox<String> gameSelect;
 
     private JLabel leftChannelLabel, rightChannelLabel;
+    private JLabel pdtFilePathLabel; // New label for PDT path
 
     GridBagConstraints gridBagConstraints = null;
 
-    public MarioPartyMusicEditorUI()
-    {
+    public MarioPartyMusicEditorUI() {
         setTitle("Mario Party GameCube Music Editor");
         generateUI();
         initPDTPath();
@@ -50,9 +50,12 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         leftChannelLabel = new JLabel("No file selected for Left Channel");
         rightChannelLabel = new JLabel("No file selected for Right Channel");
 
+        pdtFilePathLabel = new JLabel("No PDT file selected"); // Initialize label for PDT file path
+
         setLayout(new GridBagLayout());
         gridBagConstraints = new GridBagConstraints();
 
+        // Adding components to the layout
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         add(songNames, gridBagConstraints);
@@ -80,6 +83,11 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         add(modifySong, gridBagConstraints);
+
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4; // Place the PDT path label below the buttons
+        gridBagConstraints.gridwidth = 2;
+        add(pdtFilePathLabel, gridBagConstraints);
     }
 
     private void initPDTPath() {
@@ -97,6 +105,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         }
 
         pdtPath = fileChooser.getSelectedFile().getAbsolutePath();
+
+        pdtFilePathLabel.setText("Selected PDT: " + pdtPath);
 
         // Now prompt the user to select the game
         String selectedGame = (String) JOptionPane.showInputDialog(
@@ -129,9 +139,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         if (userSelection != JFileChooser.APPROVE_OPTION) {
             System.out.println("No file selected. Exiting.");
-        }
-
-        else {
+        } else {
             leftChannelPath = fileChooser.getSelectedFile().getAbsolutePath();
             String leftChannelName = fileChooser.getSelectedFile().getName();
             leftChannelLabel.setText("Left Channel: " + leftChannelName);
@@ -149,9 +157,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         if (userSelection != JFileChooser.APPROVE_OPTION) {
             System.out.println("No file selected. Exiting.");
-        }
-
-        else {
+        } else {
             rightChannelPath = fileChooser.getSelectedFile().getAbsolutePath();
             String rightChannelName = fileChooser.getSelectedFile().getName();
             rightChannelLabel.setText("Right Channel: " + rightChannelName);
