@@ -181,9 +181,4 @@ public class SongModifier {
         pdtRaf.seek(ch2Start);
         pdtRaf.write(rightChannelAudio);
     }
-
-    private static File getPDTFileName(File pdtFile) {
-        String backupFileName = "temp" + ".pdt";
-        return new File(pdtFile.getParent(), backupFileName);
-    }
 }
