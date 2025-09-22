@@ -28,7 +28,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private String selectedGame = "";
     private JComboBox<String> songNames;
 
-    private JLabel leftChannelLabel, rightChannelLabel, pdtFilePathLabel, selectedGameLabel;
+    private JLabel songLabel, leftChannelLabel, rightChannelLabel, pdtFilePathLabel, selectedGameLabel;
 
     GridBagConstraints gridBagConstraints = null;
 
@@ -59,6 +59,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         songNames = new JComboBox<>();
 
+        songLabel = new JLabel("Chosen Song");
+
         leftChannelLabel = new JLabel("No file selected");
         rightChannelLabel = new JLabel("No file selected");
 
@@ -69,6 +71,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         gridBagConstraints = new GridBagConstraints();
 
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        add(songLabel, gridBagConstraints);
+
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         add(songNames, gridBagConstraints);
 
@@ -94,11 +100,11 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
-        add(modifySong, gridBagConstraints);
+        add(dumpAllSongs, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        add(dumpAllSongs, gridBagConstraints);
+        add(modifySong, gridBagConstraints);
 
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
