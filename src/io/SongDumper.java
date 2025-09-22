@@ -104,7 +104,7 @@ public class SongDumper {
                         }
 
                         raf.seek(ch1Start);
-                        for (int k = 0; k < (nibbleCount << 1)/4; k++) {
+                        for (int k = 0; k < nibbleCount/2; k++) {
                             out.write(raf.readUnsignedByte());
                         }
                     }
@@ -127,7 +127,7 @@ public class SongDumper {
                         }
 
                         raf.seek(ch2Start);
-                        for (int k = 0; k < (nibbleCount << 1)/4; k++) {
+                        for (int k = 0; k < nibbleCount/2; k++) {
                             out.write(raf.readUnsignedByte());
                         }
                     }
