@@ -16,6 +16,8 @@
   * This is prevalent especially with 5. They're probably alternate versions of minigame themes or jingles, but who knows?
 * As of now, it's not possible to have songs that are larger than the original be the replacement (There's a size check in place)
   * Honestly, this is fine since Mario Party songs don't play for more than a minute anyway and the music restarts on a new event
+
+### Song Dumping
 * You can also dump the selected song to DSP format for listening in VGMStream or for conversion
   * The file size of the dumped file is deceiving for music replacement. The game doesn't care about that. It cares about the nibble count in the DSP header, which this tool already checks
   * Credit to Yoshimaster96's original dumping code which I translated into Java (I even fixed an issue where the stereo track didn't properly dump)
