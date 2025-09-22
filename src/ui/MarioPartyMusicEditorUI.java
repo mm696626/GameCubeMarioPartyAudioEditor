@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, dumpSong, modifySong, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, dumpSong, dumpAllSongs, modifySong, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -47,6 +47,9 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         dumpSong = new JButton("Dump Selected Song");
         dumpSong.addActionListener(this);
+
+        dumpAllSongs = new JButton("Dump All Songs");
+        dumpAllSongs.addActionListener(this);
 
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
@@ -92,6 +95,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         add(modifySong, gridBagConstraints);
+
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        add(dumpAllSongs, gridBagConstraints);
 
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
@@ -317,6 +324,26 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                     actualSongIndex,
                     selectedSongName
             );
+        }
+
+        if (e.getSource() == dumpAllSongs) {
+            if (pdtPath.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No PDT file was chosen!");
+                return;
+            }
+
+            int response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Are you sure you want to dump all songs from the PDT? It'll take a few minutes.",
+                    "Dump All Songs",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (response != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            SongDumper.dumpAllSongs(new File(pdtPath));
         }
 
         if (e.getSource() == modifySong) {
