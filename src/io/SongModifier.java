@@ -62,6 +62,19 @@ public class SongModifier {
                 chanCount = 2;
             }
 
+            if (chanCount == 1) {
+                int response = JOptionPane.showConfirmDialog(
+                        null,
+                        "The song you're replacing isn't stereo. Do you want to continue?",
+                        "Mono DSP Found",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (response != JOptionPane.YES_OPTION) {
+                    return;
+                }
+            }
+
             //read song info from left DSP channel (same for right, so only have to read from the left channel)
             byte[] dspSampleRate = new byte[DSPFileConstants.SAMPLE_RATE_LENGTH_IN_BYTES];
             try (RandomAccessFile leftChannelRaf = new RandomAccessFile(leftChannel, "r")) {
