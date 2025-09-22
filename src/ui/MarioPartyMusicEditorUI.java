@@ -251,6 +251,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             } else if ("Mario Party 7".equals(selectedGame)) {
                 trackMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
             } else {
+                JOptionPane.showMessageDialog(this, "No game is selected! Please select one!");
                 return;
             }
 
