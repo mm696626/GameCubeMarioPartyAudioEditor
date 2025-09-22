@@ -16,7 +16,7 @@
   * Honestly, this is fine since Mario Party songs don't play for more than a minute anyway and the music restarts on a new event
 * This tool will attempt to auto select the other track of your song, so name it either with the same file name appended with _L and _R or (channel 0) and (channel 1)
   * Example: mario_L.dsp and mario_R.dsp or luigi (channel 0).dsp and luigi (channel 1).dsp
-  * It will do the same with the PDT itself too to identify what game it's for. Keep the file name untouched
+  * It will do the same with the PDT itself as well in order to identify what game it's for. Keep the file name untouched
 
 ### Song Dumping
 * You can also dump the selected song to DSP format for listening in vgmstream or for conversion (it will dump in left and right channels)
