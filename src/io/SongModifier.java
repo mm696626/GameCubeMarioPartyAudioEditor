@@ -6,8 +6,6 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 
 public class SongModifier {
 
@@ -136,28 +134,8 @@ public class SongModifier {
             long newNibbleCount = thisHeaderOffs + 8;
             long newLoopStartOffset = thisHeaderOffs + 12;
 
-            File backupFile = null;
-
-            try {
-                backupFile = getPDTFileName(pdtFile);
-                Files.copy(pdtFile.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(null, "Failed to create backup: " + ex.getMessage());
-            }
-
             writeDSPToPDT(pdtRaf, newSampleRateOffset, dspSampleRate, newNibbleCount, dspNibbleCount, newLoopStartOffset, dspLoopStart, ch1CoefOffs, leftChannelDecodingCoeffs, ch2CoefOffs, rightChannelDecodingCoeffs, ch1Start, leftChannelAudio, ch2Start, rightChannelAudio);
-
-
             pdtRaf.close();
-
-            if (pdtFile.length() != backupFile.length()) {
-                JOptionPane.showMessageDialog(null, "Something must've changed the PDT file size. That's not good! The change has been undone!");
-                Files.copy(backupFile.toPath(), pdtFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                backupFile.delete();
-                return;
-            }
-
-            backupFile.delete();
 
             JOptionPane.showMessageDialog(null, "Finished modifying PDT file for " + songName);
 
