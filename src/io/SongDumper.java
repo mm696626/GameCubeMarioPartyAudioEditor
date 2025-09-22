@@ -24,6 +24,9 @@ public class SongDumper {
     }
 
     public static void dumpSong(File selectedFile, int songIndex, String songName) {
+        File outputDir = promptForOutputFolder();
+        if (outputDir == null) return;
+
         try (RandomAccessFile raf = new RandomAccessFile(selectedFile, "r")) {
             int unk00 = PDTFileIO.readU16BE(raf);
             int numFiles = PDTFileIO.readU16BE(raf);
@@ -75,14 +78,24 @@ public class SongDumper {
 
             for (int j = 0; j < chanCount; j++) {
                 String fileName = getFileName(songName, chanCount, j);
-                writeDSP(fileName, nibbleCount, sampleRate, loopFlag, loopStart, j, raf, ch1CoefOffs, ch1Start, ch2CoefOffs, ch2Start);
+                File outputFile = new File(outputDir, fileName);
+                writeDSP(outputFile.getAbsolutePath(), nibbleCount, sampleRate, loopFlag, loopStart, j, raf, ch1CoefOffs, ch1Start, ch2CoefOffs, ch2Start);
             }
 
-            JOptionPane.showMessageDialog(null, "Finished extracting DSP file for " + songName);
+            JOptionPane.showMessageDialog(null, "Finished dumping DSP file for " + songName);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
         }
+    }
+
+    private static File promptForOutputFolder() {
+        File outputDir = chooseOutputDirectory();
+        if (outputDir == null) {
+            JOptionPane.showMessageDialog(null, "No output folder selected. Operation canceled.");
+            return null;
+        }
+        return outputDir;
     }
 
     private static void writeDSP(String fileName, long nibbleCount, long sampleRate, int loopFlag, long loopStart, int j, RandomAccessFile raf, long ch1CoefOffs, long ch1Start, long ch2CoefOffs, long ch2Start) throws IOException {
@@ -159,6 +172,9 @@ public class SongDumper {
     }
 
     public static void dumpAllSongs(File selectedFile) {
+        File outputDir = promptForOutputFolder();
+        if (outputDir == null) return;
+
         try (RandomAccessFile raf = new RandomAccessFile(selectedFile, "r")) {
             int unk00 = PDTFileIO.readU16BE(raf);
             int numFiles = PDTFileIO.readU16BE(raf);
@@ -206,14 +222,29 @@ public class SongDumper {
 
                 for (int j = 0; j < chanCount; j++) {
                     String fileName = getFileNameForIndex(chanCount, j, i);
-                    writeDSP(fileName, nibbleCount, sampleRate, loopFlag, loopStart, j, raf, ch1CoefOffs, ch1Start, ch2CoefOffs, ch2Start);
+                    File outputFile = new File(outputDir, fileName);
+                    writeDSP(outputFile.getAbsolutePath(), nibbleCount, sampleRate, loopFlag, loopStart, j, raf, ch1CoefOffs, ch1Start, ch2CoefOffs, ch2Start);
                 }
             }
 
-            JOptionPane.showMessageDialog(null, "Finished all songs from PDT file");
+            JOptionPane.showMessageDialog(null, "Finished dumping all songs from PDT file");
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
+        }
+    }
+
+    private static File chooseOutputDirectory() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Select the DSP output folder");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+
+        int result = chooser.showSaveDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            return chooser.getSelectedFile();
+        } else {
+            return null;
         }
     }
 
