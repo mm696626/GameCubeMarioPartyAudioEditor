@@ -334,7 +334,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
             int response = JOptionPane.showConfirmDialog(
                     null,
-                    "Are you sure you want to dump all songs from the PDT? It'll take a few minutes.",
+                    "Are you sure you want to dump all songs from the PDT?",
                     "Dump All Songs",
                     JOptionPane.YES_NO_OPTION
             );

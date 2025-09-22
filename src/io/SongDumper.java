@@ -3,6 +3,7 @@ package io;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class SongDumper {
@@ -104,9 +105,7 @@ public class SongDumper {
                         }
 
                         raf.seek(ch1Start);
-                        for (int k = 0; k < nibbleCount/2; k++) {
-                            out.write(raf.readUnsignedByte());
-                        }
+                        writeDSPAudioData(nibbleCount, raf, out);
                     }
 
                     else {
@@ -127,9 +126,7 @@ public class SongDumper {
                         }
 
                         raf.seek(ch2Start);
-                        for (int k = 0; k < nibbleCount/2; k++) {
-                            out.write(raf.readUnsignedByte());
-                        }
+                        writeDSPAudioData(nibbleCount, raf, out);
                     }
                 }
             }
@@ -138,6 +135,24 @@ public class SongDumper {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
+        }
+    }
+
+    private static void writeDSPAudioData(long nibbleCount, RandomAccessFile raf, FileOutputStream out) throws IOException {
+        long bytesToCopy = nibbleCount / 2;
+
+        byte[] buffer = new byte[8192];
+
+        while (bytesToCopy > 0) {
+            int chunkSize = (int) Math.min(buffer.length, bytesToCopy);
+            int bytesRead = raf.read(buffer, 0, chunkSize);
+
+            if (bytesRead == -1) {
+                break;
+            }
+
+            out.write(buffer, 0, bytesRead);
+            bytesToCopy -= bytesRead;
         }
     }
 
@@ -229,9 +244,7 @@ public class SongDumper {
                             }
 
                             raf.seek(ch1Start);
-                            for (int k = 0; k < nibbleCount/2; k++) {
-                                out.write(raf.readUnsignedByte());
-                            }
+                            writeDSPAudioData(nibbleCount, raf, out);
                         }
 
                         else {
@@ -252,9 +265,7 @@ public class SongDumper {
                             }
 
                             raf.seek(ch2Start);
-                            for (int k = 0; k < nibbleCount/2; k++) {
-                                out.write(raf.readUnsignedByte());
-                            }
+                            writeDSPAudioData(nibbleCount, raf, out);
                         }
                     }
                 }
