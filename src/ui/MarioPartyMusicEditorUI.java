@@ -20,22 +20,20 @@ import java.util.Map;
 
 public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
     private String selectedGame = "";
     private JComboBox<String> songNames;
 
-    private JLabel leftChannelLabel, rightChannelLabel;
-    private JLabel pdtFilePathLabel; // New label for PDT path
+    private JLabel leftChannelLabel, rightChannelLabel, pdtFilePathLabel, selectedGameLabel;
 
     GridBagConstraints gridBagConstraints = null;
 
     public MarioPartyMusicEditorUI() {
         setTitle("Mario Party GameCube Music Editor");
         generateUI();
-        initPDTPath();
     }
 
     private void generateUI() {
@@ -49,17 +47,20 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
 
+        selectGame = new JButton("Select PDT and Game");
+        selectGame.addActionListener(this);
+
         songNames = new JComboBox<>();
 
-        leftChannelLabel = new JLabel("No file selected for Left Channel");
-        rightChannelLabel = new JLabel("No file selected for Right Channel");
+        leftChannelLabel = new JLabel("No file selected");
+        rightChannelLabel = new JLabel("No file selected");
 
-        pdtFilePathLabel = new JLabel("No PDT file selected"); // Initialize label for PDT file path
+        pdtFilePathLabel = new JLabel("No PDT file selected");
+        selectedGameLabel = new JLabel("No game selected");
 
         setLayout(new GridBagLayout());
         gridBagConstraints = new GridBagConstraints();
 
-        // Adding components to the layout
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         add(songNames, gridBagConstraints);
@@ -80,14 +81,24 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         gridBagConstraints.gridy = 2;
         add(rightChannelLabel, gridBagConstraints);
 
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        add(selectGame, gridBagConstraints);
+
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         add(modifySong, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4; // Place the PDT path label below the buttons
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 2;
         add(pdtFilePathLabel, gridBagConstraints);
+
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 2;
+        add(selectedGameLabel, gridBagConstraints);
+
     }
 
     private void initPDTPath() {
@@ -100,7 +111,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         int userSelection = fileChooser.showOpenDialog(null);
 
         if (userSelection != JFileChooser.APPROVE_OPTION) {
-            System.out.println("No file selected. Exiting.");
             return;
         }
 
@@ -126,6 +136,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         }
 
         updateSongList(selectedGame);
+        selectedGameLabel.setText("Selected Game: " + selectedGame);
     }
 
     private void chooseLeftChannelPath() {
@@ -142,7 +153,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         } else {
             leftChannelPath = fileChooser.getSelectedFile().getAbsolutePath();
             String leftChannelName = fileChooser.getSelectedFile().getName();
-            leftChannelLabel.setText("Left Channel: " + leftChannelName);
+            leftChannelLabel.setText(leftChannelName);
         }
     }
 
@@ -160,7 +171,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         } else {
             rightChannelPath = fileChooser.getSelectedFile().getAbsolutePath();
             String rightChannelName = fileChooser.getSelectedFile().getName();
-            rightChannelLabel.setText("Right Channel: " + rightChannelName);
+            rightChannelLabel.setText(rightChannelName);
         }
     }
 
@@ -266,6 +277,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                     actualSongIndex,
                     selectedSongName
             );
+        }
+
+        if (e.getSource() == selectGame) {
+            initPDTPath();
         }
     }
 
