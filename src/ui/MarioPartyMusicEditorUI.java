@@ -122,24 +122,36 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             return;
         }
 
-        pdtPath = fileChooser.getSelectedFile().getAbsolutePath();
-
+        File selectedPDT = fileChooser.getSelectedFile();
+        pdtPath = selectedPDT.getAbsolutePath();
         pdtFilePathLabel.setText("Selected PDT: " + pdtPath);
 
-        selectedGame = null;
-        while (selectedGame == null) {
-            selectedGame = (String) JOptionPane.showInputDialog(
-                    this,
-                    "Select Game",
-                    "Game Selection",
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    new String[]{"Mario Party 4", "Mario Party 5", "Mario Party 6", "Mario Party 7"},
-                    "Mario Party 4"
-            );
+        String pdtFileName = selectedPDT.getName().toLowerCase();
 
-            if (selectedGame == null) {
-                JOptionPane.showMessageDialog(this, "You must select a game. Please choose one.");
+        if (pdtFileName.equals("mpgcstr.pdt")) {
+            selectedGame = "Mario Party 4";
+        } else if (pdtFileName.equals("mp5_str.pdt")) {
+            selectedGame = "Mario Party 5";
+        } else if (pdtFileName.equals("mp6_str.pdt")) {
+            selectedGame = "Mario Party 6";
+        } else if (pdtFileName.equals("mp7_str.pdt")) {
+            selectedGame = "Mario Party 7";
+        } else {
+            selectedGame = null;
+            while (selectedGame == null) {
+                selectedGame = (String) JOptionPane.showInputDialog(
+                        this,
+                        "Select Game",
+                        "Game Selection",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        new String[]{"Mario Party 4", "Mario Party 5", "Mario Party 6", "Mario Party 7"},
+                        "Mario Party 4"
+                );
+
+                if (selectedGame == null) {
+                    JOptionPane.showMessageDialog(this, "You must select a game. Please choose one.");
+                }
             }
         }
 
@@ -158,10 +170,17 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         if (userSelection != JFileChooser.APPROVE_OPTION) {
             System.out.println("No file selected. Exiting.");
-        } else {
-            leftChannelPath = fileChooser.getSelectedFile().getAbsolutePath();
-            String leftChannelName = fileChooser.getSelectedFile().getName();
-            leftChannelLabel.setText(leftChannelName);
+            return;
+        }
+
+        File selectedFile = fileChooser.getSelectedFile();
+        leftChannelPath = selectedFile.getAbsolutePath();
+        leftChannelLabel.setText(selectedFile.getName());
+
+        File other = detectOtherChannel(selectedFile, true);
+        if (other != null) {
+            rightChannelPath = other.getAbsolutePath();
+            rightChannelLabel.setText(other.getName());
         }
     }
 
@@ -176,11 +195,44 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         if (userSelection != JFileChooser.APPROVE_OPTION) {
             System.out.println("No file selected. Exiting.");
-        } else {
-            rightChannelPath = fileChooser.getSelectedFile().getAbsolutePath();
-            String rightChannelName = fileChooser.getSelectedFile().getName();
-            rightChannelLabel.setText(rightChannelName);
+            return;
         }
+
+        File selectedFile = fileChooser.getSelectedFile();
+        rightChannelPath = selectedFile.getAbsolutePath();
+        rightChannelLabel.setText(selectedFile.getName());
+
+        File other = detectOtherChannel(selectedFile, false);
+        if (other != null) {
+            leftChannelPath = other.getAbsolutePath();
+            leftChannelLabel.setText(other.getName());
+        }
+    }
+
+    private File detectOtherChannel(File selectedFile, boolean isLeftSelected) {
+        String name = selectedFile.getName();
+        File parentDir = selectedFile.getParentFile();
+
+        String counterpartName = null;
+
+        if (name.endsWith("_L.dsp") && isLeftSelected) {
+            counterpartName = name.replace("_L.dsp", "_R.dsp");
+        } else if (name.endsWith("_R.dsp") && !isLeftSelected) {
+            counterpartName = name.replace("_R.dsp", "_L.dsp");
+        } else if (name.endsWith("(channel 0).dsp") && isLeftSelected) {
+            counterpartName = name.replace("(channel 0).dsp", "(channel 1).dsp");
+        } else if (name.endsWith("(channel 1).dsp") && !isLeftSelected) {
+            counterpartName = name.replace("(channel 1).dsp", "(channel 0).dsp");
+        }
+
+        if (counterpartName != null) {
+            File counterpartFile = new File(parentDir, counterpartName);
+            if (counterpartFile.exists()) {
+                return counterpartFile;
+            }
+        }
+
+        return null;
     }
 
     private void updateSongList(String selectedGame) {
