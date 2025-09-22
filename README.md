@@ -21,8 +21,11 @@
 ### Song Dumping
 * You can also dump the selected song to DSP format for listening in vgmstream or for conversion (it will dump in left and right channels)
   * Credit to Yoshimaster96's original dumping code which I translated into Java
-  * I fixed an issue where the stereo track didn't properly dump, an EOF issue since the number of bytes was wrong for the audio data, and changed the audio data to dump 8KB at a time instead of one byte for speed
-    * https://github.com/Yoshimaster96/mpgc-sound-tools
+  * I fixed the following issues
+    * The stereo track didn't properly dump (it dumped the same channel twice)
+    * An end of file issue since the number of bytes was wrong for the audio data (should be nibbles/2 instead of nibbles << 1)
+    * Changed the audio data to dump 8KB at a time instead of one byte for speed
+  * Link to the code I used as a basis: https://github.com/Yoshimaster96/mpgc-sound-tools/blob/main/dump_pdt.c
 
 ### Tip for Quality vs Size
 * I recommend changing the sample rate of your track to either 32,000 (what Hudson used) or 24,000
