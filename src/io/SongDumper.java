@@ -74,67 +74,69 @@ public class SongDumper {
             int loopFlag = ((flags & 0x02000000) != 0) ? 1 : 0;
 
             for (int j = 0; j < chanCount; j++) {
-
                 String fileName = getFileName(songName, chanCount, j);
-
-                try (FileOutputStream out = new FileOutputStream(fileName)) {
-                    PDTFileIO.writeU32BE(out, nibblesToSamples(nibbleCount));
-                    PDTFileIO.writeU32BE(out, nibbleCount);
-                    PDTFileIO.writeU32BE(out, sampleRate);
-                    PDTFileIO.writeU16BE(out, loopFlag);
-                    PDTFileIO.writeU16BE(out, 0);
-                    PDTFileIO.writeU32BE(out, loopStart);
-                    PDTFileIO.writeU32BE(out, nibbleCount - 1);
-                    PDTFileIO.writeU32BE(out, 0);
-
-                    if (j == 0) {
-                        raf.seek(ch1CoefOffs);
-                        for (int k = 0; k < 16; k++) {
-                            PDTFileIO.writeU16BE(out, PDTFileIO.readU16BE(raf));
-                        }
-
-                        PDTFileIO.writeU16BE(out, 0);
-                        raf.seek(ch1Start);
-                        PDTFileIO.writeU16BE(out, PDTFileIO.readU8BE(raf));
-                        for (int k = 0; k < 5; k++) {
-                            PDTFileIO.writeU16BE(out, 0);
-                        }
-
-                        for (int k = 0; k < 11; k++) {
-                            PDTFileIO.writeU16BE(out, 0);
-                        }
-
-                        raf.seek(ch1Start);
-                        writeDSPAudioData(nibbleCount, raf, out);
-                    }
-
-                    else {
-                        raf.seek(ch2CoefOffs);
-                        for (int k = 0; k < 16; k++) {
-                            PDTFileIO.writeU16BE(out, PDTFileIO.readU16BE(raf));
-                        }
-
-                        PDTFileIO.writeU16BE(out, 0);
-                        raf.seek(ch2Start);
-                        PDTFileIO.writeU16BE(out, PDTFileIO.readU8BE(raf));
-                        for (int k = 0; k < 5; k++) {
-                            PDTFileIO.writeU16BE(out, 0);
-                        }
-
-                        for (int k = 0; k < 11; k++) {
-                            PDTFileIO.writeU16BE(out, 0);
-                        }
-
-                        raf.seek(ch2Start);
-                        writeDSPAudioData(nibbleCount, raf, out);
-                    }
-                }
+                writeDSP(fileName, nibbleCount, sampleRate, loopFlag, loopStart, j, raf, ch1CoefOffs, ch1Start, ch2CoefOffs, ch2Start);
             }
 
             JOptionPane.showMessageDialog(null, "Finished extracting DSP file for " + songName);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
+        }
+    }
+
+    private static void writeDSP(String fileName, long nibbleCount, long sampleRate, int loopFlag, long loopStart, int j, RandomAccessFile raf, long ch1CoefOffs, long ch1Start, long ch2CoefOffs, long ch2Start) throws IOException {
+        try (FileOutputStream out = new FileOutputStream(fileName)) {
+            PDTFileIO.writeU32BE(out, nibblesToSamples(nibbleCount));
+            PDTFileIO.writeU32BE(out, nibbleCount);
+            PDTFileIO.writeU32BE(out, sampleRate);
+            PDTFileIO.writeU16BE(out, loopFlag);
+            PDTFileIO.writeU16BE(out, 0);
+            PDTFileIO.writeU32BE(out, loopStart);
+            PDTFileIO.writeU32BE(out, nibbleCount - 1);
+            PDTFileIO.writeU32BE(out, 0);
+
+            if (j == 0) {
+                raf.seek(ch1CoefOffs);
+                for (int k = 0; k < 16; k++) {
+                    PDTFileIO.writeU16BE(out, PDTFileIO.readU16BE(raf));
+                }
+
+                PDTFileIO.writeU16BE(out, 0);
+                raf.seek(ch1Start);
+                PDTFileIO.writeU16BE(out, PDTFileIO.readU8BE(raf));
+                for (int k = 0; k < 5; k++) {
+                    PDTFileIO.writeU16BE(out, 0);
+                }
+
+                for (int k = 0; k < 11; k++) {
+                    PDTFileIO.writeU16BE(out, 0);
+                }
+
+                raf.seek(ch1Start);
+                writeDSPAudioData(nibbleCount, raf, out);
+            }
+
+            else {
+                raf.seek(ch2CoefOffs);
+                for (int k = 0; k < 16; k++) {
+                    PDTFileIO.writeU16BE(out, PDTFileIO.readU16BE(raf));
+                }
+
+                PDTFileIO.writeU16BE(out, 0);
+                raf.seek(ch2Start);
+                PDTFileIO.writeU16BE(out, PDTFileIO.readU8BE(raf));
+                for (int k = 0; k < 5; k++) {
+                    PDTFileIO.writeU16BE(out, 0);
+                }
+
+                for (int k = 0; k < 11; k++) {
+                    PDTFileIO.writeU16BE(out, 0);
+                }
+
+                raf.seek(ch2Start);
+                writeDSPAudioData(nibbleCount, raf, out);
+            }
         }
     }
 
@@ -203,71 +205,8 @@ public class SongDumper {
                 int loopFlag = ((flags & 0x02000000) != 0) ? 1 : 0;
 
                 for (int j = 0; j < chanCount; j++) {
-
-                    String fileName;
-
-                    if (chanCount == 2) {
-                        if (j == 0) {
-                            fileName = String.format("%04d_L.dsp", i);
-                        } else {
-                            fileName = String.format("%04d_R.dsp", i);
-                        }
-                    } else {
-                        fileName = String.format("%04d.dsp", i);
-                    }
-
-                    try (FileOutputStream out = new FileOutputStream(fileName)) {
-                        PDTFileIO.writeU32BE(out, nibblesToSamples(nibbleCount));
-                        PDTFileIO.writeU32BE(out, nibbleCount);
-                        PDTFileIO.writeU32BE(out, sampleRate);
-                        PDTFileIO.writeU16BE(out, loopFlag);
-                        PDTFileIO.writeU16BE(out, 0);
-                        PDTFileIO.writeU32BE(out, loopStart);
-                        PDTFileIO.writeU32BE(out, nibbleCount - 1);
-                        PDTFileIO.writeU32BE(out, 0);
-
-                        if (j == 0) {
-                            raf.seek(ch1CoefOffs);
-                            for (int k = 0; k < 16; k++) {
-                                PDTFileIO.writeU16BE(out, PDTFileIO.readU16BE(raf));
-                            }
-
-                            PDTFileIO.writeU16BE(out, 0);
-                            raf.seek(ch1Start);
-                            PDTFileIO.writeU16BE(out, PDTFileIO.readU8BE(raf));
-                            for (int k = 0; k < 5; k++) {
-                                PDTFileIO.writeU16BE(out, 0);
-                            }
-
-                            for (int k = 0; k < 11; k++) {
-                                PDTFileIO.writeU16BE(out, 0);
-                            }
-
-                            raf.seek(ch1Start);
-                            writeDSPAudioData(nibbleCount, raf, out);
-                        }
-
-                        else {
-                            raf.seek(ch2CoefOffs);
-                            for (int k = 0; k < 16; k++) {
-                                PDTFileIO.writeU16BE(out, PDTFileIO.readU16BE(raf));
-                            }
-
-                            PDTFileIO.writeU16BE(out, 0);
-                            raf.seek(ch2Start);
-                            PDTFileIO.writeU16BE(out, PDTFileIO.readU8BE(raf));
-                            for (int k = 0; k < 5; k++) {
-                                PDTFileIO.writeU16BE(out, 0);
-                            }
-
-                            for (int k = 0; k < 11; k++) {
-                                PDTFileIO.writeU16BE(out, 0);
-                            }
-
-                            raf.seek(ch2Start);
-                            writeDSPAudioData(nibbleCount, raf, out);
-                        }
-                    }
+                    String fileName = getFileNameForIndex(chanCount, j, i);
+                    writeDSP(fileName, nibbleCount, sampleRate, loopFlag, loopStart, j, raf, ch1CoefOffs, ch1Start, ch2CoefOffs, ch2Start);
                 }
             }
 
@@ -276,6 +215,21 @@ public class SongDumper {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
         }
+    }
+
+    private static String getFileNameForIndex(int chanCount, int j, int i) {
+        String fileName;
+
+        if (chanCount == 2) {
+            if (j == 0) {
+                fileName = String.format("%04d_L.dsp", i);
+            } else {
+                fileName = String.format("%04d_R.dsp", i);
+            }
+        } else {
+            fileName = String.format("%04d.dsp", i);
+        }
+        return fileName;
     }
 
     private static String getFileName(String songName, int chanCount, int j) {
