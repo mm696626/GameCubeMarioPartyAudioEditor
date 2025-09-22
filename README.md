@@ -6,7 +6,7 @@
 ### Why isn't the majority of Mario Party 4's soundtrack editable?
 * Simple! Most of the music in that game is sequenced, not streamed
 
-### Note
+### Notes
 * Music audio must be in DSP format and must have the end of the loop be the end of the song (which I believe most do, but check with vgmstream anyway)
   * https://katiefrogs.github.io/vgmstream-web/
 * This is due to Mario Parties 4-7 not using end loop points
@@ -15,7 +15,7 @@
 * I may have gotten some song names wrong due to duplicates or just me not knowing certain songs in these OSTs
   * This is prevalent especially with 5. They're probably alternate versions of minigame themes or jingles, but who knows?
 * As of now, it's not possible to have songs that are larger than the original be the replacement (There's a size check in place)
-  * Honestly, this is fine since Mario Party songs don't play for more than a minute anyway
+  * Honestly, this is fine since Mario Party songs don't play for more than a minute anyway and the music restarts on a new event
 
 ### Tip for Quality vs Size
 * I recommend changing the sample rate of your track to either 32,000 (what Hudson used) or 24,000
