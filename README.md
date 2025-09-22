@@ -10,8 +10,6 @@
 * Music audio must be in DSP format and must have the end of the loop be the end of the song (which I believe most do, but check with vgmstream anyway)
   * https://katiefrogs.github.io/vgmstream-web/
 * This is due to Mario Parties 4-7 not using end loop points
-* Unfortunately, this tool cannot replace the last song in the file due to not knowing how (it's random garbage at where the file points for it)
-  * Only real loss is not being to be able to replace Magma Flows for Party 6 (which is a Mic mode track anyway)
 * I may have gotten some song names wrong due to duplicates or just me not knowing certain songs in these OSTs
   * This is prevalent especially with 5. They're probably alternate versions of minigame themes or jingles, but who knows?
 * As of now, it's not possible to have songs that are larger than the original be the replacement (There's a size check in place)
@@ -22,8 +20,7 @@
 
 ### Song Dumping
 * You can also dump the selected song to DSP format for listening in vgmstream or for conversion (it will dump in left and right channels)
-  * The file size of the dumped file is deceiving for music replacement. The game doesn't care about that. It cares about the nibble count in the DSP header, which this tool already checks
-  * Credit to Yoshimaster96's original dumping code which I translated into Java (I even fixed an issue where the stereo track didn't properly dump)
+  * Credit to Yoshimaster96's original dumping code which I translated into Java (I even fixed an issue where the stereo track didn't properly dump and an EOF issue since the number of bytes was wrong for the audio data)
     * https://github.com/Yoshimaster96/mpgc-sound-tools
 
 ### Tip for Quality vs Size

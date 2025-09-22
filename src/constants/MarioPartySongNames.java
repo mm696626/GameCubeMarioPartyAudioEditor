@@ -106,24 +106,25 @@ public class MarioPartySongNames {
             Map.entry(89, "In Great Fear again?"),
             Map.entry(90, "DK again?"),
             Map.entry(91, "Battle/Duel again?"),
-            Map.entry(113, "Doubtful Chance again?"),
-            Map.entry(116, "Minigame Winner"),
-            Map.entry(117, "Minigame Lose"),
-            Map.entry(118, "Tie"),
-            Map.entry(119, "idk"),
-            Map.entry(121, "Machine Complete"),
-            Map.entry(122, "Star Get"),
-            Map.entry(123, "A Bit of Happiness"),
-            Map.entry(124, "A Lot of Happiness"),
-            Map.entry(126, "Battle Wasteland"),
-            Map.entry(127, "Idk"),
-            Map.entry(128, "Start Battle"),
-            Map.entry(129, "Jingle"),
-            Map.entry(130, "Idk"),
-            Map.entry(131, "Sign Attack Intro (for some reason)"),
-            Map.entry(132, "Star Get again?"),
-            Map.entry(133, "Ztar"),
-            Map.entry(134, "Bowser Intro")
+            Map.entry(118, "Doubtful Chance again?"),
+            Map.entry(121, "Minigame Winner"),
+            Map.entry(122, "Minigame Lose"),
+            Map.entry(123, "Tie"),
+            Map.entry(124, "idk"),
+            Map.entry(126, "Machine Complete"),
+            Map.entry(127, "Star Get"),
+            Map.entry(128, "A Bit of Happiness"),
+            Map.entry(129, "A Lot of Happiness"),
+            Map.entry(131, "Battle Wasteland"),
+            Map.entry(132, "Idk"),
+            Map.entry(133, "Start Battle"),
+            Map.entry(134, "Jingle"),
+            Map.entry(135, "Idk"),
+            Map.entry(136, "Sign Attack Intro (for some reason)"),
+            Map.entry(137, "Star Get again?"),
+            Map.entry(138, "Ztar"),
+            Map.entry(139, "Bowser Intro"),
+            Map.entry(140, "Super Duel Win")
     );
 
     public static final Map<Integer, String> MARIO_PARTY_6_TRACK_NAMES = Map.ofEntries(
@@ -235,7 +236,8 @@ public class MarioPartySongNames {
             Map.entry(105, "Fun Times"),
             Map.entry(106, "Old School"),
             Map.entry(107, "Meadow Road"),
-            Map.entry(108, "Dark Path")
+            Map.entry(108, "Dark Path"),
+            Map.entry(109, "Magma Flows")
     );
 
     public static final Map<Integer, String> MARIO_PARTY_7_TRACK_NAMES = Map.ofEntries(
@@ -325,6 +327,7 @@ public class MarioPartySongNames {
             Map.entry(106, "Tie"),
             Map.entry(107, "Jingle"),
             Map.entry(108, "Bowser Castle Theme"),
-            Map.entry(109, "The Koopa King Falls")
+            Map.entry(109, "The Koopa King Falls"),
+            Map.entry(110, "Solo Mode Beaten")
     );
 }
