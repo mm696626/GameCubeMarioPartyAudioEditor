@@ -20,7 +20,8 @@
 
 ### Song Dumping
 * You can also dump the selected song to DSP format for listening in vgmstream or for conversion (it will dump in left and right channels)
-  * Credit to Yoshimaster96's original dumping code which I translated into Java (I even fixed an issue where the stereo track didn't properly dump and an EOF issue since the number of bytes was wrong for the audio data)
+  * Credit to Yoshimaster96's original dumping code which I translated into Java
+  * I fixed an issue where the stereo track didn't properly dump, an EOF issue since the number of bytes was wrong for the audio data, and changed the audio data to dump 8KB at a time instead of one byte for speed
     * https://github.com/Yoshimaster96/mpgc-sound-tools
 
 ### Tip for Quality vs Size
