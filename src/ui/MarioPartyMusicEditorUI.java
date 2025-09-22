@@ -1,6 +1,7 @@
 package ui;
 
 import constants.MarioPartySongNames;
+import io.SongDumper;
 import io.SongModifier;
 
 import javax.swing.*;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, dumpSong, modifySong, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -43,6 +44,9 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         pickRightChannel = new JButton("Select Right DSP Channel");
         pickRightChannel.addActionListener(this);
+
+        dumpSong = new JButton("Dump Selected Song");
+        dumpSong.addActionListener(this);
 
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
@@ -83,19 +87,23 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        add(selectGame, gridBagConstraints);
+        add(dumpSong, gridBagConstraints);
 
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         add(modifySong, gridBagConstraints);
 
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
+        add(selectGame, gridBagConstraints);
+
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 2;
         add(pdtFilePathLabel, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 2;
         add(selectedGameLabel, gridBagConstraints);
 
@@ -211,6 +219,52 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         if (e.getSource() == pickRightChannel) {
             chooseRightChannelPath();
+        }
+
+        if (e.getSource() == dumpSong) {
+            if (pdtPath.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No PDT file was chosen!");
+                return;
+            }
+
+            String selectedSongName = (String) songNames.getSelectedItem();
+
+            Map<Integer, String> trackMap;
+
+            if ("Mario Party 4".equals(selectedGame)) {
+                trackMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
+            } else if ("Mario Party 5".equals(selectedGame)) {
+                trackMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
+            } else if ("Mario Party 6".equals(selectedGame)) {
+                trackMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
+            } else if ("Mario Party 7".equals(selectedGame)) {
+                trackMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
+            } else {
+                JOptionPane.showMessageDialog(this, "No game is selected! Please select one!");
+                return;
+            }
+
+            int actualSongIndex = -1;
+
+            if (trackMap != null && selectedSongName != null) {
+                for (Map.Entry<Integer, String> entry : trackMap.entrySet()) {
+                    if (selectedSongName.equals(entry.getValue())) {
+                        actualSongIndex = entry.getKey();
+                        break;
+                    }
+                }
+            }
+
+            if (actualSongIndex == -1) {
+                JOptionPane.showMessageDialog(this, "Could not determine song index.");
+                return;
+            }
+
+            SongDumper.dumpSong(
+                    new File(pdtPath),
+                    actualSongIndex,
+                    selectedSongName
+            );
         }
 
         if (e.getSource() == modifySong) {
