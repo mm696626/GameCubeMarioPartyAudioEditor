@@ -30,8 +30,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
     private JLabel songLabel, leftChannelLabel, rightChannelLabel, pdtFilePathLabel, selectedGameLabel;
 
-    GridBagConstraints gridBagConstraints = null;
-
     public MarioPartyMusicEditorUI() {
         setTitle("Mario Party GameCube Music Editor");
         generateUI();
@@ -39,11 +37,27 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
     private void generateUI() {
 
-        pickLeftChannel = new JButton("Select Left DSP Channel");
-        pickLeftChannel.addActionListener(this);
+        JTabbedPane tabbedPane = new JTabbedPane();
 
-        pickRightChannel = new JButton("Select Right DSP Channel");
-        pickRightChannel.addActionListener(this);
+        //song selection tab
+        JPanel songSelectionPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints songSelectionGBC = new GridBagConstraints();
+        songSelectionGBC.insets = new Insets(5, 5, 5, 5);
+        songSelectionGBC.fill = GridBagConstraints.HORIZONTAL;
+
+        songLabel = new JLabel("Chosen Song:");
+        songNames = new JComboBox<>();
+
+        songSelectionGBC.gridx = 0; songSelectionGBC.gridy = 0;
+        songSelectionPanel.add(songLabel, songSelectionGBC);
+        songSelectionGBC.gridx = 1;
+        songSelectionPanel.add(songNames, songSelectionGBC);
+
+        //dumping tab
+        JPanel dumpPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints dumpingGBC = new GridBagConstraints();
+        dumpingGBC.insets = new Insets(5, 5, 5, 5);
+        dumpingGBC.fill = GridBagConstraints.HORIZONTAL;
 
         dumpSong = new JButton("Dump Selected Song");
         dumpSong.addActionListener(this);
@@ -51,75 +65,70 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         dumpAllSongs = new JButton("Dump All Songs");
         dumpAllSongs.addActionListener(this);
 
+        dumpingGBC.gridx = 0; dumpingGBC.gridy = 0;
+        dumpPanel.add(dumpSong, dumpingGBC);
+        dumpingGBC.gridx = 1;
+        dumpPanel.add(dumpAllSongs, dumpingGBC);
+
+        //modify tab
+        JPanel modifyPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints modifyGBC = new GridBagConstraints();
+        modifyGBC.insets = new Insets(5, 5, 5, 5);
+        modifyGBC.fill = GridBagConstraints.HORIZONTAL;
+
+        pickLeftChannel = new JButton("Select Left DSP Channel");
+        pickLeftChannel.addActionListener(this);
+        leftChannelLabel = new JLabel("No file selected");
+
+        pickRightChannel = new JButton("Select Right DSP Channel");
+        pickRightChannel.addActionListener(this);
+        rightChannelLabel = new JLabel("No file selected");
+
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
+
+        modifyGBC.gridx = 0; modifyGBC.gridy = 0;
+        modifyPanel.add(pickLeftChannel, modifyGBC);
+        modifyGBC.gridx = 1;
+        modifyPanel.add(leftChannelLabel, modifyGBC);
+
+        modifyGBC.gridx = 0; modifyGBC.gridy = 1;
+        modifyPanel.add(pickRightChannel, modifyGBC);
+        modifyGBC.gridx = 1;
+        modifyPanel.add(rightChannelLabel, modifyGBC);
+
+        modifyGBC.gridx = 0; modifyGBC.gridy = 2;
+        modifyGBC.gridwidth = 2;
+        modifyPanel.add(modifySong, modifyGBC);
+
+        //choose game/PDT tab
+        JPanel chooseGamePanel = new JPanel(new GridBagLayout());
+        GridBagConstraints chooseGameGBC = new GridBagConstraints();
+        chooseGameGBC.insets = new Insets(5, 5, 5, 5);
+        chooseGameGBC.fill = GridBagConstraints.HORIZONTAL;
 
         selectGame = new JButton("Select PDT and Game");
         selectGame.addActionListener(this);
 
-        songNames = new JComboBox<>();
-
-        songLabel = new JLabel("Chosen Song");
-
-        leftChannelLabel = new JLabel("No file selected");
-        rightChannelLabel = new JLabel("No file selected");
-
         pdtFilePathLabel = new JLabel("No PDT file selected");
         selectedGameLabel = new JLabel("No game selected");
 
-        setLayout(new GridBagLayout());
-        gridBagConstraints = new GridBagConstraints();
+        chooseGameGBC.gridx = 0; chooseGameGBC.gridy = 0;
+        chooseGamePanel.add(selectGame, chooseGameGBC);
 
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        add(songLabel, gridBagConstraints);
+        chooseGameGBC.gridx = 0; chooseGameGBC.gridy = 1;
+        chooseGamePanel.add(pdtFilePathLabel, chooseGameGBC);
 
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        add(songNames, gridBagConstraints);
+        chooseGameGBC.gridx = 0; chooseGameGBC.gridy = 2;
+        chooseGamePanel.add(selectedGameLabel, chooseGameGBC);
 
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        add(pickLeftChannel, gridBagConstraints);
+        tabbedPane.addTab("Choose PDT/Game", chooseGamePanel);
+        tabbedPane.addTab("Song Selection", songSelectionPanel);
+        tabbedPane.addTab("Song Dumping", dumpPanel);
+        tabbedPane.addTab("Modify Song", modifyPanel);
 
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        add(leftChannelLabel, gridBagConstraints);
-
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        add(pickRightChannel, gridBagConstraints);
-
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        add(rightChannelLabel, gridBagConstraints);
-
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        add(dumpSong, gridBagConstraints);
-
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        add(dumpAllSongs, gridBagConstraints);
-
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        add(modifySong, gridBagConstraints);
-
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
-        add(selectGame, gridBagConstraints);
-
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 2;
-        add(pdtFilePathLabel, gridBagConstraints);
-
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.gridwidth = 2;
-        add(selectedGameLabel, gridBagConstraints);
-
+        setLayout(new BorderLayout());
+        add(tabbedPane, BorderLayout.CENTER);
     }
 
     private void initPDTPath() {
