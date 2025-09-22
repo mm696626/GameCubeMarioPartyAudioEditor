@@ -12,7 +12,8 @@
 * This is due to Mario Parties 4-7 not using end loop points
 * Unfortunately, this tool cannot replace the last song in the file due to not knowing how (it's random garbage at where the file points for it)
   * Only real loss is not being to be able to replace Magma Flows for Party 6 (which is a Mic minigame track anyway)
-* I may have gotten some song names wrong due to duplicates or just me not knowing certain songs in these OSTs (especially with 5)
+* I may have gotten some song names wrong due to duplicates or just me not knowing certain songs in these OSTs
+  * This is prevalent especially with 5. They're probably alternate versions of minigame themes or jingles, but who knows?
 * As of now, it's not possible to have songs that are larger than the original be the replacement (There's a size check in place)
   * Honestly, this is fine since Mario Party songs don't play for more than a minute anyway
 
