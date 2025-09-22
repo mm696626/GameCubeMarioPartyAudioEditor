@@ -219,6 +219,11 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
+            if (pdtPath.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No PDT file was chosen!");
+                return;
+            }
+
             int response = JOptionPane.showConfirmDialog(
                     null,
                     "Do you want to make a backup of the PDT file?",
