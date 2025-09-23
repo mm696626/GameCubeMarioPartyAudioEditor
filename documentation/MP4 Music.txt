@@ -1,0 +1,26 @@
+Mario Party 4 Streamed Music List
+Most of the music is sequenced
+
+00 - Empty
+01 - Minigame Win
+02 - Item Get
+03 - Bowser Game Lose
+04 - Draw
+05 - Board Intro
+06 - Star Get
+07 - Jingle
+08 - Empty
+09 - Doubles
+10 - Lottery Win
+11 - Mario Speedwagons Start
+12 - Party Mode Intro
+13 - Jingle
+14 - Empty
+15 - Empty
+16 - Empty
+17 - Empty
+18 - Empty
+19 - Empty
+20 - Title Screen
+21 - Opening Cutscene Audio
+22 - Credits

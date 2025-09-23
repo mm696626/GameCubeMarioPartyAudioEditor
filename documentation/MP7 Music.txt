@@ -1,0 +1,114 @@
+Mario Party 7 Music List
+
+00 - Intro
+01 - Title Screen
+02 - File Select
+03 - Main Menu
+04 - Character Select
+05 - Solo Mode
+06 - Options Mode
+07 - The Last Hurrah
+08 - Credits
+09 - Party Mode Intro (start)
+10 - Star Location
+11 - Grand Canal
+12 - Pagoda Peak
+13 - Pyramid Park
+14 - Neon Heights
+15 - Windmillville
+16 - Bowser's Enchanted Inferno
+17 - Battle Game
+18 - Duel
+19 - Mic Game
+20 - DK
+21 - Bowser
+22 - Bowser Time
+23 - Bowser Theme 2
+24 - Minigame Results
+25 - Drumbeat?
+26 - Last 4 Turns
+27 - Game Results
+28 - Drumbeat?
+29 - Who's the Winner?
+30 - Hail to the King
+31 - Take me to Partytown
+32 - Game Start (No Intro)
+33 - Bowser's Invitation
+34 - Idk
+35 - Drumbeat
+36 - Drumbeat
+37 - Minigame Sub
+38 - Volcano Peril
+39 - Pearl Hunt
+40 - Waterfall Duel
+41 - Decathalon Castle
+42 - King of the River
+43 - Drumbeat
+44 - King of the River 1
+45 - King of the River 2
+46 - King of the River 3
+47 - King of the River Lose
+48 - King of the River Win
+49 - King of the River Win (no intro)
+50 - Minigame Explanation
+51 - Lazy Day Lollygag
+52 - Keep it Up
+53 - Fun in the Sun
+54 - Skyward Bound
+55 - Don't Look Down
+56 - Slow and Steady
+57 - Darkness Rising
+58 - What a Mess!
+59 - Look Out!
+60 - Cool as a Cucumber
+61 - Watch Yourself
+62 - Without a Care (Mic Game)
+63 - Drumbeat
+64 - Time Grows Nigh
+65 - Jump!
+66 - Face-Off (Bowser Singleplayer)
+67 - Bowser Multiplayer Game
+68 - DK Singleplayer
+69 - DK Multiplayer
+70 - High Noon
+71 - One Last Go
+72 - Rare Minigame
+73 - Faster! Faster!
+74 - Drumbeat
+75 - Duty Free Shop
+76 - Drumbeat
+77 - Drumbeat
+78 - Minigame Sub (8 Player)
+79 - On the Ice
+80 - Drumbeat
+81 - Solo Mode Win
+82 - Drumbeat
+83 - Drumbeat
+84 - Drumbeat
+85 - Drumbeat
+86 - Drumbeat
+87 - Drumbeat
+88 - Drumbeat
+89 - Drumbeat
+90 - Drumbeat
+91 - Unused Beep
+92 - Unused Beep
+93 - Jingle
+94 - Bowser Intro
+95 - Star Get
+96 - Jingle
+97 - Jingle
+98 - DK Intro
+99 - Board Intro
+100 - Bowser Time!
+101 - Unused Beep
+102 - Unused Beep
+103 - New Record
+104 - Minigame Win
+105 - Minigame Lose
+106 - Tie
+107 - Jingle
+108 - Bowser Castle Theme
+109 - The Koopa King Falls
+110 - Solo Mode Beaten
+everything after is unused beep
