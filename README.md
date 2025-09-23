@@ -29,7 +29,11 @@
   * Link to the code I used as a basis: https://github.com/Yoshimaster96/mpgc-sound-tools/blob/main/dump_pdt.c
 
 ### Tip for Quality vs Size
-* I recommend changing the sample rate of your track to either 32,000 (what Hudson used) or 24,000
+* I recommend changing the sample rate of your track
+  * 32,000 (Hudson Soft) (make sure your song isn't longer)
+  * 22,050 (Half of CD quality)
+  * 16,000 (the bare minium to be listenable)
+  * 8,000 (compressed telephone quality)
 * Keep your songs around the same length for higher quality (else you sacrifice sample rate for length)
 * File size limitations are pretty strict and this tool doesn't rewrite the file's pointers
 * I use this program to create DSPs
