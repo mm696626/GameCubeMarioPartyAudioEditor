@@ -30,7 +30,7 @@
 
 ### Tip for Quality vs Size
 * I recommend changing the sample rate of your track
-  * 32,000 (Hudson Soft) (make sure your song isn't longer)
+  * 32,000 (What Hudson Soft used) (make sure your song isn't longer)
   * 22,050 (Half of CD quality)
   * 16,000 (the bare minium to be listenable)
   * 8,000 (compressed telephone quality)
