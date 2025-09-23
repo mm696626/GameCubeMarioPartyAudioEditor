@@ -239,25 +239,25 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     }
 
     private File detectOtherChannel(File selectedFile, boolean isLeftSelected) {
-        String name = selectedFile.getName();
+        String fileName = selectedFile.getName();
         File parentDir = selectedFile.getParentFile();
 
-        String counterpartName = null;
+        String otherChannelName = null;
 
-        if (name.endsWith("_L.dsp") && isLeftSelected) {
-            counterpartName = name.replace("_L.dsp", "_R.dsp");
-        } else if (name.endsWith("_R.dsp") && !isLeftSelected) {
-            counterpartName = name.replace("_R.dsp", "_L.dsp");
-        } else if (name.endsWith("(channel 0).dsp") && isLeftSelected) {
-            counterpartName = name.replace("(channel 0).dsp", "(channel 1).dsp");
-        } else if (name.endsWith("(channel 1).dsp") && !isLeftSelected) {
-            counterpartName = name.replace("(channel 1).dsp", "(channel 0).dsp");
+        if (fileName.endsWith("_L.dsp") && isLeftSelected) {
+            otherChannelName = fileName.replace("_L.dsp", "_R.dsp");
+        } else if (fileName.endsWith("_R.dsp") && !isLeftSelected) {
+            otherChannelName = fileName.replace("_R.dsp", "_L.dsp");
+        } else if (fileName.endsWith("(channel 0).dsp") && isLeftSelected) {
+            otherChannelName = fileName.replace("(channel 0).dsp", "(channel 1).dsp");
+        } else if (fileName.endsWith("(channel 1).dsp") && !isLeftSelected) {
+            otherChannelName = fileName.replace("(channel 1).dsp", "(channel 0).dsp");
         }
 
-        if (counterpartName != null) {
-            File counterpartFile = new File(parentDir, counterpartName);
-            if (counterpartFile.exists()) {
-                return counterpartFile;
+        if (otherChannelName != null) {
+            File otherChannelFile = new File(parentDir, otherChannelName);
+            if (otherChannelFile.exists()) {
+                return otherChannelFile;
             }
         }
 
@@ -265,25 +265,25 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     }
 
     private void updateSongList(String selectedGame) {
-        Map<Integer, String> trackMap = null;
+        Map<Integer, String> songNameMap = null;
 
         if ("Mario Party 4".equals(selectedGame)) {
-            trackMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
+            songNameMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
         } else if ("Mario Party 5".equals(selectedGame)) {
-            trackMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
+            songNameMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
         } else if ("Mario Party 6".equals(selectedGame)) {
-            trackMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
+            songNameMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
         } else if ("Mario Party 7".equals(selectedGame)) {
-            trackMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
+            songNameMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
         }
 
-        if (trackMap != null) {
-            ArrayList<Integer> sortedKeys = new ArrayList<>(trackMap.keySet());
+        if (songNameMap != null) {
+            ArrayList<Integer> sortedKeys = new ArrayList<>(songNameMap.keySet());
             Collections.sort(sortedKeys);
 
             ArrayList<String> songList = new ArrayList<>();
             for (Integer key : sortedKeys) {
-                songList.add(trackMap.get(key));
+                songList.add(songNameMap.get(key));
             }
 
             songNames.setModel(new DefaultComboBoxModel<>(songList.toArray(new String[0])));
@@ -310,16 +310,16 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
             String selectedSongName = (String) songNames.getSelectedItem();
 
-            Map<Integer, String> trackMap;
+            Map<Integer, String> songNameMap;
 
             if ("Mario Party 4".equals(selectedGame)) {
-                trackMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
+                songNameMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
             } else if ("Mario Party 5".equals(selectedGame)) {
-                trackMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
+                songNameMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
             } else if ("Mario Party 6".equals(selectedGame)) {
-                trackMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
+                songNameMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
             } else if ("Mario Party 7".equals(selectedGame)) {
-                trackMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
+                songNameMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
             } else {
                 JOptionPane.showMessageDialog(this, "No game is selected! Please select one!");
                 return;
@@ -328,7 +328,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             int actualSongIndex = -1;
 
             if (selectedSongName != null) {
-                for (Map.Entry<Integer, String> entry : trackMap.entrySet()) {
+                for (Map.Entry<Integer, String> entry : songNameMap.entrySet()) {
                     if (selectedSongName.equals(entry.getValue())) {
                         actualSongIndex = entry.getKey();
                         break;
@@ -389,16 +389,16 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
             String selectedSongName = (String) songNames.getSelectedItem();
 
-            Map<Integer, String> trackMap;
+            Map<Integer, String> songNameMap;
 
             if ("Mario Party 4".equals(selectedGame)) {
-                trackMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
+                songNameMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
             } else if ("Mario Party 5".equals(selectedGame)) {
-                trackMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
+                songNameMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
             } else if ("Mario Party 6".equals(selectedGame)) {
-                trackMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
+                songNameMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
             } else if ("Mario Party 7".equals(selectedGame)) {
-                trackMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
+                songNameMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
             } else {
                 JOptionPane.showMessageDialog(this, "No game is selected! Please select one!");
                 return;
@@ -407,7 +407,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             int actualSongIndex = -1;
 
             if (selectedSongName != null) {
-                for (Map.Entry<Integer, String> entry : trackMap.entrySet()) {
+                for (Map.Entry<Integer, String> entry : songNameMap.entrySet()) {
                     if (selectedSongName.equals(entry.getValue())) {
                         actualSongIndex = entry.getKey();
                         break;
