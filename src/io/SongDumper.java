@@ -118,11 +118,8 @@ public class SongDumper {
                 PDTFileIO.writeU16BE(out, 0);
                 raf.seek(ch1Start);
                 PDTFileIO.writeU16BE(out, PDTFileIO.readU8BE(raf));
-                for (int k = 0; k < 5; k++) {
-                    PDTFileIO.writeU16BE(out, 0);
-                }
 
-                for (int k = 0; k < 11; k++) {
+                for (int k = 0; k < 16; k++) {
                     PDTFileIO.writeU16BE(out, 0);
                 }
 
@@ -139,11 +136,8 @@ public class SongDumper {
                 PDTFileIO.writeU16BE(out, 0);
                 raf.seek(ch2Start);
                 PDTFileIO.writeU16BE(out, PDTFileIO.readU8BE(raf));
-                for (int k = 0; k < 5; k++) {
-                    PDTFileIO.writeU16BE(out, 0);
-                }
 
-                for (int k = 0; k < 11; k++) {
+                for (int k = 0; k < 16; k++) {
                     PDTFileIO.writeU16BE(out, 0);
                 }
 
