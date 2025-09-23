@@ -36,11 +36,35 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     }
 
     private void generateUI() {
-
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        //song selection tab
+        JPanel chooseGamePanel = new JPanel(new GridBagLayout());
+        GridBagConstraints chooseGameGBC = new GridBagConstraints();
+        chooseGameGBC.insets = new Insets(5, 5, 5, 5);
+        chooseGameGBC.fill = GridBagConstraints.HORIZONTAL;
+
+        selectGame = new JButton("Select PDT and Game");
+        selectGame.addActionListener(this);
+
+        pdtFilePathLabel = new JLabel("No PDT file selected");
+        selectedGameLabel = new JLabel("No game selected");
+
+        chooseGameGBC.gridx = 0; chooseGameGBC.gridy = 0;
+        chooseGamePanel.add(selectGame, chooseGameGBC);
+
+        chooseGameGBC.gridy = 1;
+        chooseGamePanel.add(pdtFilePathLabel, chooseGameGBC);
+
+        chooseGameGBC.gridy = 2;
+        chooseGamePanel.add(selectedGameLabel, chooseGameGBC);
+
+        tabbedPane.addTab("Choose PDT/Game", chooseGamePanel);
+
+        JPanel songToolsPanel = new JPanel();
+        songToolsPanel.setLayout(new BoxLayout(songToolsPanel, BoxLayout.Y_AXIS));
+
         JPanel songSelectionPanel = new JPanel(new GridBagLayout());
+        songSelectionPanel.setBorder(BorderFactory.createTitledBorder("Song Selection"));
         GridBagConstraints songSelectionGBC = new GridBagConstraints();
         songSelectionGBC.insets = new Insets(5, 5, 5, 5);
         songSelectionGBC.fill = GridBagConstraints.HORIZONTAL;
@@ -53,8 +77,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         songSelectionGBC.gridx = 1;
         songSelectionPanel.add(songNames, songSelectionGBC);
 
-        //dumping tab
         JPanel dumpPanel = new JPanel(new GridBagLayout());
+        dumpPanel.setBorder(BorderFactory.createTitledBorder("Song Dumping"));
         GridBagConstraints dumpingGBC = new GridBagConstraints();
         dumpingGBC.insets = new Insets(5, 5, 5, 5);
         dumpingGBC.fill = GridBagConstraints.HORIZONTAL;
@@ -70,8 +94,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         dumpingGBC.gridx = 1;
         dumpPanel.add(dumpAllSongs, dumpingGBC);
 
-        //modify tab
         JPanel modifyPanel = new JPanel(new GridBagLayout());
+        modifyPanel.setBorder(BorderFactory.createTitledBorder("Modify Song"));
         GridBagConstraints modifyGBC = new GridBagConstraints();
         modifyGBC.insets = new Insets(5, 5, 5, 5);
         modifyGBC.fill = GridBagConstraints.HORIZONTAL;
@@ -101,31 +125,13 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         modifyGBC.gridwidth = 2;
         modifyPanel.add(modifySong, modifyGBC);
 
-        //choose game/PDT tab
-        JPanel chooseGamePanel = new JPanel(new GridBagLayout());
-        GridBagConstraints chooseGameGBC = new GridBagConstraints();
-        chooseGameGBC.insets = new Insets(5, 5, 5, 5);
-        chooseGameGBC.fill = GridBagConstraints.HORIZONTAL;
+        songToolsPanel.add(songSelectionPanel);
+        songToolsPanel.add(Box.createVerticalStrut(10));  // spacing
+        songToolsPanel.add(dumpPanel);
+        songToolsPanel.add(Box.createVerticalStrut(10));  // spacing
+        songToolsPanel.add(modifyPanel);
 
-        selectGame = new JButton("Select PDT and Game");
-        selectGame.addActionListener(this);
-
-        pdtFilePathLabel = new JLabel("No PDT file selected");
-        selectedGameLabel = new JLabel("No game selected");
-
-        chooseGameGBC.gridx = 0; chooseGameGBC.gridy = 0;
-        chooseGamePanel.add(selectGame, chooseGameGBC);
-
-        chooseGameGBC.gridx = 0; chooseGameGBC.gridy = 1;
-        chooseGamePanel.add(pdtFilePathLabel, chooseGameGBC);
-
-        chooseGameGBC.gridx = 0; chooseGameGBC.gridy = 2;
-        chooseGamePanel.add(selectedGameLabel, chooseGameGBC);
-
-        tabbedPane.addTab("Choose PDT/Game", chooseGamePanel);
-        tabbedPane.addTab("Song Selection", songSelectionPanel);
-        tabbedPane.addTab("Song Dumping", dumpPanel);
-        tabbedPane.addTab("Modify Song", modifyPanel);
+        tabbedPane.addTab("Song Tools", songToolsPanel);
 
         setLayout(new BorderLayout());
         add(tabbedPane, BorderLayout.CENTER);
@@ -344,17 +350,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         if (e.getSource() == dumpAllSongs) {
             if (pdtPath.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "No PDT file was chosen!");
-                return;
-            }
-
-            int response = JOptionPane.showConfirmDialog(
-                    null,
-                    "Are you sure you want to dump all songs from the PDT?",
-                    "Dump All Songs",
-                    JOptionPane.YES_NO_OPTION
-            );
-
-            if (response != JOptionPane.YES_OPTION) {
                 return;
             }
 
