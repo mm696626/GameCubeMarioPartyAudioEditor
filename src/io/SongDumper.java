@@ -39,15 +39,12 @@ public class SongDumper {
             long streamOffs = PDTFileIO.readU32BE(raf);
 
             if (songIndex < 0 || songIndex >= numFiles) {
-                JOptionPane.showMessageDialog(null, "Invalid song index.");
                 return;
             }
 
-            // Seek to the specific song entry
             raf.seek(entryOffs + (songIndex << 2));
             long thisHeaderOffs = PDTFileIO.readU32BE(raf);
             if (thisHeaderOffs == 0) {
-                JOptionPane.showMessageDialog(null, "No song data found for this index.");
                 return;
             }
 
@@ -90,12 +87,7 @@ public class SongDumper {
     }
 
     private static File promptForOutputFolder() {
-        File outputDir = chooseOutputDirectory();
-        if (outputDir == null) {
-            JOptionPane.showMessageDialog(null, "No output folder selected. Operation canceled.");
-            return null;
-        }
-        return outputDir;
+        return chooseOutputDirectory();
     }
 
     private static void writeDSP(String fileName, long nibbleCount, long sampleRate, int loopFlag, long loopStart, int j, RandomAccessFile raf, long ch1CoefOffs, long ch1Start, long ch2CoefOffs, long ch2Start) throws IOException {
@@ -182,7 +174,6 @@ public class SongDumper {
 
 
             for (int i=0; i<numFiles; i++) {
-                // Seek to the specific song entry
                 raf.seek(entryOffs + (i << 2));
                 long thisHeaderOffs = PDTFileIO.readU32BE(raf);
                 if (thisHeaderOffs == 0) {

@@ -25,14 +25,12 @@ public class SongModifier {
             long streamOffs = PDTFileIO.readU32BE(pdtRaf);
 
             if (songIndex < 0 || songIndex >= numFiles) {
-                JOptionPane.showMessageDialog(null, "Invalid song index.");
                 return;
             }
 
             pdtRaf.seek(entryOffs + (songIndex << 2));
             long thisHeaderOffs = PDTFileIO.readU32BE(pdtRaf);
             if (thisHeaderOffs == 0) {
-                JOptionPane.showMessageDialog(null, "No song data found for this index.");
                 return;
             }
 

@@ -28,7 +28,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private String selectedGame = "";
     private JComboBox<String> songNames;
 
-    private JLabel songLabel, leftChannelLabel, rightChannelLabel, pdtFilePathLabel, selectedGameLabel;
+    private JLabel leftChannelLabel;
+    private JLabel rightChannelLabel;
+    private JLabel pdtFilePathLabel;
+    private JLabel selectedGameLabel;
 
     public MarioPartyMusicEditorUI() {
         setTitle("Mario Party GameCube Music Editor");
@@ -69,7 +72,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         songSelectionGBC.insets = new Insets(5, 5, 5, 5);
         songSelectionGBC.fill = GridBagConstraints.HORIZONTAL;
 
-        songLabel = new JLabel("Chosen Song:");
+        JLabel songLabel = new JLabel("Chosen Song:");
         songNames = new JComboBox<>();
 
         songSelectionGBC.gridx = 0; songSelectionGBC.gridy = 0;
@@ -197,7 +200,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         int userSelection = fileChooser.showOpenDialog(null);
 
         if (userSelection != JFileChooser.APPROVE_OPTION) {
-            System.out.println("No file selected. Exiting.");
             return;
         }
 
@@ -205,10 +207,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         leftChannelPath = selectedFile.getAbsolutePath();
         leftChannelLabel.setText(selectedFile.getName());
 
-        File other = detectOtherChannel(selectedFile, true);
-        if (other != null) {
-            rightChannelPath = other.getAbsolutePath();
-            rightChannelLabel.setText(other.getName());
+        File otherChannel = detectOtherChannel(selectedFile, true);
+        if (otherChannel != null) {
+            rightChannelPath = otherChannel.getAbsolutePath();
+            rightChannelLabel.setText(otherChannel.getName());
         }
     }
 
@@ -222,7 +224,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         int userSelection = fileChooser.showOpenDialog(null);
 
         if (userSelection != JFileChooser.APPROVE_OPTION) {
-            System.out.println("No file selected. Exiting.");
             return;
         }
 
@@ -326,7 +327,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
             int actualSongIndex = -1;
 
-            if (trackMap != null && selectedSongName != null) {
+            if (selectedSongName != null) {
                 for (Map.Entry<Integer, String> entry : trackMap.entrySet()) {
                     if (selectedSongName.equals(entry.getValue())) {
                         actualSongIndex = entry.getKey();
@@ -405,7 +406,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
             int actualSongIndex = -1;
 
-            if (trackMap != null && selectedSongName != null) {
+            if (selectedSongName != null) {
                 for (Map.Entry<Integer, String> entry : trackMap.entrySet()) {
                     if (selectedSongName.equals(entry.getValue())) {
                         actualSongIndex = entry.getKey();
