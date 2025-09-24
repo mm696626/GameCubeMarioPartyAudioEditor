@@ -35,6 +35,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private JList<String> queueList;
     private JButton addToQueueButton, runQueueButton, clearQueueButton;
 
+    private File savedDSPFolder = null;
+
 
     public MarioPartyMusicEditorUI() {
         setTitle("Mario Party GameCube Music Editor");
@@ -193,6 +195,14 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         modifyGBC.gridwidth = 2;
         modifyPanel.add(clearModifyButton, modifyGBC);
 
+        JButton resetDSPFolderButton = new JButton("Reset DSP Folder Choice");
+        resetDSPFolderButton.addActionListener(e -> {
+            savedDSPFolder = null;
+            JOptionPane.showMessageDialog(this, "DSP folder selection has been reset.");
+        });
+        modifyGBC.gridy = 4;
+        modifyPanel.add(resetDSPFolderButton, modifyGBC);
+
 
         JPanel queuePanel = new JPanel(new BorderLayout());
         queuePanel.setBorder(BorderFactory.createTitledBorder("Job Queue"));
@@ -283,10 +293,28 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     }
 
     private void chooseLeftChannelPath() {
-        int response = JOptionPane.showConfirmDialog(this, "Would you like to pick a folder of DSPs to select a song from?", "Choose DSP Folder", JOptionPane.YES_NO_OPTION);
-        if (response == JOptionPane.YES_OPTION) {
-            chooseDSPPairFolder();
+        if (savedDSPFolder != null) {
+            useSavedDSPFolder();
+            return;
+        }
 
+        int response = JOptionPane.showConfirmDialog(
+                this,
+                "Would you like to pick a folder of DSPs to select a song from?\n(Your choice will be remembered until reset)",
+                "Choose DSP Folder",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (response == JOptionPane.YES_OPTION) {
+            JFileChooser folderChooser = new JFileChooser();
+            folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            folderChooser.setDialogTitle("Select Folder with DSP Files");
+
+            int folderSelected = folderChooser.showOpenDialog(this);
+            if (folderSelected == JFileChooser.APPROVE_OPTION) {
+                savedDSPFolder = folderChooser.getSelectedFile();
+                useSavedDSPFolder();
+            }
         } else {
             chooseDSP(true);
         }
@@ -327,12 +355,58 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     }
 
     private void chooseRightChannelPath() {
-        int response = JOptionPane.showConfirmDialog(this, "Would you like to pick a folder of DSPs to select a song from?", "Choose DSP Folder", JOptionPane.YES_NO_OPTION);
-        if (response == JOptionPane.YES_OPTION) {
-            chooseDSPPairFolder();
+        if (savedDSPFolder != null) {
+            useSavedDSPFolder();
+            return;
+        }
 
+        int response = JOptionPane.showConfirmDialog(
+                this,
+                "Would you like to pick a folder of DSPs to select a song from?\n(Your choice will be remembered until reset)",
+                "Choose DSP Folder",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (response == JOptionPane.YES_OPTION) {
+            JFileChooser folderChooser = new JFileChooser();
+            folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            folderChooser.setDialogTitle("Select Folder with DSP Files");
+
+            int folderSelected = folderChooser.showOpenDialog(this);
+            if (folderSelected == JFileChooser.APPROVE_OPTION) {
+                savedDSPFolder = folderChooser.getSelectedFile();
+                useSavedDSPFolder();
+            }
         } else {
             chooseDSP(false);
+        }
+    }
+
+    private void useSavedDSPFolder() {
+        if (savedDSPFolder == null) return;
+
+        ArrayList<DSPPair> dspPairs = DSPPair.detectDSPPairs(savedDSPFolder);
+
+        if (dspPairs.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No matching DSP pairs found in the saved folder.");
+            return;
+        }
+
+        DSPPair selectedPair = (DSPPair) JOptionPane.showInputDialog(
+                this,
+                "Select DSP Pair:",
+                "Select DSP Song",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                dspPairs.toArray(),
+                dspPairs.getFirst()
+        );
+
+        if (selectedPair != null) {
+            leftChannelPath = selectedPair.left.getAbsolutePath();
+            rightChannelPath = selectedPair.right.getAbsolutePath();
+            leftChannelLabel.setText(selectedPair.left.getName());
+            rightChannelLabel.setText(selectedPair.right.getName());
         }
     }
 
