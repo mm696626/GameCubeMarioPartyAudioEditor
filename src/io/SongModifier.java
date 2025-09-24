@@ -126,7 +126,7 @@ public class SongModifier {
 
             //modify song
 
-            if (isInvalidSize(dspNibbleCount, nibbleCount, runSilently)) return;
+            if (isInvalidSize(dspNibbleCount, nibbleCount, songName)) return;
 
             long newSampleRateOffset = thisHeaderOffs + 4;
             long newNibbleCount = thisHeaderOffs + 8;
@@ -147,7 +147,7 @@ public class SongModifier {
         }
     }
 
-    private static boolean isInvalidSize(byte[] dspNibbleCount, long nibbleCount, boolean runSilently) {
+    private static boolean isInvalidSize(byte[] dspNibbleCount, long nibbleCount, String songName) {
         //size check
         long newDSPSize = ((long) ((dspNibbleCount[0] & 0xFF) << 24)
                 | ((dspNibbleCount[1] & 0xFF) << 16)
@@ -155,9 +155,7 @@ public class SongModifier {
                 | (dspNibbleCount[3] & 0xFF));
 
         if (newDSPSize > nibbleCount) {
-            if (!runSilently) {
-                JOptionPane.showMessageDialog(null, "Your song is too big! Try again!");
-            }
+            JOptionPane.showMessageDialog(null, "Your replacement for " + songName + " is too big! Try again!");
             return true;
         }
         return false;
