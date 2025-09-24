@@ -12,7 +12,7 @@ public class SongModifier {
     //This code is largely derived from Yoshimaster96's C PDT dumping code, so huge credit and kudos to them!
     //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
-    public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, String songName) {
+    public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, String songName, boolean runSilently) {
         try (RandomAccessFile pdtRaf = new RandomAccessFile(pdtFile, "rw")) {
             int unk00 = PDTFileIO.readU16BE(pdtRaf);
             int numFiles = PDTFileIO.readU16BE(pdtRaf);
@@ -58,7 +58,7 @@ public class SongModifier {
                 chanCount = 2;
             }
 
-            if (chanCount == 1) {
+            if (chanCount == 1 && !runSilently) {
                 int response = JOptionPane.showConfirmDialog(
                         null,
                         "The song you're replacing isn't stereo. Do you want to continue?",
@@ -126,7 +126,7 @@ public class SongModifier {
 
             //modify song
 
-            if (isInvalidSize(dspNibbleCount, nibbleCount)) return;
+            if (isInvalidSize(dspNibbleCount, nibbleCount, runSilently)) return;
 
             long newSampleRateOffset = thisHeaderOffs + 4;
             long newNibbleCount = thisHeaderOffs + 8;
@@ -135,15 +135,19 @@ public class SongModifier {
             writeDSPToPDT(pdtRaf, newSampleRateOffset, dspSampleRate, newNibbleCount, dspNibbleCount, newLoopStartOffset, dspLoopStart, ch1CoefOffs, leftChannelDecodingCoeffs, ch2CoefOffs, rightChannelDecodingCoeffs, ch1Start, leftChannelAudio, ch2Start, rightChannelAudio);
             pdtRaf.close();
 
-            JOptionPane.showMessageDialog(null, "Finished modifying PDT file for " + songName);
+            if (!runSilently) {
+                JOptionPane.showMessageDialog(null, "Finished modifying PDT file for " + songName);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
+            if (!runSilently) {
+                JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
+            }
         }
     }
 
-    private static boolean isInvalidSize(byte[] dspNibbleCount, long nibbleCount) {
+    private static boolean isInvalidSize(byte[] dspNibbleCount, long nibbleCount, boolean runSilently) {
         //size check
         long newDSPSize = ((long) ((dspNibbleCount[0] & 0xFF) << 24)
                 | ((dspNibbleCount[1] & 0xFF) << 16)
@@ -151,7 +155,9 @@ public class SongModifier {
                 | (dspNibbleCount[3] & 0xFF));
 
         if (newDSPSize > nibbleCount) {
-            JOptionPane.showMessageDialog(null, "Your song is too big! Try again!");
+            if (!runSilently) {
+                JOptionPane.showMessageDialog(null, "Your song is too big! Try again!");
+            }
             return true;
         }
         return false;

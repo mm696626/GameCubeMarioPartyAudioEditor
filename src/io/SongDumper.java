@@ -23,7 +23,7 @@ public class SongDumper {
             return nibInt * 14;
     }
 
-    public static void dumpSong(File selectedFile, int songIndex, String songName) {
+    public static void dumpSong(File selectedFile, int songIndex, String songName, boolean runSilently) {
         File outputDir = promptForOutputFolder();
         if (outputDir == null) return;
 
@@ -79,10 +79,14 @@ public class SongDumper {
                 writeDSP(outputFile.getAbsolutePath(), nibbleCount, sampleRate, loopFlag, loopStart, j, raf, ch1CoefOffs, ch1Start, ch2CoefOffs, ch2Start);
             }
 
-            JOptionPane.showMessageDialog(null, "Finished dumping DSP file for " + songName);
+            if (!runSilently) {
+                JOptionPane.showMessageDialog(null, "Finished dumping DSP file for " + songName);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
+            if (!runSilently) {
+                JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
+            }
         }
     }
 

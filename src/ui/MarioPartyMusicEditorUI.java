@@ -2,6 +2,7 @@ package ui;
 
 import constants.MarioPartySongNames;
 import io.DSPPair;
+import io.QueueJob;
 import io.SongDumper;
 import io.SongModifier;
 
@@ -17,7 +18,7 @@ import java.util.Map;
 
 public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, dumpSong, dumpAllSongs, modifySong, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, dumpSong, dumpAllSongs, modifySong, selectGame, clearModifyButton;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -28,6 +29,12 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private JLabel rightChannelLabel;
     private JLabel pdtFilePathLabel;
     private JLabel selectedGameLabel;
+
+    private java.util.List<QueueJob> jobQueue = new ArrayList<>();
+    private DefaultListModel<String> queueListModel = new DefaultListModel<>();
+    private JList<String> queueList;
+    private JButton addToQueueButton, runQueueButton, clearQueueButton;
+
 
     public MarioPartyMusicEditorUI() {
         setTitle("Mario Party GameCube Music Editor");
@@ -93,17 +100,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         songSearchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             private void filterSongs() {
                 String filterText = songSearchField.getText().toLowerCase();
-                Map<Integer, String> songNameMap = null;
-
-                if ("Mario Party 4".equals(selectedGame)) {
-                    songNameMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
-                } else if ("Mario Party 5".equals(selectedGame)) {
-                    songNameMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
-                } else if ("Mario Party 6".equals(selectedGame)) {
-                    songNameMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
-                } else if ("Mario Party 7".equals(selectedGame)) {
-                    songNameMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
-                }
+                Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
 
                 if (songNameMap == null) return;
 
@@ -189,10 +186,44 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         modifyGBC.gridwidth = 2;
         modifyPanel.add(modifySong, modifyGBC);
 
+        clearModifyButton = new JButton("Clear");
+        clearModifyButton.addActionListener(this);
+
+        modifyGBC.gridy = 3;
+        modifyGBC.gridwidth = 2;
+        modifyPanel.add(clearModifyButton, modifyGBC);
+
+
+        JPanel queuePanel = new JPanel(new BorderLayout());
+        queuePanel.setBorder(BorderFactory.createTitledBorder("Job Queue"));
+
+        queueList = new JList<>(queueListModel);
+        queueList.setVisibleRowCount(6);
+        queuePanel.add(new JScrollPane(queueList), BorderLayout.CENTER);
+
+        JPanel queueButtonsPanel = new JPanel();
+        addToQueueButton = new JButton("Add to Queue");
+        runQueueButton = new JButton("Run Queue");
+        clearQueueButton = new JButton("Clear Queue");
+
+        addToQueueButton.addActionListener(this);
+        runQueueButton.addActionListener(this);
+        clearQueueButton.addActionListener(this);
+
+        queueButtonsPanel.add(addToQueueButton);
+        queueButtonsPanel.add(runQueueButton);
+        queueButtonsPanel.add(clearQueueButton);
+
+        queuePanel.add(queueButtonsPanel, BorderLayout.SOUTH);
+
+        songToolsPanel.add(Box.createVerticalStrut(10));
+        songToolsPanel.add(queuePanel);
+
+
         songToolsPanel.add(songSelectionPanel);
-        songToolsPanel.add(Box.createVerticalStrut(10));  // spacing
+        songToolsPanel.add(Box.createVerticalStrut(10));
         songToolsPanel.add(dumpPanel);
-        songToolsPanel.add(Box.createVerticalStrut(10));  // spacing
+        songToolsPanel.add(Box.createVerticalStrut(10));
         songToolsPanel.add(modifyPanel);
 
         tabbedPane.addTab("Song Tools", songToolsPanel);
@@ -247,7 +278,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             }
         }
 
-        updateSongList(selectedGame);
+        updateSongList();
         selectedGameLabel.setText("Selected Game: " + selectedGame);
     }
 
@@ -372,18 +403,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         return null;
     }
 
-    private void updateSongList(String selectedGame) {
-        Map<Integer, String> songNameMap = null;
-
-        if ("Mario Party 4".equals(selectedGame)) {
-            songNameMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
-        } else if ("Mario Party 5".equals(selectedGame)) {
-            songNameMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
-        } else if ("Mario Party 6".equals(selectedGame)) {
-            songNameMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
-        } else if ("Mario Party 7".equals(selectedGame)) {
-            songNameMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
-        }
+    private void updateSongList() {
+        Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
 
         if (songNameMap != null) {
             ArrayList<Integer> sortedKeys = new ArrayList<>(songNameMap.keySet());
@@ -397,6 +418,18 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             songNames.setModel(new DefaultComboBoxModel<>(songList.toArray(new String[0])));
         } else {
             songNames.setModel(new DefaultComboBoxModel<>(new String[]{}));
+        }
+    }
+
+    private Map<Integer, String> getSongNameMapForSelectedGame() {
+        switch (selectedGame) {
+            case "Mario Party 4": return MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
+            case "Mario Party 5": return MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
+            case "Mario Party 6": return MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
+            case "Mario Party 7": return MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
+            default:
+                JOptionPane.showMessageDialog(this, "No game selected.");
+                return null;
         }
     }
 
@@ -425,17 +458,9 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
             String selectedSongName = (String) songNames.getSelectedItem();
 
-            Map<Integer, String> songNameMap;
+            Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
 
-            if ("Mario Party 4".equals(selectedGame)) {
-                songNameMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
-            } else if ("Mario Party 5".equals(selectedGame)) {
-                songNameMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
-            } else if ("Mario Party 6".equals(selectedGame)) {
-                songNameMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
-            } else if ("Mario Party 7".equals(selectedGame)) {
-                songNameMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
-            } else {
+            if (songNameMap == null) {
                 JOptionPane.showMessageDialog(this, "No game is selected! Please select one!");
                 return;
             }
@@ -459,7 +484,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             SongDumper.dumpSong(
                     pdtFile,
                     actualSongIndex,
-                    selectedSongName
+                    selectedSongName,
+                    false
             );
         }
 
@@ -506,17 +532,9 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
             String selectedSongName = (String) songNames.getSelectedItem();
 
-            Map<Integer, String> songNameMap;
+            Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
 
-            if ("Mario Party 4".equals(selectedGame)) {
-                songNameMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
-            } else if ("Mario Party 5".equals(selectedGame)) {
-                songNameMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
-            } else if ("Mario Party 6".equals(selectedGame)) {
-                songNameMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
-            } else if ("Mario Party 7".equals(selectedGame)) {
-                songNameMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
-            } else {
+            if (songNameMap == null) {
                 JOptionPane.showMessageDialog(this, "No game is selected! Please select one!");
                 return;
             }
@@ -542,12 +560,94 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                     leftChannelFile,
                     rightChannelFile,
                     actualSongIndex,
-                    selectedSongName
+                    selectedSongName,
+                    false
             );
+        }
+
+        if (e.getSource() == clearModifyButton) {
+            leftChannelPath = "";
+            rightChannelPath = "";
+            leftChannelLabel.setText("No file selected");
+            rightChannelLabel.setText("No file selected");
         }
 
         if (e.getSource() == selectGame) {
             initPDTPath();
+        }
+
+        if (e.getSource() == addToQueueButton) {
+            String selectedSongName = (String) songNames.getSelectedItem();
+            if (selectedSongName == null || pdtPath.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Missing song or PDT file.");
+                return;
+            }
+
+            Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
+            if (songNameMap == null) return;
+
+            int index = songNameMap.entrySet().stream()
+                    .filter(entry -> entry.getValue().equals(selectedSongName))
+                    .map(Map.Entry::getKey)
+                    .findFirst()
+                    .orElse(-1);
+
+            if (index == -1) {
+                JOptionPane.showMessageDialog(this, "Could not find song index.");
+                return;
+            }
+
+            QueueJob.Type type = (leftChannelPath.isEmpty() || rightChannelPath.isEmpty())
+                    ? QueueJob.Type.DUMP
+                    : QueueJob.Type.MODIFY;
+
+            QueueJob job = new QueueJob(type, selectedSongName, index, leftChannelPath, rightChannelPath);
+            jobQueue.add(job);
+            queueListModel.addElement(job.toString());
+        }
+
+        if (e.getSource() == clearQueueButton) {
+            jobQueue.clear();
+            queueListModel.clear();
+        }
+
+        if (e.getSource() == runQueueButton) {
+            if (jobQueue.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Queue is empty!");
+                return;
+            }
+
+            File pdtFile = new File(pdtPath);
+            if (!pdtFile.exists()) {
+                JOptionPane.showMessageDialog(this, "PDT file does not exist.");
+                return;
+            }
+
+            new Thread(() -> {
+                for (QueueJob job : jobQueue) {
+                    try {
+                        if (job.getType() == QueueJob.Type.DUMP) {
+                            SongDumper.dumpSong(pdtFile, job.getSongIndex(), job.getSongName(), true);
+                        } else {
+                            File leftFile = new File(job.getLeftChannel());
+                            File rightFile = new File(job.getRightChannel());
+                            if (leftFile.exists() && rightFile.exists()) {
+                                SongModifier.modifySong(pdtFile, leftFile, rightFile, job.getSongIndex(), job.getSongName(), true);
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Channel file(s) missing for: " + job.getSongName());
+                            }
+                        }
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(this, "Error during job: " + job.getSongName() + "\n" + ex.getMessage());
+                    }
+                }
+
+                SwingUtilities.invokeLater(() -> {
+                    jobQueue.clear();
+                    queueListModel.clear();
+                    JOptionPane.showMessageDialog(this, "Job queue finished.");
+                });
+            }).start();
         }
     }
 }
