@@ -67,13 +67,78 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         songSelectionGBC.insets = new Insets(5, 5, 5, 5);
         songSelectionGBC.fill = GridBagConstraints.HORIZONTAL;
 
+        JLabel filterLabel = new JLabel("Search Songs:");
+        JTextField songSearchField = new JTextField();
+
         JLabel songLabel = new JLabel("Chosen Song:");
         songNames = new JComboBox<>();
 
-        songSelectionGBC.gridx = 0; songSelectionGBC.gridy = 0;
+        songSelectionGBC.gridx = 0;
+        songSelectionGBC.gridy = 0;
+        songSelectionGBC.gridwidth = 2;
+        songSelectionPanel.add(filterLabel, songSelectionGBC);
+
+        songSelectionGBC.gridy = 1;
+        songSelectionPanel.add(songSearchField, songSelectionGBC);
+
+        songSelectionGBC.gridwidth = 1;
+        songSelectionGBC.gridy = 2;
+        songSelectionGBC.gridx = 0;
         songSelectionPanel.add(songLabel, songSelectionGBC);
+
         songSelectionGBC.gridx = 1;
         songSelectionPanel.add(songNames, songSelectionGBC);
+
+        songSearchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            private void filterSongs() {
+                String filterText = songSearchField.getText().toLowerCase();
+                Map<Integer, String> songNameMap = null;
+
+                if ("Mario Party 4".equals(selectedGame)) {
+                    songNameMap = MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
+                } else if ("Mario Party 5".equals(selectedGame)) {
+                    songNameMap = MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
+                } else if ("Mario Party 6".equals(selectedGame)) {
+                    songNameMap = MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
+                } else if ("Mario Party 7".equals(selectedGame)) {
+                    songNameMap = MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
+                }
+
+                if (songNameMap == null) return;
+
+                String currentSelection = (String) songNames.getSelectedItem();
+
+                ArrayList<String> filtered = new ArrayList<>();
+                for (String song : songNameMap.values()) {
+                    if (song.toLowerCase().contains(filterText)) {
+                        filtered.add(song);
+                    }
+                }
+
+                Collections.sort(filtered);
+                DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(filtered.toArray(new String[0]));
+                songNames.setModel(model);
+
+                if (currentSelection != null && filtered.contains(currentSelection)) {
+                    songNames.setSelectedItem(currentSelection);
+                }
+            }
+
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                filterSongs();
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                filterSongs();
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                filterSongs();
+            }
+        });
 
         JPanel dumpPanel = new JPanel(new GridBagLayout());
         dumpPanel.setBorder(BorderFactory.createTitledBorder("Song Dumping"));
