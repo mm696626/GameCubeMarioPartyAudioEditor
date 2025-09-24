@@ -4,24 +4,6 @@ import java.util.Map;
 
 public class MarioPartySongNames {
 
-    public static final Map<Integer, String> MARIO_PARTY_4_TRACK_NAMES = Map.ofEntries(
-            Map.entry(1, "Minigame Win"),
-            Map.entry(2, "Item Get"),
-            Map.entry(3, "Bowser Game Lose"),
-            Map.entry(4, "Draw"),
-            Map.entry(5, "Board Intro"),
-            Map.entry(6, "Star Get"),
-            Map.entry(7, "Jingle"),
-            Map.entry(9, "Doubles"),
-            Map.entry(10, "Lottery Win"),
-            Map.entry(11, "Mario Speedwagons Start"),
-            Map.entry(12, "Party Mode Intro"),
-            Map.entry(13, "Jingle"),
-            Map.entry(20, "Title Screen"),
-            Map.entry(21, "Opening Cutscene Audio"),
-            Map.entry(22, "Credits")
-    );
-
     public static final Map<Integer, String> MARIO_PARTY_5_TRACK_NAMES = Map.ofEntries(
             Map.entry(1, "Everybody Party (Duplicate?)"),
             Map.entry(2, "Title Screen"),

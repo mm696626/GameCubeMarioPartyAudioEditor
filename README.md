@@ -1,10 +1,11 @@
 # GameCubeMarioPartyMusicEditor
 
 ### GameCube Mario Party Music Editor
-* A tool allows you to edit the music in Mario Parties 4-7
+* A tool allows you to edit the music in Mario Parties 5-7
 
-### Why isn't the majority of Mario Party 4's soundtrack editable?
+### Why isn't Mario Party 4's soundtrack editable?
 * Simple! Most of the music in that game is sequenced, not streamed
+* There's only a few songs that are even in the PDT, so I didn't bother
 
 ### Notes
 * Music audio must be in DSP format
