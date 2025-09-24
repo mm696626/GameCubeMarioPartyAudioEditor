@@ -23,9 +23,18 @@ public class SongDumper {
             return nibInt * 14;
     }
 
-    public static void dumpSong(File selectedFile, int songIndex, String songName, boolean runSilently) {
-        File outputDir = promptForOutputFolder();
-        if (outputDir == null) return;
+    public static void dumpSong(File selectedFile, int songIndex, String songName, boolean runSilently, File queueSelectedFolder) {
+
+        File outputDir;
+
+        if (queueSelectedFolder == null) {
+            outputDir = promptForOutputFolder();
+            if (outputDir == null) return;
+        }
+
+        else {
+            outputDir = queueSelectedFolder;
+        }
 
         try (RandomAccessFile raf = new RandomAccessFile(selectedFile, "r")) {
             int unk00 = PDTFileIO.readU16BE(raf);

@@ -433,6 +433,20 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         }
     }
 
+    private static File chooseOutputDirectory() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Select the DSP output folder");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+
+        int result = chooser.showSaveDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            return chooser.getSelectedFile();
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == pickLeftChannel) {
@@ -485,7 +499,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                     pdtFile,
                     actualSongIndex,
                     selectedSongName,
-                    false
+                    false,
+                    null
             );
         }
 
@@ -623,11 +638,27 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
+            boolean askedForDumpFolder = false;
+            File queueDumpFolder = null;
+            for (QueueJob job: jobQueue) {
+                if (job.getType() == QueueJob.Type.DUMP) {
+                    if (!askedForDumpFolder) {
+                        queueDumpFolder = chooseOutputDirectory();
+                    }
+                }
+            }
+
+            if (queueDumpFolder == null) {
+                return;
+            }
+
+            File usedDumpFolder = queueDumpFolder;
+
             new Thread(() -> {
                 for (QueueJob job : jobQueue) {
                     try {
                         if (job.getType() == QueueJob.Type.DUMP) {
-                            SongDumper.dumpSong(pdtFile, job.getSongIndex(), job.getSongName(), true);
+                            SongDumper.dumpSong(pdtFile, job.getSongIndex(), job.getSongName(), true, usedDumpFolder);
                         } else {
                             File leftFile = new File(job.getLeftChannel());
                             File rightFile = new File(job.getRightChannel());
