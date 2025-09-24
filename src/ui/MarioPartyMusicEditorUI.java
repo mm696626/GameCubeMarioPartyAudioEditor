@@ -303,6 +303,13 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
+            File pdtFile = new File(pdtPath);
+
+            if (!pdtFile.exists()) {
+                JOptionPane.showMessageDialog(this, "The chosen PDT file doesn't exist!");
+                return;
+            }
+
             String selectedSongName = (String) songNames.getSelectedItem();
 
             Map<Integer, String> songNameMap;
@@ -337,7 +344,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             }
 
             SongDumper.dumpSong(
-                    new File(pdtPath),
+                    pdtFile,
                     actualSongIndex,
                     selectedSongName
             );
@@ -349,7 +356,14 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            SongDumper.dumpAllSongs(new File(pdtPath));
+            File pdtFile = new File(pdtPath);
+
+            if (!pdtFile.exists()) {
+                JOptionPane.showMessageDialog(this, "The chosen PDT file doesn't exist!");
+                return;
+            }
+
+            SongDumper.dumpAllSongs(pdtFile);
         }
 
         if (e.getSource() == modifySong) {
@@ -360,6 +374,20 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
             if (pdtPath.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "No PDT file was chosen!");
+                return;
+            }
+
+            File pdtFile = new File(pdtPath);
+            File leftChannelFile = new File(leftChannelPath);
+            File rightChannelFile = new File(leftChannelPath);
+
+            if (!pdtFile.exists()) {
+                JOptionPane.showMessageDialog(this, "The chosen PDT file doesn't exist!");
+                return;
+            }
+
+            if (!leftChannelFile.exists() || !rightChannelFile.exists()) {
+                JOptionPane.showMessageDialog(this, "Either the left or right channel doesn't exist!");
                 return;
             }
 
@@ -397,9 +425,9 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             }
 
             SongModifier.modifySong(
-                    new File(pdtPath),
-                    new File(leftChannelPath),
-                    new File(rightChannelPath),
+                    pdtFile,
+                    leftChannelFile,
+                    rightChannelFile,
                     actualSongIndex,
                     selectedSongName
             );
