@@ -1,6 +1,7 @@
 package ui;
 
 import constants.MarioPartySongNames;
+import io.DSPPair;
 import io.SongDumper;
 import io.SongModifier;
 
@@ -251,50 +252,97 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     }
 
     private void chooseLeftChannelPath() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select DSP Left Channel");
+        int response = JOptionPane.showConfirmDialog(this, "Would you like to pick a folder of DSPs to select a song from?", "Choose DSP Folder", JOptionPane.YES_NO_OPTION);
+        if (response == JOptionPane.YES_OPTION) {
+            chooseDSPPairFolder();
 
-        FileNameExtensionFilter dspFilter = new FileNameExtensionFilter("DSP Files", "dsp");
-        fileChooser.setFileFilter(dspFilter);
-
-        int userSelection = fileChooser.showOpenDialog(null);
-
-        if (userSelection != JFileChooser.APPROVE_OPTION) {
-            return;
+        } else {
+            chooseDSP(true);
         }
+    }
 
-        File selectedFile = fileChooser.getSelectedFile();
-        leftChannelPath = selectedFile.getAbsolutePath();
-        leftChannelLabel.setText(selectedFile.getName());
+    private void chooseDSPPairFolder() {
+        JFileChooser folderChooser = new JFileChooser();
+        folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        folderChooser.setDialogTitle("Select Folder with DSP Files");
 
-        File otherChannel = detectOtherChannel(selectedFile, true);
-        if (otherChannel != null) {
-            rightChannelPath = otherChannel.getAbsolutePath();
-            rightChannelLabel.setText(otherChannel.getName());
+        int folderSelected = folderChooser.showOpenDialog(this);
+        if (folderSelected == JFileChooser.APPROVE_OPTION) {
+            File selectedFolder = folderChooser.getSelectedFile();
+            ArrayList<DSPPair> dspPairs = DSPPair.detectDSPPairs(selectedFolder);
+
+            if (dspPairs.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No matching DSP pairs found in the selected folder.");
+                return;
+            }
+
+            DSPPair selectedPair = (DSPPair) JOptionPane.showInputDialog(
+                    this,
+                    "Select DSP Pair:",
+                    "Select DSP Song",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    dspPairs.toArray(),
+                    dspPairs.getFirst()
+            );
+
+            if (selectedPair != null) {
+                leftChannelPath = selectedPair.left.getAbsolutePath();
+                rightChannelPath = selectedPair.right.getAbsolutePath();
+                leftChannelLabel.setText(selectedPair.left.getName());
+                rightChannelLabel.setText(selectedPair.right.getName());
+            }
         }
     }
 
     private void chooseRightChannelPath() {
+        int response = JOptionPane.showConfirmDialog(this, "Would you like to pick a folder of DSPs to select a song from?", "Choose DSP Folder", JOptionPane.YES_NO_OPTION);
+        if (response == JOptionPane.YES_OPTION) {
+            chooseDSPPairFolder();
+
+        } else {
+            chooseDSP(false);
+        }
+    }
+
+    private void chooseDSP(boolean isLeft) {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select DSP Right Channel");
+
+        if (isLeft) {
+            fileChooser.setDialogTitle("Select DSP Left Channel");
+        }
+        else {
+            fileChooser.setDialogTitle("Select DSP Right Channel");
+        }
 
         FileNameExtensionFilter dspFilter = new FileNameExtensionFilter("DSP Files", "dsp");
         fileChooser.setFileFilter(dspFilter);
 
-        int userSelection = fileChooser.showOpenDialog(null);
-
-        if (userSelection != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
+        int userSelection = fileChooser.showOpenDialog(this);
+        if (userSelection != JFileChooser.APPROVE_OPTION) return;
 
         File selectedFile = fileChooser.getSelectedFile();
-        rightChannelPath = selectedFile.getAbsolutePath();
-        rightChannelLabel.setText(selectedFile.getName());
 
-        File other = detectOtherChannel(selectedFile, false);
-        if (other != null) {
-            leftChannelPath = other.getAbsolutePath();
-            leftChannelLabel.setText(other.getName());
+        if (isLeft) {
+            leftChannelPath = selectedFile.getAbsolutePath();
+            leftChannelLabel.setText(selectedFile.getName());
+        }
+
+        else {
+            rightChannelPath = selectedFile.getAbsolutePath();
+            rightChannelLabel.setText(selectedFile.getName());
+        }
+
+        File otherChannel = detectOtherChannel(selectedFile, isLeft);
+        if (otherChannel != null) {
+            if (isLeft) {
+                rightChannelPath = otherChannel.getAbsolutePath();
+                rightChannelLabel.setText(otherChannel.getName());
+            }
+            else {
+                leftChannelPath = otherChannel.getAbsolutePath();
+                leftChannelLabel.setText(otherChannel.getName());
+            }
         }
     }
 
