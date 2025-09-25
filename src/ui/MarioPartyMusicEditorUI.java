@@ -2,7 +2,6 @@ package ui;
 
 import constants.MarioPartySongNames;
 import io.DSPPair;
-import io.QueueJob;
 import io.SongDumper;
 import io.SongModifier;
 
@@ -29,11 +28,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private JLabel rightChannelLabel;
     private JLabel pdtFilePathLabel;
     private JLabel selectedGameLabel;
-
-    private java.util.List<QueueJob> jobQueue = new ArrayList<>();
-    private DefaultListModel<String> queueListModel = new DefaultListModel<>();
-    private JList<String> queueList;
-    private JButton addToQueueButton, runQueueButton, clearQueueButton;
 
     private File savedDSPFolder = null;
 
@@ -187,32 +181,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         modifyGBC.gridx = 0; modifyGBC.gridy = 2;
         modifyGBC.gridwidth = 2;
         modifyPanel.add(modifySong, modifyGBC);
-
-        JPanel queuePanel = new JPanel(new BorderLayout());
-        queuePanel.setBorder(BorderFactory.createTitledBorder("Job Queue"));
-
-        queueList = new JList<>(queueListModel);
-        queueList.setVisibleRowCount(6);
-        queuePanel.add(new JScrollPane(queueList), BorderLayout.CENTER);
-
-        JPanel queueButtonsPanel = new JPanel();
-        addToQueueButton = new JButton("Add to Queue");
-        runQueueButton = new JButton("Run Queue");
-        clearQueueButton = new JButton("Clear Queue");
-
-        addToQueueButton.addActionListener(this);
-        runQueueButton.addActionListener(this);
-        clearQueueButton.addActionListener(this);
-
-        queueButtonsPanel.add(addToQueueButton);
-        queueButtonsPanel.add(runQueueButton);
-        queueButtonsPanel.add(clearQueueButton);
-
-        queuePanel.add(queueButtonsPanel, BorderLayout.SOUTH);
-
-        songToolsPanel.add(Box.createVerticalStrut(10));
-        songToolsPanel.add(queuePanel);
-
 
         songToolsPanel.add(songSelectionPanel);
         songToolsPanel.add(Box.createVerticalStrut(10));
@@ -459,20 +427,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         }
     }
 
-    private static File chooseOutputDirectory() {
-        JFileChooser dspOutputFolderChooser = new JFileChooser();
-        dspOutputFolderChooser.setDialogTitle("Select the DSP output folder");
-        dspOutputFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        dspOutputFolderChooser.setAcceptAllFileFilterUsed(false);
-
-        int result = dspOutputFolderChooser.showSaveDialog(null);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            return dspOutputFolderChooser.getSelectedFile();
-        } else {
-            return null;
-        }
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == pickLeftChannel) {
@@ -608,95 +562,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         if (e.getSource() == selectGame) {
             initPDTPath();
-        }
-
-        if (e.getSource() == addToQueueButton) {
-            String selectedSongName = (String) songNames.getSelectedItem();
-            if (selectedSongName == null || pdtPath.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Missing song or PDT file.");
-                return;
-            }
-
-            Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
-            if (songNameMap == null) return;
-
-            int index = songNameMap.entrySet().stream()
-                    .filter(entry -> entry.getValue().equals(selectedSongName))
-                    .map(Map.Entry::getKey)
-                    .findFirst()
-                    .orElse(-1);
-
-            if (index == -1) {
-                JOptionPane.showMessageDialog(this, "Could not find song index.");
-                return;
-            }
-
-            int choice = JOptionPane.showConfirmDialog(
-                    this,
-                    "Do you want to modify the song?\n(Click 'No' to dump it)",
-                    "Select Job Type",
-                    JOptionPane.YES_NO_OPTION
-            );
-
-            QueueJob.Type type = (choice == JOptionPane.YES_OPTION)
-                    ? QueueJob.Type.MODIFY
-                    : QueueJob.Type.DUMP;
-
-            QueueJob job = new QueueJob(type, selectedSongName, index, leftChannelPath, rightChannelPath);
-            jobQueue.add(job);
-            queueListModel.addElement(job.toString());
-        }
-
-        if (e.getSource() == clearQueueButton) {
-            jobQueue.clear();
-            queueListModel.clear();
-        }
-
-        if (e.getSource() == runQueueButton) {
-            if (jobQueue.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Queue is empty!");
-                return;
-            }
-
-            File pdtFile = new File(pdtPath);
-            if (!pdtFile.exists()) {
-                JOptionPane.showMessageDialog(this, "PDT file does not exist.");
-                return;
-            }
-
-            boolean askedForDumpFolder = false;
-            boolean hasDumpJob = false;
-            File queueDumpFolder = null;
-            for (QueueJob job: jobQueue) {
-                if (job.getType() == QueueJob.Type.DUMP) {
-                    hasDumpJob = true;
-                    if (!askedForDumpFolder) {
-                        queueDumpFolder = chooseOutputDirectory();
-                    }
-                }
-            }
-
-            if (hasDumpJob && queueDumpFolder == null) {
-                return;
-            }
-
-            for (QueueJob job : jobQueue) {
-                if (job.getType() == QueueJob.Type.DUMP) {
-                    SongDumper.dumpSong(pdtFile, job.getSongIndex(), job.getSongName(), true, queueDumpFolder);
-                } else {
-                    File leftFile = new File(job.getLeftChannel());
-                    File rightFile = new File(job.getRightChannel());
-                    if (leftFile.exists() && rightFile.exists()) {
-                        SongModifier.modifySong(pdtFile, leftFile, rightFile, job.getSongIndex(), job.getSongName(), true);
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Channel file(s) missing for: " + job.getSongName());
-                    }
-                }
-            }
-
-            jobQueue.clear();
-            queueListModel.clear();
-            JOptionPane.showMessageDialog(this, "Job queue finished.");
         }
     }
 }
