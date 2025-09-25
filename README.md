@@ -36,10 +36,6 @@
 * I use this program to create DSPs
   * https://github.com/libertyernie/LoopingAudioConverter
 
-### Documentation
-* I've added a list of every song in the PDT by their internal order including unused DSPs
-* Look in the documentation folder
-
 ### Special Thanks/Credits
 * This project wouldn't be possible without the work of Yoshimaster96. Huge props to them!
 * https://github.com/Yoshimaster96/mpgc-sound-tools
