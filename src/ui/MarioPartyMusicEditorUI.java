@@ -489,9 +489,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             SongDumper.dumpSong(
                     pdtFile,
                     actualSongIndex,
-                    selectedSongName,
-                    false,
-                    null
+                    selectedSongName
             );
         }
 
