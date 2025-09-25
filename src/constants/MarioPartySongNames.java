@@ -241,7 +241,7 @@ public class MarioPartySongNames {
             Map.entry(27, "The Afterparty"),
             Map.entry(29, "Who's Will Win?"),
             Map.entry(30, "Hail to the King"),
-            Map.entry(31, "Take me to Partytown"),
+            Map.entry(31, "Take Me to Partytown"),
             Map.entry(32, "Get This Party Started"),
             Map.entry(33, "Bowser's Invitation"),
             Map.entry(37, "The Free Play Sub"),
