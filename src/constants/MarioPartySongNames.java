@@ -155,7 +155,7 @@ public class MarioPartySongNames {
             Map.entry(50, "Special Gift"),
             Map.entry(51, "Minigame Bus"),
             Map.entry(52, "Battle Bridge"),
-            Map.entry(53, "Decathalon Park"),
+            Map.entry(53, "Decathlon Park"),
             Map.entry(54, "Endurance Alley"),
             Map.entry(55, "Treetop Bingo"),
             Map.entry(56, "Really Long Road"),
