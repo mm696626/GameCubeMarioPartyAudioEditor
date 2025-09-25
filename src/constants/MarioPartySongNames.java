@@ -85,7 +85,7 @@ public class MarioPartySongNames {
             Map.entry(87, "Bowser Laughs"),
             Map.entry(88, "Rolling About (Will Flower)"),
             Map.entry(89, "In Great Fear (Big Top Drop)"),
-            Map.entry(90, "DK (without Intro)"),
+            Map.entry(90, "Please, DK! (without Intro)"),
             Map.entry(91, "Battle Mini-Game (without Intro)"),
             Map.entry(121, "Did It! Mini-Game"),
             Map.entry(122, "You Lost! Bummer"),
