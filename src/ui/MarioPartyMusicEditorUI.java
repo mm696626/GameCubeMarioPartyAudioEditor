@@ -11,8 +11,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 
 public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
@@ -427,6 +432,17 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         }
     }
 
+    private static File getPDTFileName(File pdtFile, String timestamp) {
+        String baseName = pdtFile.getName();
+        int extIndex = baseName.lastIndexOf(".");
+        if (extIndex != -1) {
+            baseName = baseName.substring(0, extIndex);
+        }
+
+        String backupFileName = baseName + "_Backup_" + timestamp + ".pdt";
+        return new File(pdtFile.getParent(), backupFileName);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == pickLeftChannel) {
@@ -523,6 +539,24 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             if (!leftChannelFile.exists() || !rightChannelFile.exists()) {
                 JOptionPane.showMessageDialog(this, "Either the left or right channel doesn't exist!");
                 return;
+            }
+
+            int response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Do you want to make a backup of the PDT file?",
+                    "Backup PDT",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (response == JOptionPane.YES_OPTION) {
+                try {
+                    String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                    File backupFile = getPDTFileName(pdtFile, timestamp);
+
+                    Files.copy(pdtFile.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null, "Failed to create backup: " + ex.getMessage());
+                }
             }
 
             String selectedSongName = (String) songNames.getSelectedItem();
