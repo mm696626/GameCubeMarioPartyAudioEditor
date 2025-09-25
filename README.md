@@ -9,7 +9,7 @@
 
 ### Notes
 * Music audio must be in DSP format
-* As of now, it's not possible to have songs that are larger than the original be the replacement (There's a size check in place)
+* As of now, it's not possible to have songs that are larger than the original be the replacement
   * Honestly, this is fine since Mario Party songs don't play for more than a minute anyway and the music restarts on a new event
   * If anyone wants to figure this out, go right ahead!
 * This tool will attempt to auto select the other track of your song, so name it either with the same file name appended with _L and _R or (channel 0) and (channel 1)
@@ -23,21 +23,20 @@
     * The stereo track didn't properly dump (it dumped the same channel twice)
     * An end of file issue since the number of bytes was wrong for the audio data (should be nibbles/2 instead of nibbles << 1)
     * Changed the audio data to dump 8KB at a time instead of one byte for speed
-  * Link to the code I used as a basis: https://github.com/Yoshimaster96/mpgc-sound-tools/blob/main/dump_pdt.c
 
 ### Tip for Quality vs Size
-* I recommend changing the sample rate of your track (these are in Hz) (the ones listed here are 32kHz, 22.05 kHz, 16 kHz, and 8kHz)
-  * 32000 (What Hudson Soft used) (make sure your song isn't longer)
-  * 22050 (Half of CD quality)
-  * 16000 (the bare minium to be listenable)
-  * 8000 (compressed telephone quality)
-* Keep your songs around the same length for higher quality (else you sacrifice sample rate for length)
+* I recommend changing the sample rate of your track (the ones listed here are 32kHz, 22.05 kHz, 16 kHz, and 8kHz)
+  * 32000 Hz (What Hudson Soft used) (make sure your song isn't longer)
+  * 22050 Hz (Half of CD quality)
+  * 16000 Hz (the bare minium to be listenable)
+  * 8000 Hz (compressed telephone quality)
+* Keep your songs around the same length for higher quality
 * File size limitations are pretty strict and this tool doesn't rewrite the file's pointers
 * I use this program to create DSPs
   * https://github.com/libertyernie/LoopingAudioConverter
 
 ### Special Thanks/Credits
 * This project wouldn't be possible without the work of Yoshimaster96. Huge props to them!
-* https://github.com/Yoshimaster96/mpgc-sound-tools
+* https://github.com/Yoshimaster96/mpgc-sound-tools/blob/main/dump_pdt.c
 * Also, this documentation on the DSP format helped a lot too
 * https://www.metroid2002.com/retromodding/wiki/DSP_(File_Format)
