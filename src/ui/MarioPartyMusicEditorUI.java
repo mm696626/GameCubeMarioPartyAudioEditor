@@ -407,13 +407,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
 
         if (songNameMap != null) {
-            ArrayList<Integer> sortedKeys = new ArrayList<>(songNameMap.keySet());
-            Collections.sort(sortedKeys);
-
-            ArrayList<String> songList = new ArrayList<>();
-            for (Integer key : sortedKeys) {
-                songList.add(songNameMap.get(key));
-            }
+            ArrayList<String> songList = new ArrayList<>(songNameMap.values());
+            Collections.sort(songList);
 
             songNames.setModel(new DefaultComboBoxModel<>(songList.toArray(new String[0])));
         } else {
