@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, dumpSong, dumpAllSongs, modifySong, selectGame, clearModifyButton;
+    private JButton pickLeftChannel, pickRightChannel, dumpSong, dumpAllSongs, modifySong, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -188,22 +188,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         modifyGBC.gridwidth = 2;
         modifyPanel.add(modifySong, modifyGBC);
 
-        clearModifyButton = new JButton("Clear");
-        clearModifyButton.addActionListener(this);
-
-        modifyGBC.gridy = 3;
-        modifyGBC.gridwidth = 2;
-        modifyPanel.add(clearModifyButton, modifyGBC);
-
-        JButton resetDSPFolderButton = new JButton("Reset DSP Folder Choice");
-        resetDSPFolderButton.addActionListener(e -> {
-            savedDSPFolder = null;
-            JOptionPane.showMessageDialog(this, "DSP folder selection has been reset.");
-        });
-        modifyGBC.gridy = 4;
-        modifyPanel.add(resetDSPFolderButton, modifyGBC);
-
-
         JPanel queuePanel = new JPanel(new BorderLayout());
         queuePanel.setBorder(BorderFactory.createTitledBorder("Job Queue"));
 
@@ -299,7 +283,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         int response = JOptionPane.showConfirmDialog(
                 this,
-                "Would you like to pick a folder of DSPs to select a song from?\n(Your choice will be remembered until reset)",
+                "Would you like to pick a folder of DSPs to select a song from?\n(Your choice will be remembered until closing the program)",
                 "Choose DSP Folder",
                 JOptionPane.YES_NO_OPTION
         );
@@ -328,7 +312,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         int response = JOptionPane.showConfirmDialog(
                 this,
-                "Would you like to pick a folder of DSPs to select a song from?\n(Your choice will be remembered until reset)",
+                "Would you like to pick a folder of DSPs to select a song from?\n(Your choice will be remembered until closing the program)",
                 "Choose DSP Folder",
                 JOptionPane.YES_NO_OPTION
         );
@@ -356,6 +340,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         if (dspPairs.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No matching DSP pairs found in the saved folder.");
+            savedDSPFolder = null;
             return;
         }
 
@@ -621,13 +606,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             );
         }
 
-        if (e.getSource() == clearModifyButton) {
-            leftChannelPath = "";
-            rightChannelPath = "";
-            leftChannelLabel.setText("No file selected");
-            rightChannelLabel.setText("No file selected");
-        }
-
         if (e.getSource() == selectGame) {
             initPDTPath();
         }
@@ -702,11 +680,9 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            File usedDumpFolder = queueDumpFolder;
-
             for (QueueJob job : jobQueue) {
                 if (job.getType() == QueueJob.Type.DUMP) {
-                    SongDumper.dumpSong(pdtFile, job.getSongIndex(), job.getSongName(), true, usedDumpFolder);
+                    SongDumper.dumpSong(pdtFile, job.getSongIndex(), job.getSongName(), true, queueDumpFolder);
                 } else {
                     File leftFile = new File(job.getLeftChannel());
                     File rightFile = new File(job.getRightChannel());
