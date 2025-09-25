@@ -9,8 +9,6 @@
 
 ### Notes
 * Music audio must be in DSP format
-* I may have gotten some song names wrong due to duplicates or just me not knowing certain songs in these OSTs
-  * This is prevalent especially with 5. They're probably alternate versions of minigame themes or jingles, but who knows?
 * As of now, it's not possible to have songs that are larger than the original be the replacement (There's a size check in place)
   * Honestly, this is fine since Mario Party songs don't play for more than a minute anyway and the music restarts on a new event
   * If anyone wants to figure this out, go right ahead!
