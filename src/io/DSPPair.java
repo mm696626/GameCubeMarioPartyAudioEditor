@@ -6,9 +6,9 @@ import java.util.Map;
 
 public class DSPPair {
 
-    public File left;
-    public File right;
-    public String displayName;
+    private File left;
+    private File right;
+    private String displayName;
 
     public DSPPair(File left, File right, String displayName) {
         this.left = left;
@@ -49,5 +49,13 @@ public class DSPPair {
         }
 
         return pairs;
+    }
+
+    public File getLeft() {
+        return left;
+    }
+
+    public File getRight() {
+        return right;
     }
 }

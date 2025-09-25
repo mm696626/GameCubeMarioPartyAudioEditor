@@ -233,14 +233,14 @@ public class SongDumper {
     }
 
     private static File chooseOutputDirectory() {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setDialogTitle("Select the DSP output folder");
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
+        JFileChooser dspOutputFolderChooser = new JFileChooser();
+        dspOutputFolderChooser.setDialogTitle("Select the DSP output folder");
+        dspOutputFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        dspOutputFolderChooser.setAcceptAllFileFilterUsed(false);
 
-        int result = chooser.showSaveDialog(null);
+        int result = dspOutputFolderChooser.showSaveDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
-            return chooser.getSelectedFile();
+            return dspOutputFolderChooser.getSelectedFile();
         } else {
             return null;
         }

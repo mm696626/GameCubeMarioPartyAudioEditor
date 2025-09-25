@@ -243,19 +243,20 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     }
 
     private void initPDTPath() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select PDT file");
+        JFileChooser pdtFileChooser = new JFileChooser();
+        pdtFileChooser.setDialogTitle("Select PDT file");
+        pdtFileChooser.setAcceptAllFileFilterUsed(false);
 
         FileNameExtensionFilter pdtFilter = new FileNameExtensionFilter("PDT Files", "pdt");
-        fileChooser.setFileFilter(pdtFilter);
+        pdtFileChooser.setFileFilter(pdtFilter);
 
-        int userSelection = fileChooser.showOpenDialog(null);
+        int userSelection = pdtFileChooser.showOpenDialog(null);
 
         if (userSelection != JFileChooser.APPROVE_OPTION) {
             return;
         }
 
-        File selectedPDT = fileChooser.getSelectedFile();
+        File selectedPDT = pdtFileChooser.getSelectedFile();
         pdtPath = selectedPDT.getAbsolutePath();
         pdtFilePathLabel.setText("Selected PDT: " + pdtPath);
 
@@ -304,13 +305,14 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         );
 
         if (response == JOptionPane.YES_OPTION) {
-            JFileChooser folderChooser = new JFileChooser();
-            folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            folderChooser.setDialogTitle("Select Folder with DSP Files");
+            JFileChooser dspFolderChooser = new JFileChooser();
+            dspFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            dspFolderChooser.setDialogTitle("Select Folder with DSP Files");
+            dspFolderChooser.setAcceptAllFileFilterUsed(false);
 
-            int folderSelected = folderChooser.showOpenDialog(this);
+            int folderSelected = dspFolderChooser.showOpenDialog(this);
             if (folderSelected == JFileChooser.APPROVE_OPTION) {
-                savedDSPFolder = folderChooser.getSelectedFile();
+                savedDSPFolder = dspFolderChooser.getSelectedFile();
                 useSavedDSPFolder();
             }
         } else {
@@ -332,13 +334,14 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         );
 
         if (response == JOptionPane.YES_OPTION) {
-            JFileChooser folderChooser = new JFileChooser();
-            folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            folderChooser.setDialogTitle("Select Folder with DSP Files");
+            JFileChooser dspFolderChooser = new JFileChooser();
+            dspFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            dspFolderChooser.setDialogTitle("Select Folder with DSP Files");
+            dspFolderChooser.setAcceptAllFileFilterUsed(false);
 
-            int folderSelected = folderChooser.showOpenDialog(this);
+            int folderSelected = dspFolderChooser.showOpenDialog(this);
             if (folderSelected == JFileChooser.APPROVE_OPTION) {
-                savedDSPFolder = folderChooser.getSelectedFile();
+                savedDSPFolder = dspFolderChooser.getSelectedFile();
                 useSavedDSPFolder();
             }
         } else {
@@ -367,30 +370,31 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         );
 
         if (selectedPair != null) {
-            leftChannelPath = selectedPair.left.getAbsolutePath();
-            rightChannelPath = selectedPair.right.getAbsolutePath();
-            leftChannelLabel.setText(selectedPair.left.getName());
-            rightChannelLabel.setText(selectedPair.right.getName());
+            leftChannelPath = selectedPair.getLeft().getAbsolutePath();
+            rightChannelPath = selectedPair.getRight().getAbsolutePath();
+            leftChannelLabel.setText(selectedPair.getLeft().getName());
+            rightChannelLabel.setText(selectedPair.getRight().getName());
         }
     }
 
     private void chooseDSP(boolean isLeft) {
-        JFileChooser fileChooser = new JFileChooser();
+        JFileChooser dspFileChooser = new JFileChooser();
 
         if (isLeft) {
-            fileChooser.setDialogTitle("Select DSP Left Channel");
+            dspFileChooser.setDialogTitle("Select DSP Left Channel");
         }
         else {
-            fileChooser.setDialogTitle("Select DSP Right Channel");
+            dspFileChooser.setDialogTitle("Select DSP Right Channel");
         }
 
+        dspFileChooser.setAcceptAllFileFilterUsed(false);
         FileNameExtensionFilter dspFilter = new FileNameExtensionFilter("DSP Files", "dsp");
-        fileChooser.setFileFilter(dspFilter);
+        dspFileChooser.setFileFilter(dspFilter);
 
-        int userSelection = fileChooser.showOpenDialog(this);
+        int userSelection = dspFileChooser.showOpenDialog(this);
         if (userSelection != JFileChooser.APPROVE_OPTION) return;
 
-        File selectedFile = fileChooser.getSelectedFile();
+        File selectedFile = dspFileChooser.getSelectedFile();
 
         if (isLeft) {
             leftChannelPath = selectedFile.getAbsolutePath();
@@ -471,14 +475,14 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     }
 
     private static File chooseOutputDirectory() {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setDialogTitle("Select the DSP output folder");
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
+        JFileChooser dspOutputFolderChooser = new JFileChooser();
+        dspOutputFolderChooser.setDialogTitle("Select the DSP output folder");
+        dspOutputFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        dspOutputFolderChooser.setAcceptAllFileFilterUsed(false);
 
-        int result = chooser.showSaveDialog(null);
+        int result = dspOutputFolderChooser.showSaveDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
-            return chooser.getSelectedFile();
+            return dspOutputFolderChooser.getSelectedFile();
         } else {
             return null;
         }
@@ -649,9 +653,16 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            QueueJob.Type type = (leftChannelPath.isEmpty() || rightChannelPath.isEmpty())
-                    ? QueueJob.Type.DUMP
-                    : QueueJob.Type.MODIFY;
+            int choice = JOptionPane.showConfirmDialog(
+                    this,
+                    "Do you want to modify the song?\n(Click 'No' to dump it)",
+                    "Select Job Type",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            QueueJob.Type type = (choice == JOptionPane.YES_OPTION)
+                    ? QueueJob.Type.MODIFY
+                    : QueueJob.Type.DUMP;
 
             QueueJob job = new QueueJob(type, selectedSongName, index, leftChannelPath, rightChannelPath);
             jobQueue.add(job);

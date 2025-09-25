@@ -3,11 +3,11 @@ package io;
 public class QueueJob {
     public enum Type { DUMP, MODIFY }
 
-    Type type;
-    String songName;
-    int songIndex;
-    String leftChannel;
-    String rightChannel;
+    private Type type;
+    private String songName;
+    private int songIndex;
+    private String leftChannel;
+    private String rightChannel;
 
     public QueueJob(Type type, String songName, int songIndex, String leftChannel, String rightChannel) {
         this.type = type;
