@@ -3,16 +3,15 @@ package io;
 import constants.DSPFileConstants;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
+import java.util.Scanner;
 
 public class SongModifier {
 
     //This code is largely derived from Yoshimaster96's C PDT dumping code, so huge credit and kudos to them!
     //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
-    public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, String songName) {
+    public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, String songName, String selectedGame) {
         try (RandomAccessFile pdtRaf = new RandomAccessFile(pdtFile, "rw")) {
             int unk00 = PDTFileIO.readU16BE(pdtRaf);
             int numFiles = PDTFileIO.readU16BE(pdtRaf);
@@ -59,67 +58,80 @@ public class SongModifier {
             }
 
             //read song info from left DSP channel (same for right, so only have to read from the left channel)
-            byte[] dspSampleRate = new byte[DSPFileConstants.SAMPLE_RATE_LENGTH_IN_BYTES];
+            byte[] newDSPSampleRate = new byte[DSPFileConstants.SAMPLE_RATE_LENGTH_IN_BYTES];
             try (RandomAccessFile leftChannelRaf = new RandomAccessFile(leftChannel, "r")) {
                 leftChannelRaf.seek(DSPFileConstants.SAMPLE_RATE_OFFSET);
-                leftChannelRaf.read(dspSampleRate);
+                leftChannelRaf.read(newDSPSampleRate);
             }
 
-            byte[] dspNibbleCount = new byte[DSPFileConstants.NIBBLE_COUNT_LENGTH_IN_BYTES];
+            byte[] newDSPNibbleCount = new byte[DSPFileConstants.NIBBLE_COUNT_LENGTH_IN_BYTES];
             try (RandomAccessFile leftChannelRaf = new RandomAccessFile(leftChannel, "r")) {
                 leftChannelRaf.seek(DSPFileConstants.NIBBLE_COUNT_OFFSET);
-                leftChannelRaf.read(dspNibbleCount);
+                leftChannelRaf.read(newDSPNibbleCount);
             }
 
-            byte[] dspLoopStart = new byte[DSPFileConstants.LOOP_START_LENGTH_IN_BYTES];
+            byte[] newDSPLoopStart = new byte[DSPFileConstants.LOOP_START_LENGTH_IN_BYTES];
             try (RandomAccessFile leftChannelRaf = new RandomAccessFile(leftChannel, "r")) {
                 leftChannelRaf.seek(DSPFileConstants.LOOP_START_OFFSET);
-                leftChannelRaf.read(dspLoopStart);
+                leftChannelRaf.read(newDSPLoopStart);
             }
 
             //read left decode coeffs data
-            byte[] leftChannelDecodingCoeffs = new byte[DSPFileConstants.DECODE_COEFFS_LENGTH_IN_BYTES];
+            byte[] newDSPLeftChannelDecodingCoeffs = new byte[DSPFileConstants.DECODE_COEFFS_LENGTH_IN_BYTES];
             try (RandomAccessFile leftChannelRaf = new RandomAccessFile(leftChannel, "r")) {
                 leftChannelRaf.seek(DSPFileConstants.DECODE_COEFFS_OFFSET);
-                leftChannelRaf.read(leftChannelDecodingCoeffs);
+                leftChannelRaf.read(newDSPLeftChannelDecodingCoeffs);
             }
 
             //read right decode coeffs data
-            byte[] rightChannelDecodingCoeffs = new byte[DSPFileConstants.DECODE_COEFFS_LENGTH_IN_BYTES];
+            byte[] newDSPRightChannelDecodingCoeffs = new byte[DSPFileConstants.DECODE_COEFFS_LENGTH_IN_BYTES];
             try (RandomAccessFile rightChannelRaf = new RandomAccessFile(rightChannel, "r")) {
                 rightChannelRaf.seek(DSPFileConstants.DECODE_COEFFS_OFFSET);
-                rightChannelRaf.read(rightChannelDecodingCoeffs);
+                rightChannelRaf.read(newDSPRightChannelDecodingCoeffs);
             }
 
             //read left channel audio data
-            byte[] leftChannelAudio;
+            byte[] newDSPLeftChannelAudio;
 
             try (RandomAccessFile raf = new RandomAccessFile(leftChannel, "r")) {
                 raf.seek(DSPFileConstants.AUDIO_DATA_OFFSET);
                 long remainingBytes = raf.length() - DSPFileConstants.AUDIO_DATA_OFFSET;
-                leftChannelAudio = new byte[(int) remainingBytes];
-                raf.readFully(leftChannelAudio);
+                newDSPLeftChannelAudio = new byte[(int) remainingBytes];
+                raf.readFully(newDSPLeftChannelAudio);
             }
 
             //read right channel audio data
-            byte[] rightChannelAudio;
+            byte[] newDSPRightChannelAudio;
 
             try (RandomAccessFile raf = new RandomAccessFile(rightChannel, "r")) {
                 raf.seek(DSPFileConstants.AUDIO_DATA_OFFSET);
                 long remainingBytes = raf.length() - DSPFileConstants.AUDIO_DATA_OFFSET;
-                rightChannelAudio = new byte[(int) remainingBytes];
-                raf.readFully(rightChannelAudio);
+                newDSPRightChannelAudio = new byte[(int) remainingBytes];
+                raf.readFully(newDSPRightChannelAudio);
             }
 
             //modify song
 
-            if (isInvalidSize(dspNibbleCount, nibbleCount, songName)) return;
+            //read the original nibble count (which was read from header) if the song has been replaced before (for edge case)
+            //use that to compare instead of the header value
+            long originalNibbleCount = readDSPNibbleCountFromFile(songName, selectedGame);
 
-            long newSampleRateOffset = thisHeaderOffs + 4;
-            long newNibbleCount = thisHeaderOffs + 8;
-            long newLoopStartOffset = thisHeaderOffs + 12;
+            if (originalNibbleCount != -1) {
+                nibbleCount = originalNibbleCount;
+            }
 
-            writeDSPToPDT(pdtRaf, newSampleRateOffset, dspSampleRate, newNibbleCount, dspNibbleCount, newLoopStartOffset, dspLoopStart, ch1CoefOffs, leftChannelDecodingCoeffs, ch2CoefOffs, rightChannelDecodingCoeffs, ch1Start, leftChannelAudio, ch2Start, rightChannelAudio);
+            if (isInvalidSize(newDSPNibbleCount, nibbleCount, songName)) return;
+
+            //if the nibble count here is -1, then the song hasn't been replaced yet, so write it
+            if (originalNibbleCount == -1) {
+                writeDSPNibbleCountToFile(songName, nibbleCount, selectedGame);
+            }
+
+            long newDSPSampleRateOffset = thisHeaderOffs + 4;
+            long newDSPNibbleCountOffset = thisHeaderOffs + 8;
+            long newDSPLoopStartOffset = thisHeaderOffs + 12;
+
+            writeDSPToPDT(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, ch1Start, newDSPLeftChannelAudio, ch2Start, newDSPRightChannelAudio);
             pdtRaf.close();
 
             JOptionPane.showMessageDialog(null, "Finished modifying PDT file for " + songName);
@@ -127,6 +139,40 @@ public class SongModifier {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
         }
+    }
+
+    private static long readDSPNibbleCountFromFile(String songName, String selectedGame) {
+        Scanner inputStream;
+
+        try {
+            inputStream = new Scanner(new FileInputStream(selectedGame + ".txt"));
+        }
+        catch (FileNotFoundException e) {
+            return -1;
+        }
+
+        while (inputStream.hasNextLine()) {
+            String line = inputStream.nextLine();
+            if (line.split(":")[0].equals(songName)) {
+                return Long.parseLong(line.split(":")[1]);
+            }
+        }
+
+        return -1;
+    }
+
+    private static void writeDSPNibbleCountToFile(String songName, long nibbleCount, String selectedGame) {
+        PrintWriter outputStream = null;
+
+        try {
+            outputStream = new PrintWriter(new FileOutputStream(selectedGame + ".txt", true));
+        }
+        catch (FileNotFoundException f) {
+            return;
+        }
+
+        outputStream.println(songName + ":" + nibbleCount);
+        outputStream.close();
     }
 
     private static boolean isInvalidSize(byte[] dspNibbleCount, long nibbleCount, String songName) {

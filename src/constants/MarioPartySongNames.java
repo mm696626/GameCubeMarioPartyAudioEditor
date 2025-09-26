@@ -129,7 +129,7 @@ public class MarioPartySongNames {
             Map.entry(23, "Clockwork Castle"),
             Map.entry(24, "Night at the Castle"),
             Map.entry(25, "Duel/Battle"),
-            Map.entry(26, "Battle Results"),
+            Map.entry(26, "Duel/Battle (without Intro)"),
             Map.entry(27, "Bowser Theme"),
             Map.entry(28, "Bowser Theme (without Intro)"),
             Map.entry(29, "DK Theme"),
