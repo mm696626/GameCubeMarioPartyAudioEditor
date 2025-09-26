@@ -427,7 +427,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         int response = JOptionPane.showConfirmDialog(
                 this,
-                "Would you like to pick a folder of DSPs to select a song from?\n(Your choice will be remembered until closing the program)",
+                "Would you like to pick a folder of DSPs to select a song from?\n(Your choice will be remembered until closing the program or if you set a default folder)",
                 "Choose DSP Folder",
                 JOptionPane.YES_NO_OPTION
         );
