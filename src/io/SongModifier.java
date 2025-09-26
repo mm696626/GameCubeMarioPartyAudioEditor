@@ -189,26 +189,26 @@ public class SongModifier {
         return false;
     }
 
-    private static void writeDSPToPDT(RandomAccessFile pdtRaf, long newSampleRateOffset, byte[] dspSampleRate, long newNibbleCountOffset, byte[] dspNibbleCount, long newLoopStartOffset, byte[] dspLoopStart, long ch1CoefOffs, byte[] leftChannelDecodingCoeffs, long ch2CoefOffs, byte[] rightChannelDecodingCoeffs, long ch1Start, byte[] leftChannelAudio, long ch2Start, byte[] rightChannelAudio) throws IOException {
-        pdtRaf.seek(newSampleRateOffset);
-        pdtRaf.write(dspSampleRate);
+    private static void writeDSPToPDT(RandomAccessFile pdtRaf, long newDSPSampleRateOffset, byte[] newDSPSampleRate, long newDSPNibbleCountOffset, byte[] newDSPNibbleCount, long newDSPLoopStartOffset, byte[] newDSPLoopStart, long ch1CoefOffs, byte[] newDSPLeftChannelDecodingCoeffs, long ch2CoefOffs, byte[] newDSPRightChannelDecodingCoeffs, long ch1Start, byte[] newDSPLeftChannelAudio, long ch2Start, byte[] newDSPRightChannelAudio) throws IOException {
+        pdtRaf.seek(newDSPSampleRateOffset);
+        pdtRaf.write(newDSPSampleRate);
 
-        pdtRaf.seek(newNibbleCountOffset);
-        pdtRaf.write(dspNibbleCount);
+        pdtRaf.seek(newDSPNibbleCountOffset);
+        pdtRaf.write(newDSPNibbleCount);
 
-        pdtRaf.seek(newLoopStartOffset);
-        pdtRaf.write(dspLoopStart);
+        pdtRaf.seek(newDSPLoopStartOffset);
+        pdtRaf.write(newDSPLoopStart);
 
         pdtRaf.seek(ch1CoefOffs);
-        pdtRaf.write(leftChannelDecodingCoeffs);
+        pdtRaf.write(newDSPLeftChannelDecodingCoeffs);
 
         pdtRaf.seek(ch2CoefOffs);
-        pdtRaf.write(rightChannelDecodingCoeffs);
+        pdtRaf.write(newDSPRightChannelDecodingCoeffs);
 
         pdtRaf.seek(ch1Start);
-        pdtRaf.write(leftChannelAudio);
+        pdtRaf.write(newDSPLeftChannelAudio);
 
         pdtRaf.seek(ch2Start);
-        pdtRaf.write(rightChannelAudio);
+        pdtRaf.write(newDSPRightChannelAudio);
     }
 }
