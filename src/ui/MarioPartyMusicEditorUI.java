@@ -582,8 +582,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                     leftChannelFile,
                     rightChannelFile,
                     actualSongIndex,
-                    selectedSongName,
-                    false
+                    selectedSongName
             );
         }
 

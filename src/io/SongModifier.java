@@ -12,7 +12,7 @@ public class SongModifier {
     //This code is largely derived from Yoshimaster96's C PDT dumping code, so huge credit and kudos to them!
     //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
-    public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, String songName, boolean runSilently) {
+    public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, String songName) {
         try (RandomAccessFile pdtRaf = new RandomAccessFile(pdtFile, "rw")) {
             int unk00 = PDTFileIO.readU16BE(pdtRaf);
             int numFiles = PDTFileIO.readU16BE(pdtRaf);
@@ -56,19 +56,6 @@ public class SongModifier {
                 int unk11A = PDTFileIO.readU16BE(pdtRaf);
                 ch2CoefOffs = coeffOffs + (ch2CoefEntry << 5);
                 chanCount = 2;
-            }
-
-            if (chanCount == 1 && !runSilently) {
-                int response = JOptionPane.showConfirmDialog(
-                        null,
-                        "The song you're replacing isn't stereo. Do you want to continue?",
-                        "Mono DSP Found",
-                        JOptionPane.YES_NO_OPTION
-                );
-
-                if (response != JOptionPane.YES_OPTION) {
-                    return;
-                }
             }
 
             //read song info from left DSP channel (same for right, so only have to read from the left channel)
@@ -135,15 +122,10 @@ public class SongModifier {
             writeDSPToPDT(pdtRaf, newSampleRateOffset, dspSampleRate, newNibbleCount, dspNibbleCount, newLoopStartOffset, dspLoopStart, ch1CoefOffs, leftChannelDecodingCoeffs, ch2CoefOffs, rightChannelDecodingCoeffs, ch1Start, leftChannelAudio, ch2Start, rightChannelAudio);
             pdtRaf.close();
 
-            if (!runSilently) {
-                JOptionPane.showMessageDialog(null, "Finished modifying PDT file for " + songName);
-            }
-
+            JOptionPane.showMessageDialog(null, "Finished modifying PDT file for " + songName);
         } catch (Exception e) {
             e.printStackTrace();
-            if (!runSilently) {
-                JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
-            }
+            JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
         }
     }
 
