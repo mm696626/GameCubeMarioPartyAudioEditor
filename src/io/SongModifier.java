@@ -145,7 +145,7 @@ public class SongModifier {
         Scanner inputStream;
 
         try {
-            inputStream = new Scanner(new FileInputStream(selectedGame + ".txt"));
+            inputStream = new Scanner(new FileInputStream("original_sizes/" + selectedGame + ".txt"));
         }
         catch (FileNotFoundException e) {
             return -1;
@@ -162,10 +162,14 @@ public class SongModifier {
     }
 
     private static void writeDSPNibbleCountToFile(String songName, long nibbleCount, String selectedGame) {
-        PrintWriter outputStream = null;
+        PrintWriter outputStream;
 
         try {
-            outputStream = new PrintWriter(new FileOutputStream(selectedGame + ".txt", true));
+            File originalSizesFolder = new File("original_sizes");
+            if (!originalSizesFolder.exists()) {
+                originalSizesFolder.mkdirs();
+            }
+            outputStream = new PrintWriter(new FileOutputStream(new File(originalSizesFolder, selectedGame + ".txt"), true));
         }
         catch (FileNotFoundException f) {
             return;
