@@ -10,15 +10,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
@@ -36,9 +32,16 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
     private File savedDSPFolder = null;
 
+    private JLabel defaultDSPFolderLabel;
+    private JLabel defaultDumpFolderLabel;
+
+    private File defaultSavedDSPFolder = null;
+    private File defaultDumpOutputFolder = null;
 
     public MarioPartyMusicEditorUI() {
         setTitle("Mario Party GameCube Music Editor");
+        initSettingsFile();
+        loadSettingsFile();
         generateUI();
     }
 
@@ -185,6 +188,157 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         setLayout(new BorderLayout());
         add(tabbedPane, BorderLayout.CENTER);
+
+        JPanel settingsPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints settingsGBC = new GridBagConstraints();
+        settingsGBC.insets = new Insets(5, 5, 5, 5);
+        settingsGBC.fill = GridBagConstraints.HORIZONTAL;
+
+        settingsGBC.gridx = 0;
+        settingsGBC.gridy = 0;
+        settingsPanel.add(new JLabel("Default DSP Folder:"), settingsGBC);
+
+        defaultDSPFolderLabel = new JLabel(defaultSavedDSPFolder != null ? defaultSavedDSPFolder.getAbsolutePath() : "None");
+        settingsGBC.gridx = 1;
+        settingsPanel.add(defaultDSPFolderLabel, settingsGBC);
+
+        JButton chooseDefaultDSPButton = new JButton("Change");
+        chooseDefaultDSPButton.addActionListener(e -> chooseDefaultDSPFolder());
+        settingsGBC.gridx = 2;
+        settingsPanel.add(chooseDefaultDSPButton, settingsGBC);
+
+        settingsGBC.gridx = 0;
+        settingsGBC.gridy = 1;
+        settingsPanel.add(new JLabel("Default Dump Output Folder:"), settingsGBC);
+
+        defaultDumpFolderLabel = new JLabel(defaultDumpOutputFolder != null ? defaultDumpOutputFolder.getAbsolutePath() : "None");
+        settingsGBC.gridx = 1;
+        settingsPanel.add(defaultDumpFolderLabel, settingsGBC);
+
+        JButton chooseDefaultDumpButton = new JButton("Change");
+        chooseDefaultDumpButton.addActionListener(e -> chooseDefaultDumpFolder());
+        settingsGBC.gridx = 2;
+        settingsPanel.add(chooseDefaultDumpButton, settingsGBC);
+
+        JButton resetSettingsButton = new JButton("Reset Settings");
+        resetSettingsButton.addActionListener(e -> resetSettings());
+        settingsGBC.gridx = 0;
+        settingsGBC.gridy = 2;
+        settingsGBC.gridwidth = 3;
+        settingsPanel.add(resetSettingsButton, settingsGBC);
+
+        tabbedPane.addTab("Settings", settingsPanel);
+    }
+
+    private void initSettingsFile() {
+        File settingsFile = new File("settings.txt");
+        PrintWriter outputStream;
+        if (!settingsFile.exists()) {
+            try {
+                outputStream = new PrintWriter(new FileOutputStream(settingsFile));
+            }
+            catch (FileNotFoundException f) {
+                return;
+            }
+
+            outputStream.println("defaultSavedDSPFolder" + ":" + "None");
+            outputStream.println("defaultDumpOutputFolder" + ":" + "None");
+            outputStream.close();
+        }
+    }
+
+    private void loadSettingsFile() {
+        File settingsFile = new File("settings.txt");
+        Scanner inputStream;
+
+        try {
+            inputStream = new Scanner(new FileInputStream(settingsFile));
+        }
+        catch (FileNotFoundException e) {
+            return;
+        }
+
+        while (inputStream.hasNextLine()) {
+            String line = inputStream.nextLine();
+            String folderPath = line.split(":", 2)[1];
+            if (line.split(":")[0].equals("defaultSavedDSPFolder") && !folderPath.equals("None")) {
+                defaultSavedDSPFolder = new File(folderPath);
+            }
+            if (line.split(":")[0].equals("defaultDumpOutputFolder") && !folderPath.equals("None")) {
+                defaultDumpOutputFolder = new File(folderPath);
+            }
+        }
+
+        if (defaultSavedDSPFolder != null) {
+            savedDSPFolder = defaultSavedDSPFolder;
+        }
+    }
+
+    private void chooseDefaultDSPFolder() {
+        JFileChooser defaultDSPFolderChooser = new JFileChooser();
+        defaultDSPFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        defaultDSPFolderChooser.setAcceptAllFileFilterUsed(false);
+        int result = defaultDSPFolderChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            defaultSavedDSPFolder = defaultDSPFolderChooser.getSelectedFile();
+            defaultDSPFolderLabel.setText(defaultSavedDSPFolder.getAbsolutePath());
+            saveSettingsToFile();
+        }
+    }
+
+    private void chooseDefaultDumpFolder() {
+        JFileChooser defaultDumpFolderChooser = new JFileChooser();
+        defaultDumpFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        defaultDumpFolderChooser.setAcceptAllFileFilterUsed(false);
+        int result = defaultDumpFolderChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            defaultDumpOutputFolder = defaultDumpFolderChooser.getSelectedFile();
+            defaultDumpFolderLabel.setText(defaultDumpOutputFolder.getAbsolutePath());
+            saveSettingsToFile();
+        }
+    }
+
+    private void saveSettingsToFile() {
+        try (PrintWriter writer = new PrintWriter(new FileOutputStream("settings.txt"))) {
+            writer.println("defaultSavedDSPFolder:" + (defaultSavedDSPFolder != null ? defaultSavedDSPFolder.getAbsolutePath() : "None"));
+            writer.println("defaultDumpOutputFolder:" + (defaultDumpOutputFolder != null ? defaultDumpOutputFolder.getAbsolutePath() : "None"));
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Failed to save settings: " + e.getMessage());
+        }
+    }
+
+    private void resetSettings() {
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to reset all settings?",
+                "Confirm Reset",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        defaultSavedDSPFolder = null;
+        defaultDumpOutputFolder = null;
+
+        // Update the labels in the UI
+        if (defaultDSPFolderLabel != null) {
+            defaultDSPFolderLabel.setText("None");
+        }
+        if (defaultDumpFolderLabel != null) {
+            defaultDumpFolderLabel.setText("None");
+        }
+
+        try (PrintWriter writer = new PrintWriter(new FileOutputStream("settings.txt"))) {
+            writer.println("defaultSavedDSPFolder:None");
+            writer.println("defaultDumpOutputFolder:None");
+            JOptionPane.showMessageDialog(this, "Settings reset to default.");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Failed to reset settings: " + e.getMessage());
+        }
     }
 
     private void initPDTPath() {
@@ -244,7 +398,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         int response = JOptionPane.showConfirmDialog(
                 this,
-                "Would you like to pick a folder of DSPs to select a song from?\n(Your choice will be remembered until closing the program)",
+                "Would you like to pick a folder of DSPs to select a song from?\n(Your choice will be remembered until closing the program or if you set a default folder)",
                 "Choose DSP Folder",
                 JOptionPane.YES_NO_OPTION
         );
@@ -477,7 +631,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             SongDumper.dumpSong(
                     pdtFile,
                     actualSongIndex,
-                    selectedSongName
+                    selectedSongName,
+                    defaultDumpOutputFolder
             );
         }
 
