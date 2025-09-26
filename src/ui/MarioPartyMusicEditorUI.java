@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, dumpSong, dumpAllSongs, modifySong, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, dumpSong, modifySong, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -139,28 +139,11 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             }
         });
 
-        JPanel dumpPanel = new JPanel(new GridBagLayout());
-        dumpPanel.setBorder(BorderFactory.createTitledBorder("Song Dumping"));
-        GridBagConstraints dumpingGBC = new GridBagConstraints();
-        dumpingGBC.insets = new Insets(5, 5, 5, 5);
-        dumpingGBC.fill = GridBagConstraints.HORIZONTAL;
-
-        dumpSong = new JButton("Dump Selected Song");
-        dumpSong.addActionListener(this);
-
-        dumpAllSongs = new JButton("Dump All Songs");
-        dumpAllSongs.addActionListener(this);
-
-        dumpingGBC.gridx = 0; dumpingGBC.gridy = 0;
-        dumpPanel.add(dumpSong, dumpingGBC);
-        dumpingGBC.gridx = 1;
-        dumpPanel.add(dumpAllSongs, dumpingGBC);
-
-        JPanel modifyPanel = new JPanel(new GridBagLayout());
-        modifyPanel.setBorder(BorderFactory.createTitledBorder("Modify Song"));
-        GridBagConstraints modifyGBC = new GridBagConstraints();
-        modifyGBC.insets = new Insets(5, 5, 5, 5);
-        modifyGBC.fill = GridBagConstraints.HORIZONTAL;
+        JPanel songPanel = new JPanel(new GridBagLayout());
+        songPanel.setBorder(BorderFactory.createTitledBorder("Modify Song"));
+        GridBagConstraints songGBC = new GridBagConstraints();
+        songGBC.insets = new Insets(5, 5, 5, 5);
+        songGBC.fill = GridBagConstraints.HORIZONTAL;
 
         pickLeftChannel = new JButton("Select Left DSP Channel");
         pickLeftChannel.addActionListener(this);
@@ -170,28 +153,33 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         pickRightChannel.addActionListener(this);
         rightChannelLabel = new JLabel("No file selected");
 
+        dumpSong = new JButton("Dump Selected Song");
+        dumpSong.addActionListener(this);
+
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
 
-        modifyGBC.gridx = 0; modifyGBC.gridy = 0;
-        modifyPanel.add(pickLeftChannel, modifyGBC);
-        modifyGBC.gridx = 1;
-        modifyPanel.add(leftChannelLabel, modifyGBC);
+        songGBC.gridx = 0; songGBC.gridy = 0;
+        songPanel.add(pickLeftChannel, songGBC);
+        songGBC.gridx = 1;
+        songPanel.add(leftChannelLabel, songGBC);
 
-        modifyGBC.gridx = 0; modifyGBC.gridy = 1;
-        modifyPanel.add(pickRightChannel, modifyGBC);
-        modifyGBC.gridx = 1;
-        modifyPanel.add(rightChannelLabel, modifyGBC);
+        songGBC.gridx = 0; songGBC.gridy = 1;
+        songPanel.add(pickRightChannel, songGBC);
+        songGBC.gridx = 1;
+        songPanel.add(rightChannelLabel, songGBC);
 
-        modifyGBC.gridx = 0; modifyGBC.gridy = 2;
-        modifyGBC.gridwidth = 2;
-        modifyPanel.add(modifySong, modifyGBC);
+        songGBC.gridx = 0; songGBC.gridy = 2;
+        songGBC.gridwidth = 2;
+        songPanel.add(modifySong, songGBC);
+
+        songGBC.gridx = 0; songGBC.gridy = 3;
+        songGBC.gridwidth = 2;
+        songPanel.add(dumpSong, songGBC);
 
         songToolsPanel.add(songSelectionPanel);
         songToolsPanel.add(Box.createVerticalStrut(10));
-        songToolsPanel.add(dumpPanel);
-        songToolsPanel.add(Box.createVerticalStrut(10));
-        songToolsPanel.add(modifyPanel);
+        songToolsPanel.add(songPanel);
 
         tabbedPane.addTab("Song Tools", songToolsPanel);
 
@@ -491,22 +479,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                     actualSongIndex,
                     selectedSongName
             );
-        }
-
-        if (e.getSource() == dumpAllSongs) {
-            if (pdtPath.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No PDT file was chosen!");
-                return;
-            }
-
-            File pdtFile = new File(pdtPath);
-
-            if (!pdtFile.exists()) {
-                JOptionPane.showMessageDialog(this, "The chosen PDT file doesn't exist!");
-                return;
-            }
-
-            SongDumper.dumpAllSongs(pdtFile);
         }
 
         if (e.getSource() == modifySong) {

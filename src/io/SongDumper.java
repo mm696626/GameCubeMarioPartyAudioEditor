@@ -157,68 +157,6 @@ public class SongDumper {
         }
     }
 
-    public static void dumpAllSongs(File selectedFile) {
-        File outputDir = promptForOutputFolder();
-        if (outputDir == null) return;
-
-        try (RandomAccessFile raf = new RandomAccessFile(selectedFile, "r")) {
-            int unk00 = PDTFileIO.readU16BE(raf);
-            int numFiles = PDTFileIO.readU16BE(raf);
-            long unk04 = PDTFileIO.readU32BE(raf);
-            long unk08 = PDTFileIO.readU32BE(raf);
-            long unk0C = PDTFileIO.readU32BE(raf);
-            long entryOffs = PDTFileIO.readU32BE(raf);
-            long coeffOffs = PDTFileIO.readU32BE(raf);
-            long headerOffs = PDTFileIO.readU32BE(raf);
-            long streamOffs = PDTFileIO.readU32BE(raf);
-
-
-            for (int i=0; i<numFiles; i++) {
-                raf.seek(entryOffs + (i << 2));
-                long thisHeaderOffs = PDTFileIO.readU32BE(raf);
-                if (thisHeaderOffs == 0) {
-                    continue;
-                }
-
-                raf.seek(thisHeaderOffs);
-                long flags = PDTFileIO.readU32BE(raf);
-                long sampleRate = PDTFileIO.readU32BE(raf);
-                long nibbleCount = PDTFileIO.readU32BE(raf);
-                long loopStart = PDTFileIO.readU32BE(raf);
-                long ch1Start = PDTFileIO.readU32BE(raf);
-                int ch1CoefEntry = PDTFileIO.readU16BE(raf);
-                int unk116 = PDTFileIO.readU16BE(raf);
-                long ch1CoefOffs = coeffOffs + (ch1CoefEntry << 5);
-
-                long ch2Start = ch1Start;
-                int ch2CoefEntry = ch1CoefEntry;
-                long ch2CoefOffs = coeffOffs + (ch2CoefEntry << 5);
-                int chanCount = 1;
-
-                if ((flags & 0x01000000) != 0) {
-                    ch2Start = PDTFileIO.readU32BE(raf);
-                    ch2CoefEntry = PDTFileIO.readU16BE(raf);
-                    int unk11A = PDTFileIO.readU16BE(raf);
-                    ch2CoefOffs = coeffOffs + (ch2CoefEntry << 5);
-                    chanCount = 2;
-                }
-
-                int loopFlag = ((flags & 0x02000000) != 0) ? 1 : 0;
-
-                for (int j = 0; j < chanCount; j++) {
-                    String fileName = getFileNameForIndex(chanCount, j, i);
-                    File outputFile = new File(outputDir, fileName);
-                    writeDSP(outputFile.getAbsolutePath(), nibbleCount, sampleRate, loopFlag, loopStart, j, raf, ch1CoefOffs, ch1Start, ch2CoefOffs, ch2Start);
-                }
-            }
-
-            JOptionPane.showMessageDialog(null, "Finished dumping all songs from PDT file");
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
-        }
-    }
-
     private static File chooseOutputDirectory() {
         JFileChooser dspOutputFolderChooser = new JFileChooser();
         dspOutputFolderChooser.setDialogTitle("Select the DSP output folder");
@@ -231,21 +169,6 @@ public class SongDumper {
         } else {
             return null;
         }
-    }
-
-    private static String getFileNameForIndex(int chanCount, int j, int i) {
-        String fileName;
-
-        if (chanCount == 2) {
-            if (j == 0) {
-                fileName = String.format("%04d_L.dsp", i);
-            } else {
-                fileName = String.format("%04d_R.dsp", i);
-            }
-        } else {
-            fileName = String.format("%04d.dsp", i);
-        }
-        return fileName;
     }
 
     private static String getFileName(String songName, int chanCount, int j) {
