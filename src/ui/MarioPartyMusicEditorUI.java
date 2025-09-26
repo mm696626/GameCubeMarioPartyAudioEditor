@@ -140,7 +140,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         });
 
         JPanel songPanel = new JPanel(new GridBagLayout());
-        songPanel.setBorder(BorderFactory.createTitledBorder("Modify Song"));
+        songPanel.setBorder(BorderFactory.createTitledBorder("Dump/Modify Song"));
         GridBagConstraints songGBC = new GridBagConstraints();
         songGBC.insets = new Insets(5, 5, 5, 5);
         songGBC.fill = GridBagConstraints.HORIZONTAL;
