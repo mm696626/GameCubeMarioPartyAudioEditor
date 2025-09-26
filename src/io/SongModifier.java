@@ -189,11 +189,11 @@ public class SongModifier {
         return false;
     }
 
-    private static void writeDSPToPDT(RandomAccessFile pdtRaf, long newSampleRateOffset, byte[] dspSampleRate, long newNibbleCount, byte[] dspNibbleCount, long newLoopStartOffset, byte[] dspLoopStart, long ch1CoefOffs, byte[] leftChannelDecodingCoeffs, long ch2CoefOffs, byte[] rightChannelDecodingCoeffs, long ch1Start, byte[] leftChannelAudio, long ch2Start, byte[] rightChannelAudio) throws IOException {
+    private static void writeDSPToPDT(RandomAccessFile pdtRaf, long newSampleRateOffset, byte[] dspSampleRate, long newNibbleCountOffset, byte[] dspNibbleCount, long newLoopStartOffset, byte[] dspLoopStart, long ch1CoefOffs, byte[] leftChannelDecodingCoeffs, long ch2CoefOffs, byte[] rightChannelDecodingCoeffs, long ch1Start, byte[] leftChannelAudio, long ch2Start, byte[] rightChannelAudio) throws IOException {
         pdtRaf.seek(newSampleRateOffset);
         pdtRaf.write(dspSampleRate);
 
-        pdtRaf.seek(newNibbleCount);
+        pdtRaf.seek(newNibbleCountOffset);
         pdtRaf.write(dspNibbleCount);
 
         pdtRaf.seek(newLoopStartOffset);
