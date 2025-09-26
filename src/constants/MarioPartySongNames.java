@@ -40,7 +40,7 @@ public class MarioPartySongNames {
             Map.entry(38, "Sign Attack"),
             Map.entry(39, "How about a Card?"),
             Map.entry(40, "Card Party"),
-            Map.entry(41, "Super Duel Mode Garage"),
+            Map.entry(41, "Secret Garage"),
             Map.entry(43, "Burning Challenger"),
             Map.entry(44, "Knock em Out"),
             Map.entry(45, "Plunder"),
