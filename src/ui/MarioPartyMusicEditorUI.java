@@ -179,32 +179,32 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         setLayout(new BorderLayout());
         add(tabbedPane, BorderLayout.CENTER);
 
-        JPanel settingsPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints settingsGBC = new GridBagConstraints();
-        settingsGBC.insets = new Insets(5, 5, 5, 5);
-        settingsGBC.fill = GridBagConstraints.HORIZONTAL;
+        JPanel defaultDSPFolderSettingPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints defaultDSPFolderSettingGBC = new GridBagConstraints();
+        defaultDSPFolderSettingGBC.insets = new Insets(5, 5, 5, 5);
+        defaultDSPFolderSettingGBC.fill = GridBagConstraints.HORIZONTAL;
 
-        settingsGBC.gridx = 0;
-        settingsGBC.gridy = 0;
-        settingsPanel.add(new JLabel("Default DSP Folder:"), settingsGBC);
+        defaultDSPFolderSettingGBC.gridx = 0;
+        defaultDSPFolderSettingGBC.gridy = 0;
+        defaultDSPFolderSettingPanel.add(new JLabel("Default DSP Folder:"), defaultDSPFolderSettingGBC);
 
         defaultDSPFolderLabel = new JLabel(defaultSavedDSPFolder != null ? defaultSavedDSPFolder.getAbsolutePath() : "None");
-        settingsGBC.gridx = 1;
-        settingsPanel.add(defaultDSPFolderLabel, settingsGBC);
+        defaultDSPFolderSettingGBC.gridx = 1;
+        defaultDSPFolderSettingPanel.add(defaultDSPFolderLabel, defaultDSPFolderSettingGBC);
 
         JButton chooseDefaultDSPButton = new JButton("Change");
         chooseDefaultDSPButton.addActionListener(e -> chooseDefaultDSPFolder());
-        settingsGBC.gridx = 2;
-        settingsPanel.add(chooseDefaultDSPButton, settingsGBC);
+        defaultDSPFolderSettingGBC.gridx = 2;
+        defaultDSPFolderSettingPanel.add(chooseDefaultDSPButton, defaultDSPFolderSettingGBC);
 
-        JButton resetSettingsButton = new JButton("Reset Settings");
+        JButton resetSettingsButton = new JButton("Reset Default DSP Folder");
         resetSettingsButton.addActionListener(e -> resetSettings());
-        settingsGBC.gridx = 0;
-        settingsGBC.gridy = 1;
-        settingsGBC.gridwidth = 3;
-        settingsPanel.add(resetSettingsButton, settingsGBC);
+        defaultDSPFolderSettingGBC.gridx = 0;
+        defaultDSPFolderSettingGBC.gridy = 1;
+        defaultDSPFolderSettingGBC.gridwidth = 3;
+        defaultDSPFolderSettingPanel.add(resetSettingsButton, defaultDSPFolderSettingGBC);
 
-        tabbedPane.addTab("Settings", settingsPanel);
+        tabbedPane.addTab("Default DSP Folder Setting", defaultDSPFolderSettingPanel);
     }
 
     private void initSettingsFile() {
@@ -271,7 +271,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private void resetSettings() {
         int confirm = JOptionPane.showConfirmDialog(
                 this,
-                "Are you sure you want to reset all settings?",
+                "Are you sure you want to reset the default DSP folder setting?",
                 "Confirm Reset",
                 JOptionPane.YES_NO_OPTION
         );
@@ -282,16 +282,15 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         defaultSavedDSPFolder = null;
 
-        // Update the labels in the UI
         if (defaultDSPFolderLabel != null) {
             defaultDSPFolderLabel.setText("None");
         }
 
         try (PrintWriter writer = new PrintWriter(new FileOutputStream("settings.txt"))) {
             writer.println("defaultSavedDSPFolder:None");
-            JOptionPane.showMessageDialog(this, "Settings reset to default.");
+            JOptionPane.showMessageDialog(this, "Setting reset to default.");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Failed to reset settings: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Failed to reset setting: " + e.getMessage());
         }
     }
 
