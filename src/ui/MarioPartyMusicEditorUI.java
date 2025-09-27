@@ -738,7 +738,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            SongModifier.modifySong(
+            boolean modifySuccessful = SongModifier.modifySong(
                     pdtFile,
                     leftChannelFile,
                     rightChannelFile,
@@ -747,7 +747,9 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                     selectedGame
             );
 
-            JOptionPane.showMessageDialog(null, "Finished modifying PDT file for " + selectedSongName);
+            if (modifySuccessful) {
+                JOptionPane.showMessageDialog(null, "Finished modifying PDT file for " + selectedSongName);
+            }
         }
 
         if (e.getSource() == selectGame) {

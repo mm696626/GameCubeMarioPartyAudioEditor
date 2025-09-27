@@ -11,7 +11,7 @@ public class SongModifier {
     //This code is largely derived from Yoshimaster96's C PDT dumping code, so huge credit and kudos to them!
     //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
-    public static void modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, String songName, String selectedGame) {
+    public static boolean modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, String songName, String selectedGame) {
         try (RandomAccessFile pdtRaf = new RandomAccessFile(pdtFile, "rw")) {
             int unk00 = readU16BE(pdtRaf);
             int numFiles = readU16BE(pdtRaf);
@@ -24,13 +24,13 @@ public class SongModifier {
             long streamOffs = readU32BE(pdtRaf);
 
             if (songIndex < 0 || songIndex >= numFiles) {
-                return;
+                return false;
             }
 
             pdtRaf.seek(entryOffs + (songIndex << 2));
             long thisHeaderOffs = readU32BE(pdtRaf);
             if (thisHeaderOffs == 0) {
-                return;
+                return false;
             }
 
             pdtRaf.seek(thisHeaderOffs);
@@ -120,7 +120,7 @@ public class SongModifier {
                 nibbleCount = originalNibbleCount;
             }
 
-            if (isInvalidSize(newDSPNibbleCount, nibbleCount, songName)) return;
+            if (isInvalidSize(newDSPNibbleCount, nibbleCount, songName)) return false;
 
             //if the nibble count here is -1, then the song hasn't been replaced yet, so write it
             if (originalNibbleCount == -1) {
@@ -132,9 +132,11 @@ public class SongModifier {
             long newDSPLoopStartOffset = thisHeaderOffs + 12;
 
             writeDSPToPDT(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, ch1Start, newDSPLeftChannelAudio, ch2Start, newDSPRightChannelAudio);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
+            return false;
         }
     }
 
