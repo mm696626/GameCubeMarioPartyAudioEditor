@@ -239,7 +239,7 @@ public class MarioPartySongNames {
             Map.entry(24, "What's the Score?"),
             Map.entry(26, "Closing In"),
             Map.entry(27, "The Afterparty"),
-            Map.entry(29, "Who's Will Win?"),
+            Map.entry(29, "Who Will Win?"),
             Map.entry(30, "Hail to the King"),
             Map.entry(31, "Take Me to Partytown"),
             Map.entry(32, "Minigames at Dawn"),
