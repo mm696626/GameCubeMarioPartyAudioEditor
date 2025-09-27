@@ -659,6 +659,17 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         return new File(pdtFile.getParent(), backupFileName);
     }
 
+    private void backupPDT(File pdtFile) {
+        try {
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            File backupFile = getPDTFileName(pdtFile, timestamp);
+
+            Files.copy(pdtFile.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Failed to create backup: " + ex.getMessage());
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == pickLeftChannel) {
@@ -702,14 +713,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             );
 
             if (response == JOptionPane.YES_OPTION) {
-                try {
-                    String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                    File backupFile = getPDTFileName(pdtFile, timestamp);
-
-                    Files.copy(pdtFile.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(null, "Failed to create backup: " + ex.getMessage());
-                }
+                backupPDT(pdtFile);
             }
 
             String selectedSongName = (String) songNames.getSelectedItem();
@@ -814,13 +818,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             );
 
             if (response == JOptionPane.YES_OPTION) {
-                try {
-                    String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                    File backup = getPDTFileName(pdtFile, timestamp);
-                    Files.copy(pdtFile.toPath(), backup.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "Backup failed: " + ex.getMessage());
-                }
+                backupPDT(pdtFile);
             }
 
             Map<Integer, String> songMap = getSongNameMapForSelectedGame();
