@@ -256,6 +256,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         if (result == JFileChooser.APPROVE_OPTION) {
             defaultSavedDSPFolder = defaultDSPFolderChooser.getSelectedFile();
             defaultDSPFolderLabel.setText(defaultSavedDSPFolder.getAbsolutePath());
+            savedDSPFolder = defaultSavedDSPFolder;
             saveSettingsToFile();
         }
     }
