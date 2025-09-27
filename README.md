@@ -28,8 +28,7 @@
   * https://github.com/libertyernie/LoopingAudioConverter
 
 ### Special Thanks/Credits
-* This project wouldn't be possible without the work of Yoshimaster96. Huge props to them!
-* Their dumping code was crucial to get this project off the ground
+* This project wouldn't be possible without the work of Yoshimaster96. Huge props to them! Their dumping code was crucial to get this project off the ground
   * https://github.com/Yoshimaster96/mpgc-sound-tools/blob/main/dump_pdt.c
 * Also, this documentation on the DSP format helped a lot too
   * https://www.metroid2002.com/retromodding/wiki/DSP_(File_Format)
