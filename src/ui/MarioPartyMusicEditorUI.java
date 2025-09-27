@@ -40,7 +40,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
     private DefaultListModel<ModifyJob> jobQueueModel;
     private JList<ModifyJob> jobQueueList;
-    private JButton addToQueueButton, modifyQueueButton, removeQueueButton, clearQueueButton, runBatchButton;
+    private JButton addToQueueButton, removeQueueButton, clearQueueButton, runBatchButton;
 
     public MarioPartyMusicEditorUI() {
         setTitle("Mario Party GameCube Music Editor");
@@ -197,21 +197,18 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         JScrollPane scrollPane = new JScrollPane(jobQueueList);
 
-        JPanel queueButtonPanel = new JPanel(new GridLayout(1, 5, 5, 5));
+        JPanel queueButtonPanel = new JPanel(new GridLayout(1, 4, 5, 5));
         addToQueueButton = new JButton("Add");
-        modifyQueueButton = new JButton("Modify");
         removeQueueButton = new JButton("Remove");
         clearQueueButton = new JButton("Clear All");
         runBatchButton = new JButton("Run Batch");
 
         addToQueueButton.addActionListener(this);
-        modifyQueueButton.addActionListener(this);
         removeQueueButton.addActionListener(this);
         clearQueueButton.addActionListener(this);
         runBatchButton.addActionListener(this);
 
         queueButtonPanel.add(addToQueueButton);
-        queueButtonPanel.add(modifyQueueButton);
         queueButtonPanel.add(removeQueueButton);
         queueButtonPanel.add(clearQueueButton);
         queueButtonPanel.add(runBatchButton);
@@ -764,22 +761,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
             jobQueueModel.addElement(new ModifyJob(songName, leftChannelPath, rightChannelPath));
-        }
-
-        if (e.getSource() == modifyQueueButton) {
-            int selectedIndex = jobQueueList.getSelectedIndex();
-            if (selectedIndex == -1) {
-                JOptionPane.showMessageDialog(this, "Select a job to modify.");
-                return;
-            }
-
-            String songName = (String) songNames.getSelectedItem();
-            if (songName == null || leftChannelPath.isEmpty() || rightChannelPath.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please select song and both DSP channels before modifying.");
-                return;
-            }
-
-            jobQueueModel.setElementAt(new ModifyJob(songName, leftChannelPath, rightChannelPath), selectedIndex);
         }
 
         if (e.getSource() == removeQueueButton) {
