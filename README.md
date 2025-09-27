@@ -8,27 +8,28 @@
 * There's only a few songs that are even in the PDT, so I didn't bother
 
 ### Notes
-* Music audio must be in DSP format
-* As of now, it's not possible to have songs that are larger than the original be the replacement
+* Audio must be in DSP format split into two channels
+* As of now, it's not possible to have songs that are larger in file size than the original be the replacement
   * Honestly, this is fine since Mario Party songs don't play for more than a minute anyway and the music restarts on a new event
-  * If anyone wants to figure this out, go right ahead!
+  * It's rare if there'd be a case where a long song is needed anyway
 * This tool will attempt to auto select the other track of your song, so name it either with the same file name appended with _L and _R or (channel 0) and (channel 1)
   * Example: mario_L.dsp and mario_R.dsp or luigi (channel 0).dsp and luigi (channel 1).dsp
   * It will do the same with the PDT itself as well in order to identify what game it's for. Keep the file name untouched
 
 ### Tip for Quality vs Size
-* I recommend changing the sample rate of your track (the ones listed here are 32kHz, 22.05 kHz, 16 kHz, and 8kHz)
-  * 32000 Hz (What Hudson Soft used) (make sure your song isn't longer)
+* I recommend lowering the sample rate of your track (the ones listed here are 22.05 kHz, 16 kHz, and 8kHz)
   * 22050 Hz (Half of CD quality)
   * 16000 Hz (the bare minium to be listenable)
   * 8000 Hz (compressed telephone quality)
 * Keep your songs around the same length for higher quality
+* Experiment to see what works best for the song you're using
 * File size limitations are pretty strict and this tool doesn't rewrite the file's pointers
 * I use this program to create DSPs
   * https://github.com/libertyernie/LoopingAudioConverter
 
 ### Special Thanks/Credits
 * This project wouldn't be possible without the work of Yoshimaster96. Huge props to them!
+* Their dumping code was crucial to get this project off the ground
   * https://github.com/Yoshimaster96/mpgc-sound-tools/blob/main/dump_pdt.c
 * Also, this documentation on the DSP format helped a lot too
   * https://www.metroid2002.com/retromodding/wiki/DSP_(File_Format)
