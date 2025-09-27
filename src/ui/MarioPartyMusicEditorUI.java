@@ -2,6 +2,7 @@ package ui;
 
 import constants.MarioPartySongNames;
 import io.DSPPair;
+import io.ModifyJob;
 import io.SongModifier;
 
 import javax.swing.*;
@@ -36,6 +37,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
     private File defaultSavedDSPFolder = null;
     private File defaultPDTFile = null;
+
+    private DefaultListModel<ModifyJob> jobQueueModel;
+    private JList<ModifyJob> jobQueueList;
+    private JButton addToQueueButton, modifyQueueButton, removeQueueButton, clearQueueButton, runBatchButton;
 
     public MarioPartyMusicEditorUI() {
         setTitle("Mario Party GameCube Music Editor");
@@ -183,6 +188,40 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         tabbedPane.addTab("Modify Songs", songToolsPanel);
 
+        JPanel queuePanel = new JPanel(new BorderLayout());
+        queuePanel.setBorder(BorderFactory.createTitledBorder("Batch Job Queue"));
+
+        jobQueueModel = new DefaultListModel<>();
+        jobQueueList = new JList<>(jobQueueModel);
+        jobQueueList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        JScrollPane scrollPane = new JScrollPane(jobQueueList);
+
+        JPanel queueButtonPanel = new JPanel(new GridLayout(1, 5, 5, 5));
+        addToQueueButton = new JButton("Add");
+        modifyQueueButton = new JButton("Modify");
+        removeQueueButton = new JButton("Remove");
+        clearQueueButton = new JButton("Clear All");
+        runBatchButton = new JButton("Run Batch");
+
+        addToQueueButton.addActionListener(this);
+        modifyQueueButton.addActionListener(this);
+        removeQueueButton.addActionListener(this);
+        clearQueueButton.addActionListener(this);
+        runBatchButton.addActionListener(this);
+
+        queueButtonPanel.add(addToQueueButton);
+        queueButtonPanel.add(modifyQueueButton);
+        queueButtonPanel.add(removeQueueButton);
+        queueButtonPanel.add(clearQueueButton);
+        queueButtonPanel.add(runBatchButton);
+
+        queuePanel.add(scrollPane, BorderLayout.CENTER);
+        queuePanel.add(queueButtonPanel, BorderLayout.SOUTH);
+
+        songToolsPanel.add(Box.createVerticalStrut(10));
+        songToolsPanel.add(queuePanel);
+
         setLayout(new BorderLayout());
         add(tabbedPane, BorderLayout.CENTER);
 
@@ -203,7 +242,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         chooseDefaultDSPButton.addActionListener(e -> chooseDefaultDSPFolder());
         settingsGBC.gridx = 2;
         settingsPanel.add(chooseDefaultDSPButton, settingsGBC);
-
 
         defaultPDTFileLabel = new JLabel(defaultPDTFile != null ? defaultPDTFile.getAbsolutePath() : "None");
 
@@ -707,10 +745,123 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                     selectedSongName,
                     selectedGame
             );
+
+            JOptionPane.showMessageDialog(null, "Finished modifying PDT file for " + selectedSongName);
         }
 
         if (e.getSource() == selectGame) {
             initPDTPath();
+        }
+
+        if (e.getSource() == addToQueueButton) {
+            String songName = (String) songNames.getSelectedItem();
+            if (songName == null || leftChannelPath.isEmpty() || rightChannelPath.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please select song and both DSP channels before adding.");
+                return;
+            }
+            jobQueueModel.addElement(new ModifyJob(songName, leftChannelPath, rightChannelPath));
+        }
+
+        if (e.getSource() == modifyQueueButton) {
+            int selectedIndex = jobQueueList.getSelectedIndex();
+            if (selectedIndex == -1) {
+                JOptionPane.showMessageDialog(this, "Select a job to modify.");
+                return;
+            }
+
+            String songName = (String) songNames.getSelectedItem();
+            if (songName == null || leftChannelPath.isEmpty() || rightChannelPath.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please select song and both DSP channels before modifying.");
+                return;
+            }
+
+            jobQueueModel.setElementAt(new ModifyJob(songName, leftChannelPath, rightChannelPath), selectedIndex);
+        }
+
+        if (e.getSource() == removeQueueButton) {
+            int selectedIndex = jobQueueList.getSelectedIndex();
+            if (selectedIndex != -1) {
+                jobQueueModel.remove(selectedIndex);
+            }
+        }
+
+        if (e.getSource() == clearQueueButton) {
+            jobQueueModel.clear();
+        }
+
+        if (e.getSource() == runBatchButton) {
+            if (jobQueueModel.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Queue is empty!");
+                return;
+            }
+
+            if (pdtPath.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No PDT file was chosen!");
+                return;
+            }
+
+            File pdtFile = new File(pdtPath);
+            if (!pdtFile.exists()) {
+                JOptionPane.showMessageDialog(this, "The selected PDT file doesn't exist!");
+                return;
+            }
+
+            int response = JOptionPane.showConfirmDialog(
+                    this,
+                    "This will modify the PDT for all jobs in the queue.\nDo you want to back up the PDT file first?",
+                    "Backup?",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (response == JOptionPane.YES_OPTION) {
+                try {
+                    String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                    File backup = getPDTFileName(pdtFile, timestamp);
+                    Files.copy(pdtFile.toPath(), backup.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Backup failed: " + ex.getMessage());
+                }
+            }
+
+            Map<Integer, String> songMap = getSongNameMapForSelectedGame();
+            if (songMap == null) return;
+
+            for (int i = 0; i < jobQueueModel.size(); i++) {
+                ModifyJob modifyJob = jobQueueModel.getElementAt(i);
+
+                int songIndex = -1;
+                for (Map.Entry<Integer, String> entry : songMap.entrySet()) {
+                    if (entry.getValue().equals(modifyJob.getSongName())) {
+                        songIndex = entry.getKey();
+                        break;
+                    }
+                }
+
+                if (songIndex == -1) {
+                    JOptionPane.showMessageDialog(this, "Song \"" + modifyJob.getSongName() + "\" not found in song map.");
+                    continue;
+                }
+
+                File leftDSP = new File(modifyJob.getLeftDSP());
+                File rightDSP = new File(modifyJob.getRightDSP());
+
+                if (!leftDSP.exists() || !rightDSP.exists()) {
+                    JOptionPane.showMessageDialog(this, "DSP files for \"" + modifyJob.getSongName() + "\" not found. Skipping.");
+                    continue;
+                }
+
+                SongModifier.modifySong(
+                        pdtFile,
+                        leftDSP,
+                        rightDSP,
+                        songIndex,
+                        modifyJob.getSongName(),
+                        selectedGame
+                );
+            }
+
+            JOptionPane.showMessageDialog(this, "Batch process completed.");
+            jobQueueModel.clear();
         }
     }
 }

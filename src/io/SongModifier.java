@@ -132,9 +132,6 @@ public class SongModifier {
             long newDSPLoopStartOffset = thisHeaderOffs + 12;
 
             writeDSPToPDT(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, ch1Start, newDSPLeftChannelAudio, ch2Start, newDSPRightChannelAudio);
-            pdtRaf.close();
-
-            JOptionPane.showMessageDialog(null, "Finished modifying PDT file for " + songName);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
