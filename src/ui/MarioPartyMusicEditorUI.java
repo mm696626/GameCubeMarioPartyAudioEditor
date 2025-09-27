@@ -817,7 +817,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 }
 
                 if (songIndex == -1) {
-                    JOptionPane.showMessageDialog(this, "Song \"" + modifyJob.getSongName() + "\" not found in song map.");
+                    JOptionPane.showMessageDialog(this, modifyJob.getSongName() + " not found in song map.");
                     continue;
                 }
 
@@ -825,7 +825,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 File rightDSP = new File(modifyJob.getRightDSP());
 
                 if (!leftDSP.exists() || !rightDSP.exists()) {
-                    JOptionPane.showMessageDialog(this, "DSP files for \"" + modifyJob.getSongName() + "\" not found. Skipping.");
+                    JOptionPane.showMessageDialog(this, "DSP files for " + modifyJob.getSongName() + " not found. Skipping.");
                     continue;
                 }
 
