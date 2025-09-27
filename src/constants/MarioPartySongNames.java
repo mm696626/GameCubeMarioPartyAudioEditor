@@ -218,7 +218,7 @@ public class MarioPartySongNames {
             Map.entry(3, "Set Sail for Fun"),
             Map.entry(4, "Cruise Choices"),
             Map.entry(5, "Dueling Range"),
-            Map.entry(6, "Options Mode"),
+            Map.entry(6, "Decision Makers"),
             Map.entry(7, "The Last Hurrah"),
             Map.entry(8, "Many Thanks"),
             Map.entry(9, "Get This Party Started"),
