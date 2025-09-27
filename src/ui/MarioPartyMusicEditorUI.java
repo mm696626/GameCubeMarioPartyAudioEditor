@@ -32,8 +32,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private File savedDSPFolder = null;
 
     private JLabel defaultDSPFolderLabel;
+    private JLabel defaultPDTFileLabel;
 
     private File defaultSavedDSPFolder = null;
+    private File defaultPDTFile = null;
 
     public MarioPartyMusicEditorUI() {
         setTitle("Mario Party GameCube Music Editor");
@@ -53,8 +55,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         selectGame = new JButton("Select PDT and Game");
         selectGame.addActionListener(this);
 
-        pdtFilePathLabel = new JLabel("No PDT file selected");
-        selectedGameLabel = new JLabel("No game selected");
+        if (defaultPDTFile == null || !defaultPDTFile.exists()) {
+            pdtFilePathLabel = new JLabel("No PDT file selected");
+            selectedGameLabel = new JLabel("No game selected");
+        }
 
         chooseGameGBC.gridx = 0; chooseGameGBC.gridy = 0;
         chooseGamePanel.add(selectGame, chooseGameGBC);
@@ -80,7 +84,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         JTextField songSearchField = new JTextField();
 
         JLabel songLabel = new JLabel("Chosen Song:");
-        songNames = new JComboBox<>();
+
+        if (songNames == null) {
+            songNames = new JComboBox<>();
+        }
 
         songSelectionGBC.gridx = 0;
         songSelectionGBC.gridy = 0;
@@ -179,32 +186,75 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         setLayout(new BorderLayout());
         add(tabbedPane, BorderLayout.CENTER);
 
-        JPanel defaultDSPFolderSettingPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints defaultDSPFolderSettingGBC = new GridBagConstraints();
-        defaultDSPFolderSettingGBC.insets = new Insets(5, 5, 5, 5);
-        defaultDSPFolderSettingGBC.fill = GridBagConstraints.HORIZONTAL;
+        JPanel settingsPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints settingsGBC = new GridBagConstraints();
+        settingsGBC.insets = new Insets(5, 5, 5, 5);
+        settingsGBC.fill = GridBagConstraints.HORIZONTAL;
 
-        defaultDSPFolderSettingGBC.gridx = 0;
-        defaultDSPFolderSettingGBC.gridy = 0;
-        defaultDSPFolderSettingPanel.add(new JLabel("Default DSP Folder:"), defaultDSPFolderSettingGBC);
+        settingsGBC.gridx = 0;
+        settingsGBC.gridy = 0;
+        settingsPanel.add(new JLabel("Default DSP Folder:"), settingsGBC);
 
         defaultDSPFolderLabel = new JLabel(defaultSavedDSPFolder != null ? defaultSavedDSPFolder.getAbsolutePath() : "None");
-        defaultDSPFolderSettingGBC.gridx = 1;
-        defaultDSPFolderSettingPanel.add(defaultDSPFolderLabel, defaultDSPFolderSettingGBC);
+        settingsGBC.gridx = 1;
+        settingsPanel.add(defaultDSPFolderLabel, settingsGBC);
 
         JButton chooseDefaultDSPButton = new JButton("Change");
         chooseDefaultDSPButton.addActionListener(e -> chooseDefaultDSPFolder());
-        defaultDSPFolderSettingGBC.gridx = 2;
-        defaultDSPFolderSettingPanel.add(chooseDefaultDSPButton, defaultDSPFolderSettingGBC);
+        settingsGBC.gridx = 2;
+        settingsPanel.add(chooseDefaultDSPButton, settingsGBC);
 
-        JButton resetSettingsButton = new JButton("Reset Default DSP Folder");
+
+        defaultPDTFileLabel = new JLabel(defaultPDTFile != null ? defaultPDTFile.getAbsolutePath() : "None");
+
+        settingsGBC.gridx = 0;
+        settingsGBC.gridy = 1;
+        settingsGBC.gridwidth = 1;
+        settingsPanel.add(new JLabel("Default PDT File:"), settingsGBC);
+
+        settingsGBC.gridx = 1;
+        settingsPanel.add(defaultPDTFileLabel, settingsGBC);
+
+        JButton chooseDefaultPDTButton = new JButton("Change");
+        chooseDefaultPDTButton.addActionListener(e -> {
+            JFileChooser pdtChooser = new JFileChooser();
+            pdtChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            pdtChooser.setDialogTitle("Select Default PDT File");
+            FileNameExtensionFilter pdtFilter = new FileNameExtensionFilter("PDT Files", "pdt");
+            pdtChooser.setFileFilter(pdtFilter);
+            pdtChooser.setAcceptAllFileFilterUsed(false);
+
+            int result = pdtChooser.showOpenDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                defaultPDTFile = pdtChooser.getSelectedFile();
+                defaultPDTFileLabel.setText(defaultPDTFile.getAbsolutePath());
+                pdtPath = defaultPDTFile.getAbsolutePath();
+                pdtFilePathLabel.setText("Selected PDT: " + pdtPath);
+
+                String name = defaultPDTFile.getName().toLowerCase();
+                switch (name) {
+                    case "mp5_str.pdt": selectedGame = "Mario Party 5"; break;
+                    case "mp6_str.pdt": selectedGame = "Mario Party 6"; break;
+                    case "mp7_str.pdt": selectedGame = "Mario Party 7"; break;
+                }
+
+                selectedGameLabel.setText("Selected Game: " + selectedGame);
+                updateSongList();
+
+                saveSettingsToFile();
+            }
+        });
+        settingsGBC.gridx = 2;
+        settingsPanel.add(chooseDefaultPDTButton, settingsGBC);
+
+        JButton resetSettingsButton = new JButton("Reset Settings");
         resetSettingsButton.addActionListener(e -> resetSettings());
-        defaultDSPFolderSettingGBC.gridx = 0;
-        defaultDSPFolderSettingGBC.gridy = 1;
-        defaultDSPFolderSettingGBC.gridwidth = 3;
-        defaultDSPFolderSettingPanel.add(resetSettingsButton, defaultDSPFolderSettingGBC);
+        settingsGBC.gridx = 0;
+        settingsGBC.gridy = 2;
+        settingsGBC.gridwidth = 3;
+        settingsPanel.add(resetSettingsButton, settingsGBC);
 
-        tabbedPane.addTab("Default DSP Folder Setting", defaultDSPFolderSettingPanel);
+        tabbedPane.addTab("Settings", settingsPanel);
     }
 
     private void initSettingsFile() {
@@ -219,31 +269,56 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             }
 
             outputStream.println("defaultSavedDSPFolder" + ":" + "None");
+            outputStream.println("defaultPDTFile:None");
             outputStream.close();
         }
     }
 
     private void loadSettingsFile() {
         File settingsFile = new File("settings.txt");
-        Scanner inputStream;
+        try (Scanner inputStream = new Scanner(new FileInputStream(settingsFile))) {
+            while (inputStream.hasNextLine()) {
+                String line = inputStream.nextLine();
+                String[] parts = line.split(":", 2);
+                if (parts.length < 2) continue;
+                String key = parts[0];
+                String value = parts[1];
 
-        try {
-            inputStream = new Scanner(new FileInputStream(settingsFile));
-        }
-        catch (FileNotFoundException e) {
-            return;
-        }
-
-        while (inputStream.hasNextLine()) {
-            String line = inputStream.nextLine();
-            String folderPath = line.split(":", 2)[1];
-            if (line.split(":")[0].equals("defaultSavedDSPFolder") && !folderPath.equals("None")) {
-                defaultSavedDSPFolder = new File(folderPath);
+                switch (key) {
+                    case "defaultSavedDSPFolder":
+                        if (!value.equals("None")) defaultSavedDSPFolder = new File(value);
+                        break;
+                    case "defaultPDTFile":
+                        if (!value.equals("None")) defaultPDTFile = new File(value);
+                        break;
+                }
             }
-        }
 
-        if (defaultSavedDSPFolder != null) {
-            savedDSPFolder = defaultSavedDSPFolder;
+            if (defaultSavedDSPFolder != null && defaultSavedDSPFolder.exists()) {
+                savedDSPFolder = defaultSavedDSPFolder;
+            }
+
+            if (defaultPDTFile != null && defaultPDTFile.exists()) {
+                pdtPath = defaultPDTFile.getAbsolutePath();
+                pdtFilePathLabel = new JLabel("No PDT file selected");
+                pdtFilePathLabel.setText("Selected PDT: " + pdtPath);
+
+                String pdtFileName = defaultPDTFile.getName().toLowerCase();
+                switch (pdtFileName) {
+                    case "mp5_str.pdt": selectedGame = "Mario Party 5"; break;
+                    case "mp6_str.pdt": selectedGame = "Mario Party 6"; break;
+                    case "mp7_str.pdt": selectedGame = "Mario Party 7"; break;
+                }
+
+                if (selectedGame != null) {
+                    selectedGameLabel = new JLabel("No game selected");
+                    selectedGameLabel.setText("Selected Game: " + selectedGame);
+                    updateSongList();
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            return;
         }
     }
 
@@ -264,6 +339,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private void saveSettingsToFile() {
         try (PrintWriter writer = new PrintWriter(new FileOutputStream("settings.txt"))) {
             writer.println("defaultSavedDSPFolder:" + (defaultSavedDSPFolder != null ? defaultSavedDSPFolder.getAbsolutePath() : "None"));
+            writer.println("defaultPDTFile:" + (defaultPDTFile != null ? defaultPDTFile.getAbsolutePath() : "None"));
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Failed to save settings: " + e.getMessage());
         }
@@ -272,7 +348,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private void resetSettings() {
         int confirm = JOptionPane.showConfirmDialog(
                 this,
-                "Are you sure you want to reset the default DSP folder setting?",
+                "Are you sure you want to reset the settings?",
                 "Confirm Reset",
                 JOptionPane.YES_NO_OPTION
         );
@@ -287,8 +363,15 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             defaultDSPFolderLabel.setText("None");
         }
 
+        defaultPDTFile = null;
+
+        if (defaultPDTFileLabel != null) {
+            defaultPDTFileLabel.setText("None");
+        }
+
         try (PrintWriter writer = new PrintWriter(new FileOutputStream("settings.txt"))) {
             writer.println("defaultSavedDSPFolder:None");
+            writer.println("defaultPDTFile:None");
             JOptionPane.showMessageDialog(this, "Setting reset to default.");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Failed to reset setting: " + e.getMessage());
@@ -501,6 +584,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
     private void updateSongList() {
         Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
+
+        if (songNames == null) {
+            songNames = new JComboBox<>();
+        }
 
         if (songNameMap != null) {
             ArrayList<String> songList = new ArrayList<>(songNameMap.values());
