@@ -187,7 +187,7 @@ public class SongModifier {
                 | (dspNibbleCount[3] & 0xFF));
 
         if (newDSPSize > nibbleCount) {
-            JOptionPane.showMessageDialog(null, "Your replacement for " + songName + " is too big! Try again!");
+            JOptionPane.showMessageDialog(null, String.format("Your replacement for %s is %,d nibbles and the original is %,d nibbles! Try again!", songName, newDSPSize, nibbleCount));
             return true;
         }
         return false;
