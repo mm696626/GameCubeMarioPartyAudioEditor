@@ -6,7 +6,7 @@
 ### Why isn't most of Mario Party 4's soundtrack editable?
 * Simple! Most of the music in that game is sequenced, not streamed
 
-### Notes
+### Music Notes
 * Audio must be in DSP format split into two channels
 * As of now, it's not possible to have songs that are larger in file size than the original be the replacement
   * Honestly, this is fine since Mario Party songs don't play for more than a minute anyway and the music restarts on a new event
