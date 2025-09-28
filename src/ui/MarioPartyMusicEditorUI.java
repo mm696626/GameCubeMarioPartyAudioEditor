@@ -16,7 +16,7 @@ import java.util.*;
 
 public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpAllSounds, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpAllSounds, replaceSoundBank, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -174,6 +174,9 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         dumpAllSounds = new JButton("Dump All Sounds");
         dumpAllSounds.addActionListener(this);
 
+        replaceSoundBank = new JButton("Replace Sound Bank");
+        replaceSoundBank.addActionListener(this);
+
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
 
@@ -198,10 +201,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         songGBC.gridx = 1; songGBC.gridy = 3;
         songGBC.gridwidth = 1;
         songPanel.add(dumpAllSongs, songGBC);
-
-        songGBC.gridx = 2; songGBC.gridy = 3;
-        songGBC.gridwidth = 1;
-        songPanel.add(dumpAllSounds, songGBC);
 
         songToolsPanel.add(songSelectionPanel);
         songToolsPanel.add(Box.createVerticalStrut(10));
@@ -239,6 +238,26 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         songToolsPanel.add(Box.createVerticalStrut(10));
         songToolsPanel.add(queuePanel);
+
+        JPanel soundToolsPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints soundGBC = new GridBagConstraints();
+        soundGBC.insets = new Insets(5, 5, 5, 5);
+        soundGBC.fill = GridBagConstraints.HORIZONTAL;
+
+        soundGBC.gridx = 0;
+        soundGBC.gridy = 0;
+        dumpAllSounds = new JButton("Dump All Sounds");
+        dumpAllSounds.addActionListener(this);
+        soundToolsPanel.add(dumpAllSounds, soundGBC);
+
+        soundGBC.gridx = 0;
+        soundGBC.gridy = 1;
+        replaceSoundBank = new JButton("Replace Sound Bank");
+        replaceSoundBank.addActionListener(this);
+        soundToolsPanel.add(replaceSoundBank, soundGBC);
+
+        tabbedPane.addTab("Sound Tools", soundToolsPanel);
+
 
         setLayout(new BorderLayout());
         add(tabbedPane, BorderLayout.CENTER);
@@ -749,7 +768,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            if (!defaultDumpOutputFolder.exists()) {
+            if (defaultDumpOutputFolder != null && !defaultDumpOutputFolder.exists()) {
                 defaultDumpOutputFolder = null;
             }
 
@@ -791,8 +810,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             msmFileChooser.setDialogTitle("Select MSM file");
             msmFileChooser.setAcceptAllFileFilterUsed(false);
 
-            FileNameExtensionFilter pdtFilter = new FileNameExtensionFilter("MSM Files", "msm");
-            msmFileChooser.setFileFilter(pdtFilter);
+            FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
+            msmFileChooser.setFileFilter(msmFilter);
 
             int userSelection = msmFileChooser.showOpenDialog(null);
 
@@ -800,13 +819,90 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            if (!defaultDumpOutputFolder.exists()) {
+            if (defaultDumpOutputFolder != null && !defaultDumpOutputFolder.exists()) {
                 defaultDumpOutputFolder = null;
             }
 
             File selectedMSM = msmFileChooser.getSelectedFile();
 
             SoundDumper.dumpAllSounds(selectedMSM, defaultDumpOutputFolder);
+        }
+
+        if (e.getSource() == replaceSoundBank) {
+            JFileChooser msmFileChooser = new JFileChooser();
+            msmFileChooser.setDialogTitle("Select MSM file");
+            msmFileChooser.setAcceptAllFileFilterUsed(false);
+
+            FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
+            msmFileChooser.setFileFilter(msmFilter);
+
+            int userSelection = msmFileChooser.showOpenDialog(null);
+
+            if (userSelection != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            JFileChooser sdirFileChooser = new JFileChooser();
+            sdirFileChooser.setDialogTitle("Select Replacement SDIR file");
+            sdirFileChooser.setAcceptAllFileFilterUsed(false);
+
+            FileNameExtensionFilter sdirFilter = new FileNameExtensionFilter("SDIR Files", "sdir");
+            sdirFileChooser.setFileFilter(sdirFilter);
+
+            userSelection = sdirFileChooser.showOpenDialog(null);
+
+            if (userSelection != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            JFileChooser sampFileChooser = new JFileChooser();
+            sampFileChooser.setDialogTitle("Select Replacement SAMP file");
+            sampFileChooser.setAcceptAllFileFilterUsed(false);
+
+            FileNameExtensionFilter sampFilter = new FileNameExtensionFilter("SAMP Files", "samp");
+            sampFileChooser.setFileFilter(sampFilter);
+
+            userSelection = sampFileChooser.showOpenDialog(null);
+
+            if (userSelection != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+
+            File selectedMSM = msmFileChooser.getSelectedFile();
+            File selectedSDIR = sdirFileChooser.getSelectedFile();
+            File selectedSAMP = sampFileChooser.getSelectedFile();
+
+            ArrayList<String> banks = SoundModifier.getBanks(selectedMSM);
+
+            if (banks != null) {
+                String[] bankArray = banks.toArray(new String[0]);
+                JComboBox<String> bankDropdown = new JComboBox<>(bankArray);
+
+                // Show dropdown in a dialog
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        bankDropdown,
+                        "Select a Bank",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
+
+                if (result == JOptionPane.OK_OPTION) {
+                    String selectedBank = (String) bankDropdown.getSelectedItem();
+
+                    if (selectedBank != null) {
+                        boolean isCorrectBank = selectedSDIR.getName().contains(selectedBank) && selectedSAMP.getName().contains(selectedBank);
+                        if (isCorrectBank) {
+                            SoundModifier.modifySoundBank(selectedMSM, selectedSDIR, selectedSAMP, Long.parseLong(selectedBank, 16));
+                        }
+                        else {
+                            JOptionPane.showMessageDialog(this, "Your replacement sdir or samp are not for the correct sound bank");
+                        }
+                    }
+
+                }
+            }
         }
 
         if (e.getSource() == dumpAllSongs) {
@@ -822,7 +918,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            if (!defaultDumpOutputFolder.exists()) {
+            if (defaultDumpOutputFolder != null && !defaultDumpOutputFolder.exists()) {
                 defaultDumpOutputFolder = null;
             }
 

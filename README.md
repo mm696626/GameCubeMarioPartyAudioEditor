@@ -24,6 +24,27 @@
         * An end of file issue since the number of bytes was wrong for the audio data (should be nibbles/2 instead of nibbles << 1)
         * Changed the audio data to dump 8KB at a time instead of one byte for speed
 
+### Sound Dumping
+* You can also dump the selected sounds to their native samp/sdir format for listening in vgmstream or for conversion
+    * Credit to Yoshimaster96's original dumping code which I translated into Java
+* If you want them to be in DSP for listening, You'll need to use this script
+  * https://github.com/Nisto/musyx-extract
+
+### Sound Replacement
+* You can also dump replace sound effects in game, but it's a bit more complicated
+* Step 1: Convert your replacement sound to DSP (I use LoopingAudioConverter. If you use it, make sure to remove the looping information when converted as this will disable the looping flag in the DSP header)
+* Step 2: If your sound isn't meant to loop, edit bytes 0x14, 0x15, 0x16, and 0x17 in a hex editor to be 00 (this will fix sounds looping in game)
+* Step 3: If you don't have Python 3 installed, install it from https://www.python.org/downloads/
+  * **Add Python to the path, or this won't work**
+* Step 4: Download the Python script from https://github.com/Nisto/musyx-extract
+* Step 5: Extract the sounds from the MSM with the UI (this will extract to samp/sdir)
+* Step 6: Open command prompt and run the Python Script and follow the usage
+* Step 7: Extract the sounds from the samp/sdir with the Python script
+* Step 8: Replace whatever you want (make sure it's smaller)
+* Step 9: Repack the files into their samp/sdir formats with the Python script
+* Step 10: Use the UI to replace the appropriate sound bank
+* Note: **Do not rename anything and make sure your replacements are the same name as the original**
+
 ### Tip for Quality vs Size
 * I recommend lowering the sample rate of your track (the ones listed here are 22.05 kHz, 16 kHz, and 8kHz)
   * 22050 Hz (Half of CD quality)
