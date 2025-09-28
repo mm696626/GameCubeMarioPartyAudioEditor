@@ -158,6 +158,8 @@ public class SoundModifier {
 
                     msmRaf.close();
 
+                    JOptionPane.showMessageDialog(null, "Sound bank has been modified!");
+
                     return;
                 }
             }

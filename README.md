@@ -35,8 +35,8 @@
 
 ### Sound Replacement
 * You can also replace sound effects, but it's a bit more complicated
-* Step 1: Convert your replacement sound to DSP (I use LoopingAudioConverter. If you use it, make sure to remove the looping information when converted as this will disable the looping flag in the DSP header)
-* Step 2: If your sound isn't meant to loop, edit bytes 0x14, 0x15, 0x16, and 0x17 in a hex editor to be 00 (this will fix sounds looping in game)
+* Step 1: Convert your replacement sound to DSP (I use LoopingAudioConverter)
+* Step 2: If your sound isn't meant to loop, use the Fix Nonlooping Sound DSP Header in the UI
 * Step 3: If you don't have Python 3 installed, install it from https://www.python.org/downloads/
   * **Add Python to the path, or this won't work**
 * Step 4: Download the Python script from https://github.com/Nisto/musyx-extract

@@ -16,7 +16,7 @@ import java.util.*;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpSoundBank, dumpAllSounds, replaceSoundBank, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpSoundBank, dumpAllSounds, replaceSoundBank, fixSoundDSPHeader, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -249,6 +249,12 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         replaceSoundBank = new JButton("Replace Sound Bank");
         replaceSoundBank.addActionListener(this);
         soundToolsPanel.add(replaceSoundBank, soundGBC);
+
+        soundGBC.gridx = 0;
+        soundGBC.gridy = 3;
+        fixSoundDSPHeader = new JButton("Fix Nonlooping Sound DSP Header");
+        fixSoundDSPHeader.addActionListener(this);
+        soundToolsPanel.add(fixSoundDSPHeader, soundGBC);
 
         tabbedPane.addTab("Sound Tools", soundToolsPanel);
 
@@ -932,7 +938,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-
             File selectedMSM = msmFileChooser.getSelectedFile();
             File selectedSDIR = sdirFileChooser.getSelectedFile();
             File selectedSAMP = sampFileChooser.getSelectedFile();
@@ -978,6 +983,37 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
                 }
             }
+        }
+
+        if (e.getSource() == fixSoundDSPHeader) {
+            int response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Only use this if you have an intended non looping sound that is looping in game.\nAre you sure you want to continue?",
+                    "Continue?",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (response != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            JFileChooser dspFileChooser = new JFileChooser();
+            dspFileChooser.setDialogTitle("Select Sound DSP file");
+            dspFileChooser.setAcceptAllFileFilterUsed(false);
+
+            FileNameExtensionFilter dspFilter = new FileNameExtensionFilter("DSP Files", "dsp");
+            dspFileChooser.setFileFilter(dspFilter);
+
+            int userSelection = dspFileChooser.showOpenDialog(null);
+
+            if (userSelection != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            File selectedDSP = dspFileChooser.getSelectedFile();
+
+            FixDSPSoundHeader.fixHeader(selectedDSP);
+            JOptionPane.showMessageDialog(this, "Header has been fixed!");
         }
 
         if (e.getSource() == dumpAllSongs) {

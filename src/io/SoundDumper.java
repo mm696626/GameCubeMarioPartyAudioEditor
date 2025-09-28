@@ -75,6 +75,8 @@ public class SoundDumper {
 
                     file.close();
 
+                    JOptionPane.showMessageDialog(null, "Sound bank has been dumped!");
+
                     return;
                 }
             }
@@ -146,6 +148,8 @@ public class SoundDumper {
                 // Dump .samp
                 dumpToFile(file, sampOffs, sampSize, new File(outputDir, String.format("%04X.samp", groupId)));
             }
+
+            JOptionPane.showMessageDialog(null, "Sound banks have been dumped!");
 
         } catch (IOException e) {
             e.printStackTrace();
