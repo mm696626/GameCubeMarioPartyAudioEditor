@@ -5,6 +5,10 @@ import java.io.*;
 
 public class SoundDumper {
 
+    //This code is derived from Yoshimaster96's C MSM sound dumping code, so huge credit and kudos to them!
+    //This code is a C to Java translation
+    //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
+
     public static void dumpAllSounds(File msmFile, File defaultDumpOutputFolder) {
         File outputDir;
 
