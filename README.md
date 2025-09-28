@@ -16,6 +16,14 @@
   * Example: mario_L.dsp and mario_R.dsp or luigi (channel 0).dsp and luigi (channel 1).dsp
   * It will do the same with the PDT itself as well in order to identify what game it's for. Keep the file name untouched
 
+### Song Dumping
+* You can also dump the selected song to DSP format for listening in vgmstream or for conversion (it will dump in left and right channels)
+    * Credit to Yoshimaster96's original dumping code which I translated into Java
+    * I fixed the following issues
+        * The stereo track didn't properly dump (it dumped the same channel twice)
+        * An end of file issue since the number of bytes was wrong for the audio data (should be nibbles/2 instead of nibbles << 1)
+        * Changed the audio data to dump 8KB at a time instead of one byte for speed
+
 ### Tip for Quality vs Size
 * I recommend lowering the sample rate of your track (the ones listed here are 22.05 kHz, 16 kHz, and 8kHz)
   * 22050 Hz (Half of CD quality)

@@ -3,6 +3,7 @@ package ui;
 import constants.MarioPartySongNames;
 import io.DSPPair;
 import io.ModifyJob;
+import io.SongDumper;
 import io.SongModifier;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ import java.util.*;
 
 public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -34,9 +35,11 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
     private JLabel defaultDSPFolderLabel;
     private JLabel defaultPDTFileLabel;
+    private JLabel defaultDumpFolderLabel;
 
     private File defaultSavedDSPFolder = null;
     private File defaultPDTFile = null;
+    private File defaultDumpOutputFolder = null;
 
     private DefaultListModel<ModifyJob> jobQueueModel;
     private JList<ModifyJob> jobQueueList;
@@ -152,7 +155,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         });
 
         JPanel songPanel = new JPanel(new GridBagLayout());
-        songPanel.setBorder(BorderFactory.createTitledBorder("Modify Song"));
+        songPanel.setBorder(BorderFactory.createTitledBorder("Dump/Modify Song"));
         GridBagConstraints songGBC = new GridBagConstraints();
         songGBC.insets = new Insets(5, 5, 5, 5);
         songGBC.fill = GridBagConstraints.HORIZONTAL;
@@ -164,6 +167,12 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         pickRightChannel = new JButton("Select Right DSP Channel");
         pickRightChannel.addActionListener(this);
         rightChannelLabel = new JLabel("No file selected");
+
+        dumpSong = new JButton("Dump Selected Song");
+        dumpSong.addActionListener(this);
+
+        dumpAllSongs = new JButton("Dump All Songs");
+        dumpAllSongs.addActionListener(this);
 
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
@@ -182,14 +191,22 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         songGBC.gridwidth = 2;
         songPanel.add(modifySong, songGBC);
 
+        songGBC.gridx = 0; songGBC.gridy = 3;
+        songGBC.gridwidth = 1;
+        songPanel.add(dumpSong, songGBC);
+
+        songGBC.gridx = 1; songGBC.gridy = 3;
+        songGBC.gridwidth = 1;
+        songPanel.add(dumpAllSongs, songGBC);
+
         songToolsPanel.add(songSelectionPanel);
         songToolsPanel.add(Box.createVerticalStrut(10));
         songToolsPanel.add(songPanel);
 
-        tabbedPane.addTab("Modify Songs", songToolsPanel);
+        tabbedPane.addTab("Song Tools", songToolsPanel);
 
         JPanel queuePanel = new JPanel(new BorderLayout());
-        queuePanel.setBorder(BorderFactory.createTitledBorder("Batch Job Queue"));
+        queuePanel.setBorder(BorderFactory.createTitledBorder("Batch Modification Job Queue"));
 
         jobQueueModel = new DefaultListModel<>();
         jobQueueList = new JList<>(jobQueueModel);
@@ -240,10 +257,23 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         settingsGBC.gridx = 2;
         settingsPanel.add(chooseDefaultDSPButton, settingsGBC);
 
+        settingsGBC.gridx = 0;
+        settingsGBC.gridy = 1;
+        settingsPanel.add(new JLabel("Default Dump Output Folder:"), settingsGBC);
+
+        defaultDumpFolderLabel = new JLabel(defaultDumpOutputFolder != null ? defaultDumpOutputFolder.getAbsolutePath() : "None");
+        settingsGBC.gridx = 1;
+        settingsPanel.add(defaultDumpFolderLabel, settingsGBC);
+
+        JButton chooseDefaultDumpButton = new JButton("Change");
+        chooseDefaultDumpButton.addActionListener(e -> chooseDefaultDumpFolder());
+        settingsGBC.gridx = 2;
+        settingsPanel.add(chooseDefaultDumpButton, settingsGBC);
+
         defaultPDTFileLabel = new JLabel(defaultPDTFile != null ? defaultPDTFile.getAbsolutePath() : "None");
 
         settingsGBC.gridx = 0;
-        settingsGBC.gridy = 1;
+        settingsGBC.gridy = 2;
         settingsGBC.gridwidth = 1;
         settingsPanel.add(new JLabel("Default PDT File:"), settingsGBC);
 
@@ -285,7 +315,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         JButton resetSettingsButton = new JButton("Reset Settings");
         resetSettingsButton.addActionListener(e -> resetSettings());
         settingsGBC.gridx = 0;
-        settingsGBC.gridy = 2;
+        settingsGBC.gridy = 3;
         settingsGBC.gridwidth = 3;
         settingsPanel.add(resetSettingsButton, settingsGBC);
 
@@ -303,8 +333,9 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            outputStream.println("defaultSavedDSPFolder" + ":" + "None");
+            outputStream.println("defaultSavedDSPFolder:None");
             outputStream.println("defaultPDTFile:None");
+            outputStream.println("defaultDumpOutputFolder:None");
             outputStream.close();
         }
     }
@@ -325,6 +356,9 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                         break;
                     case "defaultPDTFile":
                         if (!value.equals("None")) defaultPDTFile = new File(value);
+                        break;
+                    case "defaultDumpOutputFolder":
+                        if (!value.equals("None")) defaultDumpOutputFolder = new File(value);
                         break;
                 }
             }
@@ -357,6 +391,19 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         }
     }
 
+    private void chooseDefaultDumpFolder() {
+        JFileChooser defaultDumpFolderChooser = new JFileChooser();
+        defaultDumpFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        defaultDumpFolderChooser.setAcceptAllFileFilterUsed(false);
+        int result = defaultDumpFolderChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            defaultDumpOutputFolder = defaultDumpFolderChooser.getSelectedFile();
+            defaultDumpFolderLabel.setText(defaultDumpOutputFolder.getAbsolutePath());
+            saveSettingsToFile();
+        }
+    }
+
     private void chooseDefaultDSPFolder() {
         JFileChooser defaultDSPFolderChooser = new JFileChooser();
         defaultDSPFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -375,6 +422,7 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         try (PrintWriter writer = new PrintWriter(new FileOutputStream("settings.txt"))) {
             writer.println("defaultSavedDSPFolder:" + (defaultSavedDSPFolder != null ? defaultSavedDSPFolder.getAbsolutePath() : "None"));
             writer.println("defaultPDTFile:" + (defaultPDTFile != null ? defaultPDTFile.getAbsolutePath() : "None"));
+            writer.println("defaultDumpOutputFolder:" + (defaultDumpOutputFolder != null ? defaultDumpOutputFolder.getAbsolutePath() : "None"));
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Failed to save settings: " + e.getMessage());
         }
@@ -404,9 +452,16 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
             defaultPDTFileLabel.setText("None");
         }
 
+        defaultDumpOutputFolder = null;
+
+        if (defaultDumpFolderLabel != null) {
+            defaultDumpFolderLabel.setText("None");
+        }
+
         try (PrintWriter writer = new PrintWriter(new FileOutputStream("settings.txt"))) {
             writer.println("defaultSavedDSPFolder:None");
             writer.println("defaultPDTFile:None");
+            writer.println("defaultDumpOutputFolder:None");
             JOptionPane.showMessageDialog(this, "Setting reset to default.");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Failed to reset setting: " + e.getMessage());
@@ -675,6 +730,68 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
         if (e.getSource() == pickRightChannel) {
             chooseRightChannelPath();
+        }
+
+        if (e.getSource() == dumpSong) {
+            if (pdtPath.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No PDT file was chosen!");
+                return;
+            }
+
+            File pdtFile = new File(pdtPath);
+
+            if (!pdtFile.exists()) {
+                JOptionPane.showMessageDialog(this, "The chosen PDT file doesn't exist!");
+                return;
+            }
+
+            String selectedSongName = (String) songNames.getSelectedItem();
+
+            Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
+
+            if (songNameMap == null) {
+                JOptionPane.showMessageDialog(this, "No game is selected! Please select one!");
+                return;
+            }
+
+            int actualSongIndex = -1;
+
+            if (selectedSongName != null) {
+                for (Map.Entry<Integer, String> entry : songNameMap.entrySet()) {
+                    if (selectedSongName.equals(entry.getValue())) {
+                        actualSongIndex = entry.getKey();
+                        break;
+                    }
+                }
+            }
+
+            if (actualSongIndex == -1) {
+                JOptionPane.showMessageDialog(this, "Could not determine song index.");
+                return;
+            }
+
+            SongDumper.dumpSong(
+                    pdtFile,
+                    actualSongIndex,
+                    selectedSongName,
+                    defaultDumpOutputFolder
+            );
+        }
+
+        if (e.getSource() == dumpAllSongs) {
+            if (pdtPath.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No PDT file was chosen!");
+                return;
+            }
+
+            File pdtFile = new File(pdtPath);
+
+            if (!pdtFile.exists()) {
+                JOptionPane.showMessageDialog(this, "The chosen PDT file doesn't exist!");
+                return;
+            }
+
+            SongDumper.dumpAllSongs(pdtFile);
         }
 
         if (e.getSource() == modifySong) {

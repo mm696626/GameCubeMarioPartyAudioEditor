@@ -11,61 +11,37 @@ public class SongModifier {
     //This code is largely derived from Yoshimaster96's C PDT dumping code, so huge credit and kudos to them!
     //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
-    /*
-        MIT License
-
-        Copyright (c) 2022 Yoshimaster96
-
-        Permission is hereby granted, free of charge, to any person obtaining a copy
-        of this software and associated documentation files (the "Software"), to deal
-        in the Software without restriction, including without limitation the rights
-        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-        copies of the Software, and to permit persons to whom the Software is
-        furnished to do so, subject to the following conditions:
-
-        The above copyright notice and this permission notice shall be included in all
-        copies or substantial portions of the Software.
-
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-        SOFTWARE.
-     */
-
     public static boolean modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, String songName, String selectedGame) {
         try (RandomAccessFile pdtRaf = new RandomAccessFile(pdtFile, "rw")) {
-            int unk00 = readU16BE(pdtRaf);
-            int numFiles = readU16BE(pdtRaf);
-            long unk04 = readU32BE(pdtRaf);
-            long unk08 = readU32BE(pdtRaf);
-            long unk0C = readU32BE(pdtRaf);
-            long entryOffs = readU32BE(pdtRaf);
-            long coeffOffs = readU32BE(pdtRaf);
-            long headerOffs = readU32BE(pdtRaf);
-            long streamOffs = readU32BE(pdtRaf);
+            int unk00 = FileIO.readU16BE(pdtRaf);
+            int numFiles = FileIO.readU16BE(pdtRaf);
+            long unk04 = FileIO.readU32BE(pdtRaf);
+            long unk08 = FileIO.readU32BE(pdtRaf);
+            long unk0C = FileIO.readU32BE(pdtRaf);
+            long entryOffs = FileIO.readU32BE(pdtRaf);
+            long coeffOffs = FileIO.readU32BE(pdtRaf);
+            long headerOffs = FileIO.readU32BE(pdtRaf);
+            long streamOffs = FileIO.readU32BE(pdtRaf);
 
             if (songIndex < 0 || songIndex >= numFiles) {
                 return false;
             }
 
             pdtRaf.seek(entryOffs + (songIndex << 2));
-            long thisHeaderOffs = readU32BE(pdtRaf);
+            long thisHeaderOffs = FileIO.readU32BE(pdtRaf);
             if (thisHeaderOffs == 0) {
                 return false;
             }
 
             pdtRaf.seek(thisHeaderOffs);
 
-            long flags = readU32BE(pdtRaf);
-            long sampleRate = readU32BE(pdtRaf);
-            long nibbleCount = readU32BE(pdtRaf);
-            long loopStart = readU32BE(pdtRaf);
-            long ch1Start = readU32BE(pdtRaf);
-            int ch1CoefEntry = readU16BE(pdtRaf);
-            int unk116 = readU16BE(pdtRaf);
+            long flags = FileIO.readU32BE(pdtRaf);
+            long sampleRate = FileIO.readU32BE(pdtRaf);
+            long nibbleCount = FileIO.readU32BE(pdtRaf);
+            long loopStart = FileIO.readU32BE(pdtRaf);
+            long ch1Start = FileIO.readU32BE(pdtRaf);
+            int ch1CoefEntry = FileIO.readU16BE(pdtRaf);
+            int unk116 = FileIO.readU16BE(pdtRaf);
             long ch1CoefOffs = coeffOffs + (ch1CoefEntry << 5);
 
             long ch2Start = ch1Start;
@@ -74,9 +50,9 @@ public class SongModifier {
             int chanCount = 1;
 
             if ((flags & 0x01000000) != 0) {
-                ch2Start = readU32BE(pdtRaf);
-                ch2CoefEntry = readU16BE(pdtRaf);
-                int unk11A = readU16BE(pdtRaf);
+                ch2Start = FileIO.readU32BE(pdtRaf);
+                ch2CoefEntry = FileIO.readU16BE(pdtRaf);
+                int unk11A = FileIO.readU16BE(pdtRaf);
                 ch2CoefOffs = coeffOffs + (ch2CoefEntry << 5);
                 chanCount = 2;
             }
@@ -237,19 +213,5 @@ public class SongModifier {
 
         pdtRaf.seek(ch2Start);
         pdtRaf.write(newDSPRightChannelAudio);
-    }
-
-    private static int readU16BE(RandomAccessFile raf) throws IOException {
-        int b0 = raf.readUnsignedByte();
-        int b1 = raf.readUnsignedByte();
-        return (b0 << 8) | b1;
-    }
-
-    private static long readU32BE(RandomAccessFile raf) throws IOException {
-        long b0 = raf.readUnsignedByte();
-        long b1 = raf.readUnsignedByte();
-        long b2 = raf.readUnsignedByte();
-        long b3 = raf.readUnsignedByte();
-        return (b0 << 24) | (b1 << 16) | (b2 << 8) | b3;
     }
 }
