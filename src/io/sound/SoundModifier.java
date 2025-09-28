@@ -1,10 +1,9 @@
-package io;
+package io.sound;
 
-import constants.DSPFileConstants;
+import io.FileIO;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;

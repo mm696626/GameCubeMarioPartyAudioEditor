@@ -1,4 +1,6 @@
-package io;
+package io.music;
+
+import io.FileIO;
 
 import javax.swing.*;
 import java.io.File;

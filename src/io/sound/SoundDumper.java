@@ -1,4 +1,6 @@
-package io;
+package io.sound;
+
+import io.FileIO;
 
 import javax.swing.*;
 import java.io.*;

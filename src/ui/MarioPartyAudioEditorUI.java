@@ -1,7 +1,11 @@
 package ui;
 
 import constants.MarioPartySongNames;
-import io.*;
+import io.music.SongDumper;
+import io.music.SongModifier;
+import io.sound.FixDSPSoundHeader;
+import io.sound.SoundDumper;
+import io.sound.SoundModifier;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
