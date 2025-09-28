@@ -14,7 +14,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
+public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
     private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpAllSounds, replaceSoundBank, selectGame;
     private String pdtPath = "";
@@ -42,8 +42,8 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
     private JList<ModifyJob> jobQueueList;
     private JButton addToQueueButton, removeQueueButton, clearQueueButton, runBatchButton;
 
-    public MarioPartyMusicEditorUI() {
-        setTitle("Mario Party GameCube Music Editor");
+    public MarioPartyAudioEditorUI() {
+        setTitle("Mario Party GameCube Audio Editor");
         initSettingsFile();
         loadSettingsFile();
         generateUI();
@@ -51,30 +51,6 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
     private void generateUI() {
         JTabbedPane tabbedPane = new JTabbedPane();
-
-        JPanel chooseGamePanel = new JPanel(new GridBagLayout());
-        GridBagConstraints chooseGameGBC = new GridBagConstraints();
-        chooseGameGBC.insets = new Insets(5, 5, 5, 5);
-        chooseGameGBC.fill = GridBagConstraints.HORIZONTAL;
-
-        selectGame = new JButton("Select PDT and Game");
-        selectGame.addActionListener(this);
-
-        if (defaultPDTFile == null || !defaultPDTFile.exists()) {
-            pdtFilePathLabel = new JLabel("No PDT file selected");
-            selectedGameLabel = new JLabel("No game selected");
-        }
-
-        chooseGameGBC.gridx = 0; chooseGameGBC.gridy = 0;
-        chooseGamePanel.add(selectGame, chooseGameGBC);
-
-        chooseGameGBC.gridy = 1;
-        chooseGamePanel.add(pdtFilePathLabel, chooseGameGBC);
-
-        chooseGameGBC.gridy = 2;
-        chooseGamePanel.add(selectedGameLabel, chooseGameGBC);
-
-        tabbedPane.addTab("Choose PDT/Game", chooseGamePanel);
 
         JPanel songToolsPanel = new JPanel();
         songToolsPanel.setLayout(new BoxLayout(songToolsPanel, BoxLayout.Y_AXIS));
@@ -201,6 +177,24 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         songGBC.gridx = 1; songGBC.gridy = 3;
         songGBC.gridwidth = 1;
         songPanel.add(dumpAllSongs, songGBC);
+
+        selectGame = new JButton("Select PDT and Game");
+        selectGame.addActionListener(this);
+
+        if (defaultPDTFile == null || !defaultPDTFile.exists()) {
+            pdtFilePathLabel = new JLabel("No PDT file selected");
+            selectedGameLabel = new JLabel("No game selected");
+        }
+
+        songGBC.gridx = 0; songGBC.gridy = 4;
+        songGBC.gridwidth = 2;
+        songPanel.add(selectGame, songGBC);
+
+        songGBC.gridy = 5;
+        songPanel.add(pdtFilePathLabel, songGBC);
+
+        songGBC.gridy = 6;
+        songPanel.add(selectedGameLabel, songGBC);
 
         songToolsPanel.add(songSelectionPanel);
         songToolsPanel.add(Box.createVerticalStrut(10));
