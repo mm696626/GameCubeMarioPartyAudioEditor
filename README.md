@@ -16,6 +16,10 @@
   * Example: mario_L.dsp and mario_R.dsp or luigi (channel 0).dsp and luigi (channel 1).dsp
   * It will do the same with the PDT itself as well in order to identify what game it's for. Keep the file name untouched
 
+### Sound Notes
+* Audio must be in DSP format (sounds are stored in mono DSPs within samp/sdir files so you need to rip them from their samp/sdirs first)
+* As of now, it's not possible to have sounds that are larger in file size than the original be the replacement
+
 ### Song Dumping
 * You can also dump the selected song to DSP format for listening in vgmstream or for conversion (it will dump in left and right channels)
     * Credit to Yoshimaster96's original dumping code which I translated into Java
