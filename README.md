@@ -3,9 +3,8 @@
 ### GameCube Mario Party Audio Editor
 * A tool allows you to edit the music/sounds in Mario Parties 5-7
 
-### Why isn't Mario Party 4's soundtrack editable?
+### Why isn't most of Mario Party 4's soundtrack editable?
 * Simple! Most of the music in that game is sequenced, not streamed
-* There's only a few songs that are even in the PDT, so I didn't bother
 
 ### Notes
 * Audio must be in DSP format split into two channels
@@ -35,7 +34,7 @@
   * https://github.com/Nisto/musyx-extract
 
 ### Sound Replacement
-* You can also dump replace sound effects in game, but it's a bit more complicated
+* You can also replace sound effects, but it's a bit more complicated
 * Step 1: Convert your replacement sound to DSP (I use LoopingAudioConverter. If you use it, make sure to remove the looping information when converted as this will disable the looping flag in the DSP header)
 * Step 2: If your sound isn't meant to loop, edit bytes 0x14, 0x15, 0x16, and 0x17 in a hex editor to be 00 (this will fix sounds looping in game)
 * Step 3: If you don't have Python 3 installed, install it from https://www.python.org/downloads/
@@ -66,6 +65,7 @@
 * Also, this documentation on the DSP format helped a lot too
   * https://www.metroid2002.com/retromodding/wiki/DSP_(File_Format)
 * Thanks to the Mario Wiki for pinpointing each song and catching a few I missed
+  * https://www.mariowiki.com/Mario_Party_4_sound_test
   * https://www.mariowiki.com/Mario_Party_5_sound_test
   * https://www.mariowiki.com/Mario_Party_6_sound_test
   * https://www.mariowiki.com/Mario_Party_7_sound_test

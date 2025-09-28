@@ -4,6 +4,25 @@ import java.util.Map;
 
 public class MarioPartySongNames {
 
+
+    public static final Map<Integer, String> MARIO_PARTY_4_TRACK_NAMES = Map.ofEntries(
+            Map.entry(1, "You Did It"),
+            Map.entry(2, "Get an Item"),
+            Map.entry(3, "Ha Ha Ha!"),
+            Map.entry(4, "It's a Draw"),
+            Map.entry(5, "It's Party Time"),
+            Map.entry(6, "Get a Star"),
+            Map.entry(7, "You Got a Present"),
+            Map.entry(9, "We Got Doubles"),
+            Map.entry(10, "Jackpot"),
+            Map.entry(11, "Let the Race Begin"),
+            Map.entry(12, "Into the Cube"),
+            Map.entry(13, "You Finally Did It"),
+            Map.entry(20, "Mario Party"),
+            Map.entry(21, "Opening Cutscene Audio"),
+            Map.entry(22, "Many Thanks")
+    );
+
     public static final Map<Integer, String> MARIO_PARTY_5_TRACK_NAMES = Map.ofEntries(
             Map.entry(2, "Dream Party"),
             Map.entry(3, "Inside the Dream"),
