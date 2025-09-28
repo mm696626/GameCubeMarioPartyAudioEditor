@@ -1,10 +1,7 @@
 package ui;
 
 import constants.MarioPartySongNames;
-import io.DSPPair;
-import io.ModifyJob;
-import io.SongDumper;
-import io.SongModifier;
+import io.*;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -19,7 +16,7 @@ import java.util.*;
 
 public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpAllSounds, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -174,6 +171,9 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         dumpAllSongs = new JButton("Dump All Songs");
         dumpAllSongs.addActionListener(this);
 
+        dumpAllSounds = new JButton("Dump All Sounds");
+        dumpAllSounds.addActionListener(this);
+
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
 
@@ -198,6 +198,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
         songGBC.gridx = 1; songGBC.gridy = 3;
         songGBC.gridwidth = 1;
         songPanel.add(dumpAllSongs, songGBC);
+
+        songGBC.gridx = 2; songGBC.gridy = 3;
+        songGBC.gridwidth = 1;
+        songPanel.add(dumpAllSounds, songGBC);
 
         songToolsPanel.add(songSelectionPanel);
         songToolsPanel.add(Box.createVerticalStrut(10));
@@ -780,6 +784,29 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                     selectedSongName,
                     defaultDumpOutputFolder
             );
+        }
+
+        if (e.getSource() == dumpAllSounds) {
+            JFileChooser msmFileChooser = new JFileChooser();
+            msmFileChooser.setDialogTitle("Select MSM file");
+            msmFileChooser.setAcceptAllFileFilterUsed(false);
+
+            FileNameExtensionFilter pdtFilter = new FileNameExtensionFilter("MSM Files", "msm");
+            msmFileChooser.setFileFilter(pdtFilter);
+
+            int userSelection = msmFileChooser.showOpenDialog(null);
+
+            if (userSelection != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            if (!defaultDumpOutputFolder.exists()) {
+                defaultDumpOutputFolder = null;
+            }
+
+            File selectedMSM = msmFileChooser.getSelectedFile();
+
+            SoundDumper.dumpAllSounds(selectedMSM, defaultDumpOutputFolder);
         }
 
         if (e.getSource() == dumpAllSongs) {
