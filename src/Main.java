@@ -1,5 +1,5 @@
 // GameCube Mario Party Audio Editor by Matt McCullough
-// This is to edit the in game music and sounds for Mario Parties 5-7
+// This is to edit the in game music and sounds for Mario Parties 4-7
 
 import ui.MarioPartyAudioEditorUI;
 
