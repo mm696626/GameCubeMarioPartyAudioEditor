@@ -164,9 +164,16 @@ public class SongDumper {
         }
     }
 
-    public static void dumpAllSongs(File selectedFile) {
-        File outputDir = promptForOutputFolder();
-        if (outputDir == null) return;
+    public static void dumpAllSongs(File selectedFile, File defaultDumpOutputFolder) {
+        File outputDir;
+
+        if (defaultDumpOutputFolder == null) {
+            outputDir = promptForOutputFolder();
+            if (outputDir == null) return;
+        }
+        else {
+            outputDir = defaultDumpOutputFolder;
+        }
 
         try (RandomAccessFile raf = new RandomAccessFile(selectedFile, "r")) {
             int unk00 = FileIO.readU16BE(raf);

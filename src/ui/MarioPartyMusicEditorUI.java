@@ -745,6 +745,10 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
+            if (!defaultDumpOutputFolder.exists()) {
+                defaultDumpOutputFolder = null;
+            }
+
             String selectedSongName = (String) songNames.getSelectedItem();
 
             Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
@@ -791,7 +795,11 @@ public class MarioPartyMusicEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            SongDumper.dumpAllSongs(pdtFile);
+            if (!defaultDumpOutputFolder.exists()) {
+                defaultDumpOutputFolder = null;
+            }
+
+            SongDumper.dumpAllSongs(pdtFile, defaultDumpOutputFolder);
         }
 
         if (e.getSource() == modifySong) {
