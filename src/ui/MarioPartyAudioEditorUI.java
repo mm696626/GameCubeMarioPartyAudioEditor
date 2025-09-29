@@ -20,7 +20,7 @@ import java.util.*;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpSoundBank, dumpAllSounds, replaceSoundBank, fixSoundDSPHeader, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpSoundBank, dumpAllSounds, replaceSoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -259,6 +259,12 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         fixSoundDSPHeader = new JButton("Fix Nonlooping Sound DSP Header");
         fixSoundDSPHeader.addActionListener(this);
         soundToolsPanel.add(fixSoundDSPHeader, soundGBC);
+
+        soundGBC.gridx = 0;
+        soundGBC.gridy = 4;
+        fixSoundDSPHeaderFolder = new JButton("Fix Nonlooping Sound DSP Header (Folder)");
+        fixSoundDSPHeaderFolder.addActionListener(this);
+        soundToolsPanel.add(fixSoundDSPHeaderFolder, soundGBC);
 
         tabbedPane.addTab("Sound Tools", soundToolsPanel);
 
@@ -1018,6 +1024,41 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
             FixDSPSoundHeader.fixHeader(selectedDSP);
             JOptionPane.showMessageDialog(this, "Header has been fixed!");
+        }
+
+        if (e.getSource() == fixSoundDSPHeaderFolder) {
+            int response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Only use this if you have a folder of intended non looping sounds that are looping in game.\nAre you sure you want to continue?",
+                    "Continue?",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (response != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            JFileChooser dspFolderChooser = new JFileChooser();
+            dspFolderChooser.setDialogTitle("Select Sound DSP folder");
+            dspFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            dspFolderChooser.setAcceptAllFileFilterUsed(false);
+
+            int userSelection = dspFolderChooser.showOpenDialog(null);
+
+            if (userSelection != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            File selectedDSPFolder = dspFolderChooser.getSelectedFile();
+
+            File[] files = selectedDSPFolder.listFiles((_, name) -> name.toLowerCase().endsWith(".dsp"));
+            if (files == null) return;
+
+            for (int i=0; i<files.length; i++) {
+                FixDSPSoundHeader.fixHeader(files[i]);
+            }
+
+            JOptionPane.showMessageDialog(this, "Headers have been fixed!");
         }
 
         if (e.getSource() == dumpAllSongs) {
