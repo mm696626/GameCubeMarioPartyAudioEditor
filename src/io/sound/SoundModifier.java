@@ -152,8 +152,18 @@ public class SoundModifier {
                     msmRaf.seek(sdirOffs);
                     msmRaf.write(newSDirFileBytes);
 
+                    //pad sdir file to match original size
+                    for (int j=0; j<Math.abs(sdirFile.length()-sdirSize); j++) {
+                        msmRaf.write(0);
+                    }
+
                     msmRaf.seek(sampOffs);
                     msmRaf.write(newSampFileBytes);
+
+                    //pad samp file to match original size
+                    for (int j=0; j<Math.abs(sampFile.length()-sampSize); j++) {
+                        msmRaf.write(0);
+                    }
 
                     msmRaf.close();
 

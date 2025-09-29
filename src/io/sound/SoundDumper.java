@@ -172,14 +172,14 @@ public class SoundDumper {
     }
 
     private static File chooseOutputDirectory() {
-        JFileChooser dspOutputFolderChooser = new JFileChooser();
-        dspOutputFolderChooser.setDialogTitle("Select the DSP output folder");
-        dspOutputFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        dspOutputFolderChooser.setAcceptAllFileFilterUsed(false);
+        JFileChooser soundBankOutputFolderChooser = new JFileChooser();
+        soundBankOutputFolderChooser.setDialogTitle("Select the sound bank output folder");
+        soundBankOutputFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        soundBankOutputFolderChooser.setAcceptAllFileFilterUsed(false);
 
-        int result = dspOutputFolderChooser.showSaveDialog(null);
+        int result = soundBankOutputFolderChooser.showSaveDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
-            return dspOutputFolderChooser.getSelectedFile();
+            return soundBankOutputFolderChooser.getSelectedFile();
         } else {
             return null;
         }
