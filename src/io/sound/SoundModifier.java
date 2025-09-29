@@ -62,12 +62,12 @@ public class SoundModifier {
 
                 if (groupId == soundBankReplaced) {
                     if (sdirFile.length() > sdirSize) {
-                        JOptionPane.showMessageDialog(null, "Your sdir file is too big!");
+                        JOptionPane.showMessageDialog(null, String.format("Your sdir file replacement is %,d bytes and the original is %,d bytes! Try again!", sdirFile.length(), sdirSize));
                         return;
                     }
 
                     if (sampFile.length() > sampSize) {
-                        JOptionPane.showMessageDialog(null, "Your samp file is too big!");
+                        JOptionPane.showMessageDialog(null, String.format("Your samp file replacement is %,d bytes and the original is %,d bytes! Try again!", sampFile.length(), sampSize));
                         return;
                     }
 
