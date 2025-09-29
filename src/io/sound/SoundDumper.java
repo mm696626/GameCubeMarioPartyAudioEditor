@@ -11,7 +11,7 @@ public class SoundDumper {
     //This code is a C to Java translation
     //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
-    public static void dumpSoundBank(File msmFile, long soundBankDumped, File defaultDumpOutputFolder) {
+    public static void dumpSoundBank(File msmFile, long soundBankDumped, File defaultDumpOutputFolder, boolean dumpProjPool) {
         File outputDir;
 
         if (defaultDumpOutputFolder == null) {
@@ -75,6 +75,14 @@ public class SoundDumper {
                     // Dump .samp
                     dumpToFile(file, sampOffs, sampSize, new File(outputDir, String.format("%04X.samp", groupId)));
 
+                    if (dumpProjPool) {
+                        // Dump .pool
+                        dumpToFile(file, poolOffs, poolSize, new File(outputDir, String.format("%04X.pool", groupId)));
+
+                        // Dump .proj
+                        dumpToFile(file, projOffs, projSize, new File(outputDir, String.format("%04X.proj", groupId)));
+                    }
+
                     file.close();
 
                     JOptionPane.showMessageDialog(null, "Sound bank has been dumped!");
@@ -88,7 +96,7 @@ public class SoundDumper {
         }
     }
 
-    public static void dumpAllSounds(File msmFile, File defaultDumpOutputFolder) {
+    public static void dumpAllSounds(File msmFile, File defaultDumpOutputFolder, boolean dumpProjPool) {
         File outputDir;
 
         if (defaultDumpOutputFolder == null) {
@@ -149,8 +157,17 @@ public class SoundDumper {
 
                 // Dump .samp
                 dumpToFile(file, sampOffs, sampSize, new File(outputDir, String.format("%04X.samp", groupId)));
+
+                if (dumpProjPool) {
+                    // Dump .pool
+                    dumpToFile(file, poolOffs, poolSize, new File(outputDir, String.format("%04X.pool", groupId)));
+
+                    // Dump .proj
+                    dumpToFile(file, projOffs, projSize, new File(outputDir, String.format("%04X.proj", groupId)));
+                }
             }
 
+            file.close();
             JOptionPane.showMessageDialog(null, "Sound banks have been dumped!");
 
         } catch (IOException e) {
