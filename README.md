@@ -22,16 +22,10 @@
 ### Song Dumping
 * You can also dump the selected song to DSP format for listening in vgmstream or for conversion (it will dump in left and right channels)
     * Credit to Yoshimaster96's original dumping code which I translated into Java
-    * I fixed the following issues
-        * The stereo track didn't properly dump (it dumped the same channel twice)
-        * An end of file issue since the number of bytes was wrong for the audio data (should be nibbles/2 instead of nibbles << 1)
-        * Changed the audio data to dump 8KB at a time instead of one byte for speed
 
 ### Sound Dumping
-* You can also dump the selected sounds to their native samp/sdir format for listening in vgmstream or for conversion
+* You can also dump the selected sounds to their native samp/sdir format
     * Credit to Yoshimaster96's original dumping code which I translated into Java
-* If you want them to be in DSP for listening, You'll need to use this script
-  * https://github.com/Nisto/musyx-extract
 
 ### Sound Replacement
 * You can also replace sound effects, but it's a bit more complicated
