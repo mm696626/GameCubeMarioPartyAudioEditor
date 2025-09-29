@@ -92,7 +92,7 @@ public class SoundModifier {
                     msmRaf.write(newSDirFileBytes);
 
                     //pad sdir file to match original size
-                    for (int j=0; j<Math.abs(sdirFile.length()-sdirSize); j++) {
+                    for (int j=0; j<sdirSize-sdirFile.length(); j++) {
                         msmRaf.write(0);
                     }
 
@@ -100,7 +100,7 @@ public class SoundModifier {
                     msmRaf.write(newSampFileBytes);
 
                     //pad samp file to match original size
-                    for (int j=0; j<Math.abs(sampFile.length()-sampSize); j++) {
+                    for (int j=0; j<sampSize-sampFile.length(); j++) {
                         msmRaf.write(0);
                     }
 
