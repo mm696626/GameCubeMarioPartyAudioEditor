@@ -22,10 +22,12 @@
 ### Song Dumping
 * You can also dump the selected song to DSP format for listening in vgmstream or for conversion (it will dump in left and right channels)
     * Credit to Yoshimaster96's original dumping code which I translated into Java
+* You can also dump all songs from the Mario Party games or other games that use the format (such as Adventure Island (GameCube))
 
 ### Sound Dumping
 * You can also dump the selected sounds to their native samp/sdir format
     * Credit to Yoshimaster96's original dumping code which I translated into Java
+* You can also dump all sounds from the Mario Party games or other games that use the format (such as Adventure Island (GameCube))
 
 ### Sound Replacement
 * You can also replace sound effects, but it's a bit more complicated

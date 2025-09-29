@@ -1069,12 +1069,28 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == dumpAllSongs) {
-            if (pdtPath.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No PDT file was chosen!");
-                return;
-            }
 
-            File pdtFile = new File(pdtPath);
+            File pdtFile;
+
+            if (pdtPath.isEmpty()) {
+                JFileChooser pdtFileChooser = new JFileChooser();
+                pdtFileChooser.setDialogTitle("Select PDT file");
+                pdtFileChooser.setAcceptAllFileFilterUsed(false);
+
+                FileNameExtensionFilter pdtFilter = new FileNameExtensionFilter("PDT Files", "pdt");
+                pdtFileChooser.setFileFilter(pdtFilter);
+
+                int userSelection = pdtFileChooser.showOpenDialog(null);
+
+                if (userSelection != JFileChooser.APPROVE_OPTION) {
+                    return;
+                }
+
+                pdtFile = pdtFileChooser.getSelectedFile();
+            }
+            else {
+                pdtFile = new File(pdtPath);
+            }
 
             if (!pdtFile.exists()) {
                 JOptionPane.showMessageDialog(this, "The chosen PDT file doesn't exist!");
