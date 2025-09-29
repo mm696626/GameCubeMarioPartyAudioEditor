@@ -13,67 +13,6 @@ public class SoundModifier {
     //This code is derived from Yoshimaster96's C MSM sound dumping code, so huge credit and kudos to them!
     //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
-    public static ArrayList<String> getBanks(File msmFile) {
-
-        ArrayList<String> banks = new ArrayList<>();
-
-        try (RandomAccessFile msmRaf = new RandomAccessFile(msmFile, "r")) {
-
-            // Seek to 0x20 to read chk2 offset and size
-            msmRaf.seek(0x20);
-            long chk2Offs = FileIO.readU32BE(msmRaf);
-            long chk2Size = FileIO.readU32BE(msmRaf);
-
-            // Skip 0x10 bytes
-            msmRaf.skipBytes(0x10);
-
-            // Read chk5 and chk6 offsets and sizes
-            long chk5Offs = FileIO.readU32BE(msmRaf);
-            long chk5Size = FileIO.readU32BE(msmRaf);
-            long chk6Offs = FileIO.readU32BE(msmRaf);
-            long chk6Size = FileIO.readU32BE(msmRaf);
-
-            // Iterate through entries in chk2
-            for (int i = 1; i < (chk2Size >> 5); i++) {
-                msmRaf.seek(chk2Offs + (i << 5));
-                long groupId = FileIO.readU16BE(msmRaf);
-                msmRaf.skipBytes(2);
-
-                long groupDataOffs = FileIO.readU32BE(msmRaf);
-                long groupDataSize = FileIO.readU32BE(msmRaf);
-                long sampOffs = FileIO.readU32BE(msmRaf);
-                long sampSize = FileIO.readU32BE(msmRaf);
-
-                groupDataOffs += chk5Offs;
-                sampOffs += chk6Offs;
-
-                // Read offsets from group data
-                msmRaf.seek(groupDataOffs);
-                long poolOffs = FileIO.readU32BE(msmRaf);
-                long projOffs = FileIO.readU32BE(msmRaf);
-                long sdirOffs = FileIO.readU32BE(msmRaf);
-                long SNGOffs = FileIO.readU32BE(msmRaf);
-
-                long poolSize = projOffs - poolOffs;
-                long projSize = sdirOffs - projOffs;
-                long sdirSize = SNGOffs - sdirOffs;
-
-                poolOffs += groupDataOffs;
-                projOffs += groupDataOffs;
-                sdirOffs += groupDataOffs;
-
-
-                banks.add(String.format("%04X", groupId));
-            }
-
-            return banks;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public static void modifySoundBank(File msmFile, File sdirFile, File sampFile, long soundBankReplaced) {
         try (RandomAccessFile msmRaf = new RandomAccessFile(msmFile, "rw")) {
 

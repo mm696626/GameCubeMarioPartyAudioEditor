@@ -858,7 +858,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
             File selectedMSM = msmFileChooser.getSelectedFile();
 
-            ArrayList<String> banks = SoundModifier.getBanks(selectedMSM);
+            ArrayList<String> banks = SoundBankGetter.getBanks(selectedMSM);
 
             if (banks != null) {
                 String[] bankArray = banks.toArray(new String[0]);
@@ -952,7 +952,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             File selectedSDIR = sdirFileChooser.getSelectedFile();
             File selectedSAMP = sampFileChooser.getSelectedFile();
 
-            ArrayList<String> banks = SoundModifier.getBanks(selectedMSM);
+            ArrayList<String> banks = SoundBankGetter.getBanks(selectedMSM);
 
             if (banks != null) {
                 String[] bankArray = banks.toArray(new String[0]);
