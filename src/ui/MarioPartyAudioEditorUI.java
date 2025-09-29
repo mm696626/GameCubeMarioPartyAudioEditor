@@ -20,7 +20,7 @@ import java.util.*;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpSoundBank, dumpAllSounds, replaceSoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpSoundBank, dumpAllSoundBanks, replaceSoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -246,9 +246,9 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         soundGBC.gridx = 0;
         soundGBC.gridy = 1;
-        dumpAllSounds = new JButton("Dump All Sounds");
-        dumpAllSounds.addActionListener(this);
-        soundToolsPanel.add(dumpAllSounds, soundGBC);
+        dumpAllSoundBanks = new JButton("Dump All Sound Banks");
+        dumpAllSoundBanks.addActionListener(this);
+        soundToolsPanel.add(dumpAllSoundBanks, soundGBC);
 
         soundGBC.gridx = 0;
         soundGBC.gridy = 2;
@@ -892,7 +892,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             }
         }
 
-        if (e.getSource() == dumpAllSounds) {
+        if (e.getSource() == dumpAllSoundBanks) {
             JFileChooser msmFileChooser = new JFileChooser();
             msmFileChooser.setDialogTitle("Select MSM file");
             msmFileChooser.setAcceptAllFileFilterUsed(false);
