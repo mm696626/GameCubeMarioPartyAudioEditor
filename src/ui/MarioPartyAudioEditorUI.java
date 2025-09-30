@@ -429,6 +429,9 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                     case "defaultPDTFile":
                         if (!value.equals("None")) defaultPDTFile = new File(value);
                         break;
+                    case "defaultMSMFile":
+                        if (!value.equals("None")) defaultMSMFile = new File(value);
+                        break;
                     case "defaultDumpOutputFolder":
                         if (!value.equals("None")) defaultDumpOutputFolder = new File(value);
                         break;
@@ -495,6 +498,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         try (PrintWriter writer = new PrintWriter(new FileOutputStream("settings.txt"))) {
             writer.println("defaultSavedDSPFolder:" + (defaultSavedDSPFolder != null ? defaultSavedDSPFolder.getAbsolutePath() : "None"));
             writer.println("defaultPDTFile:" + (defaultPDTFile != null ? defaultPDTFile.getAbsolutePath() : "None"));
+            writer.println("defaultMSMFile:" + (defaultMSMFile != null ? defaultMSMFile.getAbsolutePath() : "None"));
             writer.println("defaultDumpOutputFolder:" + (defaultDumpOutputFolder != null ? defaultDumpOutputFolder.getAbsolutePath() : "None"));
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Failed to save settings: " + e.getMessage());
@@ -525,6 +529,12 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             defaultPDTFileLabel.setText("None");
         }
 
+        defaultMSMFile = null;
+
+        if (defaultMSMFileLabel != null) {
+            defaultMSMFileLabel.setText("None");
+        }
+
         defaultDumpOutputFolder = null;
 
         if (defaultDumpFolderLabel != null) {
@@ -534,6 +544,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         try (PrintWriter writer = new PrintWriter(new FileOutputStream("settings.txt"))) {
             writer.println("defaultSavedDSPFolder:None");
             writer.println("defaultPDTFile:None");
+            writer.println("defaultMSMFile:None");
             writer.println("defaultDumpOutputFolder:None");
             JOptionPane.showMessageDialog(this, "Setting reset to default.");
         } catch (IOException e) {
