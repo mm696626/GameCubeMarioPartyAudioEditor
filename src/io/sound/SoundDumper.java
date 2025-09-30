@@ -3,7 +3,10 @@ package io.sound;
 import io.FileIO;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 public class SoundDumper {
 
@@ -64,12 +67,12 @@ public class SoundDumper {
 
 
                 if (groupId == soundBankDumped) {
-                    dumpToFile(file, sdirOffs, sdirSize, new File(outputDir, String.format("%04X.sdir", groupId)));
-                    dumpToFile(file, sampOffs, sampSize, new File(outputDir, String.format("%04X.samp", groupId)));
+                    dumpToFile(file, sdirOffs, sdirSize, new File(outputDir, String.format("%04d.sdir", groupId)));
+                    dumpToFile(file, sampOffs, sampSize, new File(outputDir, String.format("%04d.samp", groupId)));
 
                     if (dumpProjPool) {
-                        dumpToFile(file, poolOffs, poolSize, new File(outputDir, String.format("%04X.pool", groupId)));
-                        dumpToFile(file, projOffs, projSize, new File(outputDir, String.format("%04X.proj", groupId)));
+                        dumpToFile(file, poolOffs, poolSize, new File(outputDir, String.format("%04d.pool", groupId)));
+                        dumpToFile(file, projOffs, projSize, new File(outputDir, String.format("%04d.proj", groupId)));
                     }
 
                     file.close();
@@ -136,12 +139,12 @@ public class SoundDumper {
                 projOffs += groupDataOffs;
                 sdirOffs += groupDataOffs;
 
-                dumpToFile(file, sdirOffs, sdirSize, new File(outputDir, String.format("%04X.sdir", groupId)));
-                dumpToFile(file, sampOffs, sampSize, new File(outputDir, String.format("%04X.samp", groupId)));
+                dumpToFile(file, sdirOffs, sdirSize, new File(outputDir, String.format("%04d.sdir", groupId)));
+                dumpToFile(file, sampOffs, sampSize, new File(outputDir, String.format("%04d.samp", groupId)));
 
                 if (dumpProjPool) {
-                    dumpToFile(file, poolOffs, poolSize, new File(outputDir, String.format("%04X.pool", groupId)));
-                    dumpToFile(file, projOffs, projSize, new File(outputDir, String.format("%04X.proj", groupId)));
+                    dumpToFile(file, poolOffs, poolSize, new File(outputDir, String.format("%04d.pool", groupId)));
+                    dumpToFile(file, projOffs, projSize, new File(outputDir, String.format("%04d.proj", groupId)));
                 }
             }
 

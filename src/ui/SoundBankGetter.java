@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class SoundBankGetter {
 
@@ -22,8 +23,10 @@ public class SoundBankGetter {
             for (int i = 1; i < (chk2Size >> 5); i++) {
                 msmRaf.seek(chk2Offs + (i << 5));
                 long groupId = FileIO.readU16BE(msmRaf);
-                banks.add(String.format("%04X", groupId));
+                banks.add(String.format("%04d", groupId));
             }
+
+            banks.sort(Comparator.comparingInt(Integer::parseInt));
 
             return banks;
 

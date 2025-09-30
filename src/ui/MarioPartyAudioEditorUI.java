@@ -935,7 +935,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                     String selectedBank = (String) bankDropdown.getSelectedItem();
 
                     if (selectedBank != null) {
-                        SoundDumper.dumpSoundBank(selectedMSM, Long.parseLong(selectedBank, 16), defaultDumpOutputFolder, dumpProjPool.isSelected());
+                        SoundDumper.dumpSoundBank(selectedMSM, Long.parseLong(selectedBank), defaultDumpOutputFolder, dumpProjPool.isSelected());
                     }
                     else {
                         return;
