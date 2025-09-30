@@ -16,21 +16,17 @@ public class SoundModifier {
     public static void modifySoundBank(File msmFile, File sdirFile, File sampFile, long soundBankReplaced) {
         try (RandomAccessFile msmRaf = new RandomAccessFile(msmFile, "rw")) {
 
-            // Seek to 0x20 to read chk2 offset and size
             msmRaf.seek(0x20);
             long chk2Offs = FileIO.readU32BE(msmRaf);
             long chk2Size = FileIO.readU32BE(msmRaf);
 
-            // Skip 0x10 bytes
             msmRaf.skipBytes(0x10);
 
-            // Read chk5 and chk6 offsets and sizes
             long chk5Offs = FileIO.readU32BE(msmRaf);
             long chk5Size = FileIO.readU32BE(msmRaf);
             long chk6Offs = FileIO.readU32BE(msmRaf);
             long chk6Size = FileIO.readU32BE(msmRaf);
 
-            // Iterate through entries in chk2
             for (int i = 1; i < (chk2Size >> 5); i++) {
                 msmRaf.seek(chk2Offs + (i << 5));
                 long groupId = FileIO.readU16BE(msmRaf);
@@ -44,7 +40,6 @@ public class SoundModifier {
                 groupDataOffs += chk5Offs;
                 sampOffs += chk6Offs;
 
-                // Read offsets from group data
                 msmRaf.seek(groupDataOffs);
                 long poolOffs = FileIO.readU32BE(msmRaf);
                 long projOffs = FileIO.readU32BE(msmRaf);
