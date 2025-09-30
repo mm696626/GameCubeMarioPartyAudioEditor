@@ -145,7 +145,7 @@ public class SongModifier {
         Scanner inputStream;
 
         try {
-            inputStream = new Scanner(new FileInputStream("original_sizes/" + selectedGame + ".txt"));
+            inputStream = new Scanner(new FileInputStream("original_song_sizes/" + selectedGame + ".txt"));
         }
         catch (FileNotFoundException e) {
             return -1;
@@ -165,7 +165,7 @@ public class SongModifier {
         PrintWriter outputStream;
 
         try {
-            File originalSizesFolder = new File("original_sizes");
+            File originalSizesFolder = new File("original_song_sizes");
             if (!originalSizesFolder.exists()) {
                 originalSizesFolder.mkdirs();
             }
