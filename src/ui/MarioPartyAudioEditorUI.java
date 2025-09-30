@@ -1034,7 +1034,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                     String selectedBank = (String) bankDropdown.getSelectedItem();
 
                     if (selectedBank != null) {
-                        boolean isCorrectBank = selectedSDIR.getName().contains(selectedBank) && selectedSAMP.getName().contains(selectedBank);
+                        boolean isCorrectBank = selectedSDIR.getName().equals(selectedBank + ".sdir") && selectedSAMP.getName().equals(selectedBank + ".samp");
                         if (isCorrectBank) {
                             int response = JOptionPane.showConfirmDialog(
                                     null,
