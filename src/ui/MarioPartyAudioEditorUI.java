@@ -36,10 +36,12 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
     private JLabel defaultDSPFolderLabel;
     private JLabel defaultPDTFileLabel;
+    private JLabel defaultMSMFileLabel;
     private JLabel defaultDumpFolderLabel;
 
     private File defaultSavedDSPFolder = null;
     private File defaultPDTFile = null;
+    private File defaultMSMFile = null;
     private File defaultDumpOutputFolder = null;
 
     private DefaultListModel<ModifyJob> jobQueueModel;
@@ -353,10 +355,39 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         settingsGBC.gridx = 2;
         settingsPanel.add(chooseDefaultPDTButton, settingsGBC);
 
+        defaultMSMFileLabel = new JLabel(defaultMSMFile != null ? defaultMSMFile.getAbsolutePath() : "None");
+
+        settingsGBC.gridx = 0;
+        settingsGBC.gridy = 3;
+        settingsGBC.gridwidth = 1;
+        settingsPanel.add(new JLabel("Default MSM File:"), settingsGBC);
+
+        settingsGBC.gridx = 1;
+        settingsPanel.add(defaultMSMFileLabel, settingsGBC);
+
+        JButton chooseDefaultMSMButton = new JButton("Change");
+        chooseDefaultMSMButton.addActionListener(e -> {
+            JFileChooser msmChooser = new JFileChooser();
+            msmChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            msmChooser.setDialogTitle("Select Default MSM File");
+            FileNameExtensionFilter pdtFilter = new FileNameExtensionFilter("MSM Files", "msm");
+            msmChooser.setFileFilter(pdtFilter);
+            msmChooser.setAcceptAllFileFilterUsed(false);
+
+            int result = msmChooser.showOpenDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                defaultMSMFile = msmChooser.getSelectedFile();
+                defaultMSMFileLabel.setText(defaultMSMFile.getAbsolutePath());
+                saveSettingsToFile();
+            }
+        });
+        settingsGBC.gridx = 2;
+        settingsPanel.add(chooseDefaultMSMButton, settingsGBC);
+
         JButton resetSettingsButton = new JButton("Reset Settings");
         resetSettingsButton.addActionListener(e -> resetSettings());
         settingsGBC.gridx = 0;
-        settingsGBC.gridy = 3;
+        settingsGBC.gridy = 4;
         settingsGBC.gridwidth = 3;
         settingsPanel.add(resetSettingsButton, settingsGBC);
 
@@ -850,20 +881,30 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == dumpSoundBank) {
-            JFileChooser msmFileChooser = new JFileChooser();
-            msmFileChooser.setDialogTitle("Select MSM file");
-            msmFileChooser.setAcceptAllFileFilterUsed(false);
 
-            FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
-            msmFileChooser.setFileFilter(msmFilter);
+            File selectedMSM;
 
-            int userSelection = msmFileChooser.showOpenDialog(null);
+            if (defaultMSMFile == null || !defaultMSMFile.exists()) {
+                JFileChooser msmFileChooser = new JFileChooser();
+                msmFileChooser.setDialogTitle("Select MSM file");
+                msmFileChooser.setAcceptAllFileFilterUsed(false);
 
-            if (userSelection != JFileChooser.APPROVE_OPTION) {
-                return;
+                FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
+                msmFileChooser.setFileFilter(msmFilter);
+
+                int userSelection = msmFileChooser.showOpenDialog(null);
+
+                if (userSelection != JFileChooser.APPROVE_OPTION) {
+                    return;
+                }
+                else {
+                    selectedMSM = msmFileChooser.getSelectedFile();
+                }
             }
 
-            File selectedMSM = msmFileChooser.getSelectedFile();
+            else {
+                selectedMSM = defaultMSMFile;
+            }
 
             ArrayList<String> banks = SoundBankGetter.getBanks(selectedMSM);
 
@@ -893,40 +934,57 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == dumpAllSoundBanks) {
-            JFileChooser msmFileChooser = new JFileChooser();
-            msmFileChooser.setDialogTitle("Select MSM file");
-            msmFileChooser.setAcceptAllFileFilterUsed(false);
+            File selectedMSM;
 
-            FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
-            msmFileChooser.setFileFilter(msmFilter);
+            if (defaultMSMFile == null || !defaultMSMFile.exists()) {
+                JFileChooser msmFileChooser = new JFileChooser();
+                msmFileChooser.setDialogTitle("Select MSM file");
+                msmFileChooser.setAcceptAllFileFilterUsed(false);
 
-            int userSelection = msmFileChooser.showOpenDialog(null);
+                FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
+                msmFileChooser.setFileFilter(msmFilter);
 
-            if (userSelection != JFileChooser.APPROVE_OPTION) {
-                return;
+                int userSelection = msmFileChooser.showOpenDialog(null);
+
+                if (userSelection != JFileChooser.APPROVE_OPTION) {
+                    return;
+                }
+                else {
+                    selectedMSM = msmFileChooser.getSelectedFile();
+                }
             }
 
-            if (defaultDumpOutputFolder != null && !defaultDumpOutputFolder.exists()) {
-                defaultDumpOutputFolder = null;
+            else {
+                selectedMSM = defaultMSMFile;
             }
-
-            File selectedMSM = msmFileChooser.getSelectedFile();
 
             SoundDumper.dumpAllSounds(selectedMSM, defaultDumpOutputFolder, dumpProjPool.isSelected());
         }
 
         if (e.getSource() == replaceSoundBank) {
-            JFileChooser msmFileChooser = new JFileChooser();
-            msmFileChooser.setDialogTitle("Select MSM file");
-            msmFileChooser.setAcceptAllFileFilterUsed(false);
+            File selectedMSM;
+            int userSelection;
 
-            FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
-            msmFileChooser.setFileFilter(msmFilter);
+            if (defaultMSMFile == null || !defaultMSMFile.exists()) {
+                JFileChooser msmFileChooser = new JFileChooser();
+                msmFileChooser.setDialogTitle("Select MSM file");
+                msmFileChooser.setAcceptAllFileFilterUsed(false);
 
-            int userSelection = msmFileChooser.showOpenDialog(null);
+                FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
+                msmFileChooser.setFileFilter(msmFilter);
 
-            if (userSelection != JFileChooser.APPROVE_OPTION) {
-                return;
+                userSelection = msmFileChooser.showOpenDialog(null);
+
+                if (userSelection != JFileChooser.APPROVE_OPTION) {
+                    return;
+                }
+                else {
+                    selectedMSM = msmFileChooser.getSelectedFile();
+                }
+            }
+
+            else {
+                selectedMSM = defaultMSMFile;
             }
 
             JFileChooser sdirFileChooser = new JFileChooser();
@@ -955,7 +1013,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            File selectedMSM = msmFileChooser.getSelectedFile();
             File selectedSDIR = sdirFileChooser.getSelectedFile();
             File selectedSAMP = sampFileChooser.getSelectedFile();
 
@@ -965,7 +1022,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 String[] bankArray = banks.toArray(new String[0]);
                 JComboBox<String> bankDropdown = new JComboBox<>(bankArray);
 
-                // Show dropdown in a dialog
                 int result = JOptionPane.showConfirmDialog(
                         null,
                         bankDropdown,
