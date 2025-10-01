@@ -1186,6 +1186,8 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
+            boolean paddedFile = false;
+
             if (oldDSPFile.getName().equals(newDSPFile.getName())) {
                 long oldSize = oldDSPFile.length();
                 long newSize = newDSPFile.length();
@@ -1202,10 +1204,16 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                             raf.write(padding, 0, bytesToWrite);
                             sizeDifference -= bytesToWrite;
                         }
+
+                        paddedFile = true;
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
                 }
+            }
+
+            if (paddedFile) {
+                JOptionPane.showMessageDialog(this, "DSP file has been padded!");
             }
         }
 
@@ -1253,6 +1261,8 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
+            boolean paddedFiles = false;
+
             for (int i = 0; i < oldFiles.length; i++) {
                 for (int j = 0; j < newFiles.length; j++) {
                     if (oldFiles[i].getName().equals(newFiles[j].getName())) {
@@ -1272,12 +1282,18 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                                     raf.write(padding, 0, bytesToWrite);
                                     sizeDifference -= bytesToWrite;
                                 }
+
+                                paddedFiles = true;
                             } catch (IOException ex) {
                                 ex.printStackTrace();
                             }
                         }
                     }
                 }
+            }
+
+            if (paddedFiles) {
+                JOptionPane.showMessageDialog(this, "DSP files have been padded!");
             }
         }
 
