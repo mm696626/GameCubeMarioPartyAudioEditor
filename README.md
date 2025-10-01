@@ -40,6 +40,7 @@
 * Step 6: Open command prompt and run the Python Script and follow the usage
 * Step 7: Extract the sounds from the samp/sdir with the Python script
 * Step 8: Replace whatever you want (make sure it's smaller)
+  * If you'd like for safety, you can pad your replacement DSPs to the old size with the UI (haven't had any issues without that, but just in case)
 * Step 9: Repack the files into their samp/sdir formats with the Python script
 * Step 10: Use the UI to replace the appropriate sound bank
 * Note: **Do not rename anything and make sure your replacements are the same name as the original**
