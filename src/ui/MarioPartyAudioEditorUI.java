@@ -22,7 +22,7 @@ import java.util.*;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpSoundBank, dumpAllSoundBanks, replaceSoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSPs, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpSoundBank, dumpAllSoundBanks, replaceSoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -272,6 +272,12 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         soundGBC.gridx = 0;
         soundGBC.gridy = 5;
+        padSoundDSP = new JButton("Pad Sound DSP Filesize (to have them match the old one)");
+        padSoundDSP.addActionListener(this);
+        soundToolsPanel.add(padSoundDSP, soundGBC);
+
+        soundGBC.gridx = 0;
+        soundGBC.gridy = 6;
         padSoundDSPs = new JButton("Pad Sound DSP Filesizes (to have them match the old ones) (Folder)");
         padSoundDSPs.addActionListener(this);
         soundToolsPanel.add(padSoundDSPs, soundGBC);
@@ -1134,6 +1140,73 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             }
 
             JOptionPane.showMessageDialog(this, "Headers have been fixed!");
+        }
+
+        if (e.getSource() == padSoundDSP) {
+            int response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Only use this if you're padding a sound DSP. Music has its own system that is taken care of already.\nThis is to prevent issues (haven't seen any with Mario Party, but it's here in case)\nThis will pad your replacement to the exact size as the original.\nThus, you will have to rename your file to what the original name was at this point.\nAre you sure you want to continue?",
+                    "Continue?",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (response != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            JFileChooser oldDSPFileChooser = new JFileChooser();
+            oldDSPFileChooser.setDialogTitle("Select unmodified sound DSP file");
+            oldDSPFileChooser.setAcceptAllFileFilterUsed(false);
+
+            FileNameExtensionFilter dspFilter = new FileNameExtensionFilter("DSP Files", "dsp");
+            oldDSPFileChooser.setFileFilter(dspFilter);
+
+            int userSelection = oldDSPFileChooser.showOpenDialog(null);
+
+            if (userSelection != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            JFileChooser newDSPFileChooser = new JFileChooser();
+            newDSPFileChooser.setDialogTitle("Select modified sound DSP file");
+            newDSPFileChooser.setAcceptAllFileFilterUsed(false);
+
+            newDSPFileChooser.setFileFilter(dspFilter);
+
+            userSelection = newDSPFileChooser.showOpenDialog(null);
+
+            if (userSelection != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            File oldDSPFile = oldDSPFileChooser.getSelectedFile();
+            File newDSPFile = newDSPFileChooser.getSelectedFile();
+
+            if (oldDSPFile == null || newDSPFile == null) {
+                return;
+            }
+
+            if (oldDSPFile.getName().equals(newDSPFile.getName())) {
+                long oldSize = oldDSPFile.length();
+                long newSize = newDSPFile.length();
+
+                if (newSize < oldSize) {
+                    long sizeDifference = oldSize - newSize;
+
+                    try (RandomAccessFile raf = new RandomAccessFile(newDSPFile, "rw")) {
+                        raf.seek(newDSPFile.length());
+
+                        byte[] padding = new byte[1024];
+                        while (sizeDifference > 0) {
+                            int bytesToWrite = (int) Math.min(sizeDifference, padding.length);
+                            raf.write(padding, 0, bytesToWrite);
+                            sizeDifference -= bytesToWrite;
+                        }
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
         }
 
         if (e.getSource() == padSoundDSPs) {
