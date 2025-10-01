@@ -48,8 +48,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
     private JList<ModifyJob> jobQueueList;
     private JButton addToQueueButton, removeQueueButton, clearQueueButton, runBatchButton;
 
-    private JCheckBox dumpProjPool = null;
-
     public MarioPartyAudioEditorUI() {
         setTitle("Mario Party GameCube Audio Editor");
         initSettingsFile();
@@ -269,11 +267,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         fixSoundDSPHeaderFolder = new JButton("Fix Nonlooping Sound DSP Header (Folder)");
         fixSoundDSPHeaderFolder.addActionListener(this);
         soundToolsPanel.add(fixSoundDSPHeaderFolder, soundGBC);
-
-        soundGBC.gridx = 0;
-        soundGBC.gridy = 5;
-        dumpProjPool = new JCheckBox("Dump .proj and .pool files (not needed for modding)");
-        soundToolsPanel.add(dumpProjPool, soundGBC);
 
         tabbedPane.addTab("Sound Tools", soundToolsPanel);
 
@@ -935,7 +928,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                     String selectedBank = (String) bankDropdown.getSelectedItem();
 
                     if (selectedBank != null) {
-                        SoundDumper.dumpSoundBank(selectedMSM, Long.parseLong(selectedBank), defaultDumpOutputFolder, dumpProjPool.isSelected());
+                        SoundDumper.dumpSoundBank(selectedMSM, Long.parseLong(selectedBank), defaultDumpOutputFolder);
                     }
                     else {
                         return;
@@ -969,7 +962,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 selectedMSM = defaultMSMFile;
             }
 
-            SoundDumper.dumpAllSounds(selectedMSM, defaultDumpOutputFolder, dumpProjPool.isSelected());
+            SoundDumper.dumpAllSounds(selectedMSM, defaultDumpOutputFolder);
         }
 
         if (e.getSource() == replaceSoundBank) {

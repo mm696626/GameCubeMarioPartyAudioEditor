@@ -14,7 +14,7 @@ public class SoundDumper {
     //This code is a C to Java translation
     //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
-    public static void dumpSoundBank(File msmFile, long soundBankDumped, File defaultDumpOutputFolder, boolean dumpProjPool) {
+    public static void dumpSoundBank(File msmFile, long soundBankDumped, File defaultDumpOutputFolder) {
         File outputDir;
 
         if (defaultDumpOutputFolder == null) {
@@ -70,11 +70,6 @@ public class SoundDumper {
                     dumpToFile(file, sdirOffs, sdirSize, new File(outputDir, String.format("%04d.sdir", groupId)));
                     dumpToFile(file, sampOffs, sampSize, new File(outputDir, String.format("%04d.samp", groupId)));
 
-                    if (dumpProjPool) {
-                        dumpToFile(file, poolOffs, poolSize, new File(outputDir, String.format("%04d.pool", groupId)));
-                        dumpToFile(file, projOffs, projSize, new File(outputDir, String.format("%04d.proj", groupId)));
-                    }
-
                     file.close();
 
                     JOptionPane.showMessageDialog(null, "Sound bank has been dumped!");
@@ -88,7 +83,7 @@ public class SoundDumper {
         }
     }
 
-    public static void dumpAllSounds(File msmFile, File defaultDumpOutputFolder, boolean dumpProjPool) {
+    public static void dumpAllSounds(File msmFile, File defaultDumpOutputFolder) {
         File outputDir;
 
         if (defaultDumpOutputFolder == null) {
@@ -141,11 +136,6 @@ public class SoundDumper {
 
                 dumpToFile(file, sdirOffs, sdirSize, new File(outputDir, String.format("%04d.sdir", groupId)));
                 dumpToFile(file, sampOffs, sampSize, new File(outputDir, String.format("%04d.samp", groupId)));
-
-                if (dumpProjPool) {
-                    dumpToFile(file, poolOffs, poolSize, new File(outputDir, String.format("%04d.pool", groupId)));
-                    dumpToFile(file, projOffs, projSize, new File(outputDir, String.format("%04d.proj", groupId)));
-                }
             }
 
             file.close();
