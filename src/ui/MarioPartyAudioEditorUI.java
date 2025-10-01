@@ -414,6 +414,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
             outputStream.println("defaultSavedDSPFolder:None");
             outputStream.println("defaultPDTFile:None");
+            outputStream.println("defaultMSMFile:None");
             outputStream.println("defaultDumpOutputFolder:None");
             outputStream.close();
         }
