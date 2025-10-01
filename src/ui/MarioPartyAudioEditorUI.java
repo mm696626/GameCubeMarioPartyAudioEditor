@@ -8,6 +8,8 @@ import io.sound.SoundDumper;
 import io.sound.SoundModifier;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -20,7 +22,7 @@ import java.util.*;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpSoundBank, dumpAllSoundBanks, replaceSoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpSoundBank, dumpAllSoundBanks, replaceSoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSPs, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -92,7 +94,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         songSelectionGBC.gridx = 1;
         songSelectionPanel.add(songNames, songSelectionGBC);
 
-        songSearchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+        songSearchField.getDocument().addDocumentListener(new DocumentListener() {
             private void filterSongs() {
                 String filterText = songSearchField.getText().toLowerCase();
                 Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
@@ -118,17 +120,17 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             }
 
             @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+            public void insertUpdate(DocumentEvent e) {
                 filterSongs();
             }
 
             @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+            public void removeUpdate(DocumentEvent e) {
                 filterSongs();
             }
 
             @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            public void changedUpdate(DocumentEvent e) {
                 filterSongs();
             }
         });
@@ -267,6 +269,12 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         fixSoundDSPHeaderFolder = new JButton("Fix Nonlooping Sound DSP Header (Folder)");
         fixSoundDSPHeaderFolder.addActionListener(this);
         soundToolsPanel.add(fixSoundDSPHeaderFolder, soundGBC);
+
+        soundGBC.gridx = 0;
+        soundGBC.gridy = 5;
+        padSoundDSPs = new JButton("Pad Sound DSP Filesizes (to have them match the old ones) (Folder)");
+        padSoundDSPs.addActionListener(this);
+        soundToolsPanel.add(padSoundDSPs, soundGBC);
 
         tabbedPane.addTab("Sound Tools", soundToolsPanel);
 
@@ -1126,6 +1134,67 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             }
 
             JOptionPane.showMessageDialog(this, "Headers have been fixed!");
+        }
+
+        if (e.getSource() == padSoundDSPs) {
+            JFileChooser oldDSPFolderChooser = new JFileChooser();
+            oldDSPFolderChooser.setDialogTitle("Select the unmodified sound DSP folder");
+            oldDSPFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            oldDSPFolderChooser.setAcceptAllFileFilterUsed(false);
+
+            int userSelection = oldDSPFolderChooser.showOpenDialog(null);
+
+            if (userSelection != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            JFileChooser newDSPFolderChooser = new JFileChooser();
+            newDSPFolderChooser.setDialogTitle("Select the modified sound DSP folder");
+            newDSPFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            newDSPFolderChooser.setAcceptAllFileFilterUsed(false);
+
+            userSelection = newDSPFolderChooser.showOpenDialog(null);
+
+            if (userSelection != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            File oldDSPFolder = oldDSPFolderChooser.getSelectedFile();
+            File newDSPFolder = newDSPFolderChooser.getSelectedFile();
+
+            File[] oldFiles = oldDSPFolder.listFiles((_, name) -> name.toLowerCase().endsWith(".dsp"));
+            File[] newFiles = newDSPFolder.listFiles((_, name) -> name.toLowerCase().endsWith(".dsp"));
+
+            if (oldFiles == null || newFiles == null) {
+                return;
+            }
+
+            for (int i = 0; i < oldFiles.length; i++) {
+                for (int j = 0; j < newFiles.length; j++) {
+                    if (oldFiles[i].getName().equals(newFiles[j].getName())) {
+                        long oldSize = oldFiles[i].length();
+                        long newSize = newFiles[j].length();
+
+                        if (newSize < oldSize) {
+                            File smallerFile = newFiles[j];
+                            long sizeDifference = oldSize - newSize;
+
+                            try (RandomAccessFile raf = new RandomAccessFile(smallerFile, "rw")) {
+                                raf.seek(smallerFile.length());
+
+                                byte[] padding = new byte[1024];
+                                while (sizeDifference > 0) {
+                                    int bytesToWrite = (int) Math.min(sizeDifference, padding.length);
+                                    raf.write(padding, 0, bytesToWrite);
+                                    sizeDifference -= bytesToWrite;
+                                }
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         if (e.getSource() == dumpAllSongs) {
