@@ -1137,6 +1137,17 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == padSoundDSPs) {
+            int response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Only use this if you're padding sound DSPs. Music has its own system that is taken care of already.\nThis is to prevent issues (haven't seen any with Mario Party, but it's here in case)\nThis will pad your replacements to the exact size as the originals.\nThus, you will have to rename your files to what the original name was at this point.\nAre you sure you want to continue?",
+                    "Continue?",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (response != JOptionPane.YES_OPTION) {
+                return;
+            }
+
             JFileChooser oldDSPFolderChooser = new JFileChooser();
             oldDSPFolderChooser.setDialogTitle("Select the unmodified sound DSP folder");
             oldDSPFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
