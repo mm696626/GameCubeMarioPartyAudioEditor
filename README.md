@@ -5,6 +5,9 @@
 
 ### Why isn't most of Mario Party 4's soundtrack editable?
 * Simple! Most of the music in that game is sequenced, not streamed
+* As a consolation, you can dump the game's sequenced audio (might figure it out)
+* You can convert them to MIDI files with amuse
+  * https://github.com/AxioDL/amuse
 
 ### Music Notes
 * Audio must be in DSP format split into two channels
