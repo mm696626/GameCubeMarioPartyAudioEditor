@@ -1051,7 +1051,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                                 backupMSM(selectedMSM);
                             }
 
-                            SoundModifier.modifySoundBank(selectedMSM, selectedSDIR, selectedSAMP, Long.parseLong(selectedBank, 16));
+                            SoundModifier.modifySoundBank(selectedMSM, selectedSDIR, selectedSAMP, Long.parseLong(selectedBank));
                         }
                         else {
                             JOptionPane.showMessageDialog(this, "Your replacement sdir or samp are not for the correct sound bank");
