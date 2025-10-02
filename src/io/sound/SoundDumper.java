@@ -17,7 +17,7 @@ public class SoundDumper {
     public static void dumpSoundBank(File msmFile, long soundBankDumped, File defaultDumpOutputFolder) {
         File outputDir;
 
-        if (defaultDumpOutputFolder == null) {
+        if (defaultDumpOutputFolder == null || !defaultDumpOutputFolder.exists()) {
             outputDir = promptForOutputFolder();
             if (outputDir == null) return;
         }
@@ -86,7 +86,7 @@ public class SoundDumper {
     public static void dumpAllSounds(File msmFile, File defaultDumpOutputFolder) {
         File outputDir;
 
-        if (defaultDumpOutputFolder == null) {
+        if (defaultDumpOutputFolder == null || !defaultDumpOutputFolder.exists()) {
             outputDir = promptForOutputFolder();
             if (outputDir == null) return;
         }

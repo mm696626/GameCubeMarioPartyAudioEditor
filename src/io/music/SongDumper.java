@@ -28,7 +28,7 @@ public class SongDumper {
     public static void dumpSong(File selectedFile, int songIndex, String songName, File defaultDumpOutputFolder) {
         File outputDir;
 
-        if (defaultDumpOutputFolder == null) {
+        if (defaultDumpOutputFolder == null || !defaultDumpOutputFolder.exists()) {
             outputDir = promptForOutputFolder();
             if (outputDir == null) return;
         }
@@ -169,7 +169,7 @@ public class SongDumper {
     public static void dumpAllSongs(File selectedFile, File defaultDumpOutputFolder) {
         File outputDir;
 
-        if (defaultDumpOutputFolder == null) {
+        if (defaultDumpOutputFolder == null || !defaultDumpOutputFolder.exists()) {
             outputDir = promptForOutputFolder();
             if (outputDir == null) return;
         }
