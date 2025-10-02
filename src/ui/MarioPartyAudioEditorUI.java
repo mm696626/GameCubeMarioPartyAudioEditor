@@ -23,7 +23,7 @@ import java.util.*;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpSoundBank, dumpAllSoundBanks, replaceSoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpSoundBank, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -257,9 +257,9 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         soundBankPanel.add(dumpAllSoundBanks, soundBankGBC);
 
         soundBankGBC.gridy = 2;
-        replaceSoundBank = new JButton("Replace Sound Bank");
-        replaceSoundBank.addActionListener(this);
-        soundBankPanel.add(replaceSoundBank, soundBankGBC);
+        modifySoundBank = new JButton("Modify Sound Bank");
+        modifySoundBank.addActionListener(this);
+        soundBankPanel.add(modifySoundBank, soundBankGBC);
 
         JPanel soundDSPPanel = new JPanel(new GridBagLayout());
         soundDSPPanel.setBorder(BorderFactory.createTitledBorder("Fix Sound DSP"));
@@ -990,7 +990,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             SoundDumper.dumpAllSounds(selectedMSM, defaultDumpOutputFolder);
         }
 
-        if (e.getSource() == replaceSoundBank) {
+        if (e.getSource() == modifySoundBank) {
             File selectedMSM;
             int userSelection;
 
@@ -1017,7 +1017,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             }
 
             JFileChooser sdirFileChooser = new JFileChooser();
-            sdirFileChooser.setDialogTitle("Select Replacement SDIR file");
+            sdirFileChooser.setDialogTitle("Select Modified SDIR file");
             sdirFileChooser.setAcceptAllFileFilterUsed(false);
 
             FileNameExtensionFilter sdirFilter = new FileNameExtensionFilter("SDIR Files", "sdir");
@@ -1030,7 +1030,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             }
 
             JFileChooser sampFileChooser = new JFileChooser();
-            sampFileChooser.setDialogTitle("Select Replacement SAMP file");
+            sampFileChooser.setDialogTitle("Select Modified SAMP file");
             sampFileChooser.setAcceptAllFileFilterUsed(false);
 
             FileNameExtensionFilter sampFilter = new FileNameExtensionFilter("SAMP Files", "samp");
@@ -1079,7 +1079,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                             SoundModifier.modifySoundBank(selectedMSM, selectedSDIR, selectedSAMP, Long.parseLong(selectedBank));
                         }
                         else {
-                            JOptionPane.showMessageDialog(this, "Your replacement sdir or samp are not for the correct sound bank");
+                            JOptionPane.showMessageDialog(this, "Your modified sdir or samp are not for the correct sound bank");
                         }
                     }
 
