@@ -3,6 +3,7 @@ package ui;
 import constants.MarioPartySongNames;
 import io.music.SongDumper;
 import io.music.SongModifier;
+import io.sound.DSPSoundPadder;
 import io.sound.FixDSPSoundHeader;
 import io.sound.SoundDumper;
 import io.sound.SoundModifier;
@@ -1196,31 +1197,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            boolean paddedFile = false;
-
-            if (oldDSPFile.getName().equals(newDSPFile.getName())) {
-                long oldSize = oldDSPFile.length();
-                long newSize = newDSPFile.length();
-
-                if (newSize < oldSize) {
-                    long sizeDifference = oldSize - newSize;
-
-                    try (RandomAccessFile raf = new RandomAccessFile(newDSPFile, "rw")) {
-                        raf.seek(newDSPFile.length());
-
-                        byte[] padding = new byte[1024];
-                        while (sizeDifference > 0) {
-                            int bytesToWrite = (int) Math.min(sizeDifference, padding.length);
-                            raf.write(padding, 0, bytesToWrite);
-                            sizeDifference -= bytesToWrite;
-                        }
-
-                        paddedFile = true;
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
+            boolean paddedFile = DSPSoundPadder.padSoundDSP(oldDSPFile, newDSPFile);
 
             if (paddedFile) {
                 JOptionPane.showMessageDialog(this, "DSP file has been padded!");
@@ -1271,36 +1248,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            boolean paddedFiles = false;
-
-            for (int i = 0; i < oldFiles.length; i++) {
-                for (int j = 0; j < newFiles.length; j++) {
-                    if (oldFiles[i].getName().equals(newFiles[j].getName())) {
-                        long oldSize = oldFiles[i].length();
-                        long newSize = newFiles[j].length();
-
-                        if (newSize < oldSize) {
-                            File smallerFile = newFiles[j];
-                            long sizeDifference = oldSize - newSize;
-
-                            try (RandomAccessFile raf = new RandomAccessFile(smallerFile, "rw")) {
-                                raf.seek(smallerFile.length());
-
-                                byte[] padding = new byte[1024];
-                                while (sizeDifference > 0) {
-                                    int bytesToWrite = (int) Math.min(sizeDifference, padding.length);
-                                    raf.write(padding, 0, bytesToWrite);
-                                    sizeDifference -= bytesToWrite;
-                                }
-
-                                paddedFiles = true;
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            }
+            boolean paddedFiles = DSPSoundPadder.padSoundDSPs(oldFiles, newFiles);
 
             if (paddedFiles) {
                 JOptionPane.showMessageDialog(this, "DSP files have been padded!");
