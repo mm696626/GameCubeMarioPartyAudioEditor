@@ -6,7 +6,7 @@ import java.io.RandomAccessFile;
 
 public class DSPSoundPadder {
 
-    public static boolean padSoundDSP(File oldDSPFile, File newDSPFile) {
+    public static boolean padSoundDSP(File oldDSPFile, File newDSPFile, boolean fixHeader) {
         if (oldDSPFile.getName().equals(newDSPFile.getName())) {
             long oldSize = oldDSPFile.length();
             long newSize = newDSPFile.length();
@@ -24,6 +24,10 @@ public class DSPSoundPadder {
                         sizeDifference -= bytesToWrite;
                     }
 
+                    if (fixHeader) {
+                        FixDSPSoundHeader.fixHeader(newDSPFile);
+                    }
+
                     return true;
                 } catch (IOException ex) {
                     ex.printStackTrace();
@@ -34,14 +38,14 @@ public class DSPSoundPadder {
         return false;
     }
 
-    public static boolean padSoundDSPs(File[] oldFiles, File[] newFiles) {
+    public static boolean padSoundDSPs(File[] oldFiles, File[] newFiles, boolean fixHeaders) {
         boolean paddedAFile = false;
         boolean paddedFile;
 
         for (int i = 0; i < oldFiles.length; i++) {
             for (int j = 0; j < newFiles.length; j++) {
                 if (oldFiles[i].getName().equals(newFiles[j].getName())) {
-                    paddedFile = padSoundDSP(oldFiles[i], newFiles[j]);
+                    paddedFile = padSoundDSP(oldFiles[i], newFiles[j], fixHeaders);
 
                     if (paddedFile && !paddedAFile) {
                         paddedAFile = true;

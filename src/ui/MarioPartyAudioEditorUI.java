@@ -1209,7 +1209,20 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            boolean paddedFile = DSPSoundPadder.padSoundDSP(oldDSPFile, newDSPFile);
+            boolean fixHeader = false;
+
+            response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Do you also want to fix the header?\nOnly say yes to this if your sound isn't meant to loop.\nAre you sure you want to continue?",
+                    "Continue?",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (response == JOptionPane.YES_OPTION) {
+                fixHeader = true;
+            }
+
+            boolean paddedFile = DSPSoundPadder.padSoundDSP(oldDSPFile, newDSPFile, fixHeader);
 
             if (paddedFile) {
                 JOptionPane.showMessageDialog(this, "DSP file has been padded!");
@@ -1260,7 +1273,20 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            boolean paddedFiles = DSPSoundPadder.padSoundDSPs(oldFiles, newFiles);
+            boolean fixHeaders = false;
+
+            response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Do you also want to fix the headers?\nOnly say yes to this if your sounds aren't meant to loop.\nAre you sure you want to continue?",
+                    "Continue?",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (response == JOptionPane.YES_OPTION) {
+                fixHeaders = true;
+            }
+
+            boolean paddedFiles = DSPSoundPadder.padSoundDSPs(oldFiles, newFiles, fixHeaders);
 
             if (paddedFiles) {
                 JOptionPane.showMessageDialog(this, "DSP files have been padded!");
