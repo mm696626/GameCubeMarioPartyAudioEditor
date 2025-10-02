@@ -274,12 +274,12 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         soundDSPPanel.add(fixSoundDSPHeader, soundDSPGBC);
 
         soundDSPGBC.gridy = 1;
-        fixSoundDSPHeaderFolder = new JButton("Fix Nonlooping Sound DSP Header (Folder)");
+        fixSoundDSPHeaderFolder = new JButton("Fix Nonlooping Sound DSP Headers (Folder)");
         fixSoundDSPHeaderFolder.addActionListener(this);
         soundDSPPanel.add(fixSoundDSPHeaderFolder, soundDSPGBC);
 
         soundDSPGBC.gridy = 2;
-        padSoundDSP = new JButton("Pad Sound DSP Filesize (to match old)");
+        padSoundDSP = new JButton("Pad Sound DSP Filesize");
         padSoundDSP.addActionListener(this);
         soundDSPPanel.add(padSoundDSP, soundDSPGBC);
 
