@@ -235,52 +235,61 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         songToolsPanel.add(Box.createVerticalStrut(10));
         songToolsPanel.add(queuePanel);
 
-        JPanel soundToolsPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints soundGBC = new GridBagConstraints();
-        soundGBC.insets = new Insets(5, 5, 5, 5);
-        soundGBC.fill = GridBagConstraints.HORIZONTAL;
+        JPanel soundToolsPanel = new JPanel();
+        soundToolsPanel.setLayout(new BoxLayout(soundToolsPanel, BoxLayout.Y_AXIS));
 
-        soundGBC.gridx = 0;
-        soundGBC.gridy = 0;
+        JPanel soundBankPanel = new JPanel(new GridBagLayout());
+        soundBankPanel.setBorder(BorderFactory.createTitledBorder("Dump/Modify Sound Bank"));
+        GridBagConstraints soundBankGBC = new GridBagConstraints();
+        soundBankGBC.insets = new Insets(5, 5, 5, 5);
+        soundBankGBC.fill = GridBagConstraints.HORIZONTAL;
+
+        soundBankGBC.gridx = 0;
+        soundBankGBC.gridy = 0;
         dumpSoundBank = new JButton("Dump Sound Bank");
         dumpSoundBank.addActionListener(this);
-        soundToolsPanel.add(dumpSoundBank, soundGBC);
+        soundBankPanel.add(dumpSoundBank, soundBankGBC);
 
-        soundGBC.gridx = 0;
-        soundGBC.gridy = 1;
+        soundBankGBC.gridy = 1;
         dumpAllSoundBanks = new JButton("Dump All Sound Banks");
         dumpAllSoundBanks.addActionListener(this);
-        soundToolsPanel.add(dumpAllSoundBanks, soundGBC);
+        soundBankPanel.add(dumpAllSoundBanks, soundBankGBC);
 
-        soundGBC.gridx = 0;
-        soundGBC.gridy = 2;
+        soundBankGBC.gridy = 2;
         replaceSoundBank = new JButton("Replace Sound Bank");
         replaceSoundBank.addActionListener(this);
-        soundToolsPanel.add(replaceSoundBank, soundGBC);
+        soundBankPanel.add(replaceSoundBank, soundBankGBC);
 
-        soundGBC.gridx = 0;
-        soundGBC.gridy = 3;
+        JPanel soundDSPPanel = new JPanel(new GridBagLayout());
+        soundDSPPanel.setBorder(BorderFactory.createTitledBorder("Fix Sound DSP"));
+        GridBagConstraints soundDSPGBC = new GridBagConstraints();
+        soundDSPGBC.insets = new Insets(5, 5, 5, 5);
+        soundDSPGBC.fill = GridBagConstraints.HORIZONTAL;
+
+        soundDSPGBC.gridx = 0;
+        soundDSPGBC.gridy = 0;
         fixSoundDSPHeader = new JButton("Fix Nonlooping Sound DSP Header");
         fixSoundDSPHeader.addActionListener(this);
-        soundToolsPanel.add(fixSoundDSPHeader, soundGBC);
+        soundDSPPanel.add(fixSoundDSPHeader, soundDSPGBC);
 
-        soundGBC.gridx = 0;
-        soundGBC.gridy = 4;
+        soundDSPGBC.gridy = 1;
         fixSoundDSPHeaderFolder = new JButton("Fix Nonlooping Sound DSP Header (Folder)");
         fixSoundDSPHeaderFolder.addActionListener(this);
-        soundToolsPanel.add(fixSoundDSPHeaderFolder, soundGBC);
+        soundDSPPanel.add(fixSoundDSPHeaderFolder, soundDSPGBC);
 
-        soundGBC.gridx = 0;
-        soundGBC.gridy = 5;
-        padSoundDSP = new JButton("Pad Sound DSP Filesize (to have them match the old one)");
+        soundDSPGBC.gridy = 2;
+        padSoundDSP = new JButton("Pad Sound DSP Filesize (to match old)");
         padSoundDSP.addActionListener(this);
-        soundToolsPanel.add(padSoundDSP, soundGBC);
+        soundDSPPanel.add(padSoundDSP, soundDSPGBC);
 
-        soundGBC.gridx = 0;
-        soundGBC.gridy = 6;
-        padSoundDSPs = new JButton("Pad Sound DSP Filesizes (to have them match the old ones) (Folder)");
+        soundDSPGBC.gridy = 3;
+        padSoundDSPs = new JButton("Pad Sound DSP Filesizes (Folder)");
         padSoundDSPs.addActionListener(this);
-        soundToolsPanel.add(padSoundDSPs, soundGBC);
+        soundDSPPanel.add(padSoundDSPs, soundDSPGBC);
+
+        soundToolsPanel.add(soundBankPanel);
+        soundToolsPanel.add(Box.createVerticalStrut(10));
+        soundToolsPanel.add(soundDSPPanel);
 
         tabbedPane.addTab("Sound Tools", soundToolsPanel);
 
