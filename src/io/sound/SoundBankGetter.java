@@ -1,4 +1,4 @@
-package ui;
+package io.sound;
 
 import io.FileIO;
 
@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class SoundBankGetter {
+
+    //This code is derived from Yoshimaster96's C MSM sound dumping code, so huge credit and kudos to them!
+    //This code is a C to Java translation
+    //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
     public static ArrayList<String> getBanks(File msmFile) {
 

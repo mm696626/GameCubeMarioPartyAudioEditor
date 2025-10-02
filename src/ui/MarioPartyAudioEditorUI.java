@@ -3,10 +3,9 @@ package ui;
 import constants.MarioPartySongNames;
 import io.music.SongDumper;
 import io.music.SongModifier;
-import io.sound.DSPSoundPadder;
-import io.sound.FixDSPSoundHeader;
-import io.sound.SoundDumper;
-import io.sound.SoundModifier;
+import io.sound.*;
+import uihelpers.DSPPair;
+import uihelpers.ModifyJob;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
