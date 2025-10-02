@@ -51,6 +51,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
     private JButton addToQueueButton, removeQueueButton, clearQueueButton, runBatchButton;
 
     private JCheckBox dumpProjPool = null;
+    private JCheckBox padSoundOnModify = null;
 
 
     public MarioPartyAudioEditorUI() {
@@ -266,6 +267,11 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         soundBankGBC.gridy = 3;
         dumpProjPool = new JCheckBox("Dump .proj and .pool files (not needed for modding)");
         soundBankPanel.add(dumpProjPool, soundBankGBC);
+
+        soundBankGBC.gridy = 4;
+        padSoundOnModify = new JCheckBox("Pad .samp and .sdir on modify (not sure if you need this, but it's on by default)");
+        padSoundOnModify.setSelected(true);
+        soundBankPanel.add(padSoundOnModify, soundBankGBC);
 
         JPanel soundDSPPanel = new JPanel(new GridBagLayout());
         soundDSPPanel.setBorder(BorderFactory.createTitledBorder("Fix Sound DSP"));
@@ -1082,7 +1088,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                                 backupMSM(selectedMSM);
                             }
 
-                            SoundModifier.modifySoundBank(selectedMSM, selectedSDIR, selectedSAMP, Long.parseLong(selectedBank));
+                            SoundModifier.modifySoundBank(selectedMSM, selectedSDIR, selectedSAMP, Long.parseLong(selectedBank), padSoundOnModify.isSelected());
                         }
                         else {
                             JOptionPane.showMessageDialog(this, "Your modified sdir or samp are not for the correct sound bank");

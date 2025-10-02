@@ -6,14 +6,13 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
 
 public class SoundModifier {
 
     //This code is derived from Yoshimaster96's C MSM sound dumping code, so huge credit and kudos to them!
     //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
-    public static void modifySoundBank(File msmFile, File sdirFile, File sampFile, long soundBankReplaced) {
+    public static void modifySoundBank(File msmFile, File sdirFile, File sampFile, long soundBankReplaced, boolean padSound) {
         try (RandomAccessFile msmRaf = new RandomAccessFile(msmFile, "rw")) {
 
             msmRaf.seek(0x20);
@@ -86,17 +85,21 @@ public class SoundModifier {
                     msmRaf.seek(sdirOffs);
                     msmRaf.write(newSDirFileBytes);
 
-                    //pad sdir file to match original size
-                    for (int j=0; j<sdirSize-sdirFile.length(); j++) {
-                        msmRaf.write(0);
+                    if (padSound) {
+                        //pad sdir file to match original size
+                        for (int j=0; j<sdirSize-sdirFile.length(); j++) {
+                            msmRaf.write(0);
+                        }
                     }
 
                     msmRaf.seek(sampOffs);
                     msmRaf.write(newSampFileBytes);
 
-                    //pad samp file to match original size
-                    for (int j=0; j<sampSize-sampFile.length(); j++) {
-                        msmRaf.write(0);
+                    if (padSound) {
+                        //pad samp file to match original size
+                        for (int j=0; j<sampSize-sampFile.length(); j++) {
+                            msmRaf.write(0);
+                        }
                     }
 
                     msmRaf.close();
