@@ -21,6 +21,7 @@
     * It's rare if there'd be a case where a long song is needed anyway
 * Not sure how to make SNG files that loop without dropping instruments since one track must have a terminator (so make sure you pick a song that is long enough to avoid this. Only really an issue with the board tracks)
 * To be fair, this was put in as a novelty and wasn't the main focus. Rather, it's just a bonus
+* Results of this may wildly vary. Not sure why some songs break or sound off with this
 
 ### Sound Notes
 * Audio must be in DSP format (sounds are stored in mono DSPs within samp/sdir files so you need to rip them from their samp/sdirs first)
