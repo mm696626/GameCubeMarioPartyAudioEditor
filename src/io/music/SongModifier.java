@@ -141,6 +141,78 @@ public class SongModifier {
         }
     }
 
+    public static void replaceMarioParty4SequencedSong(File msmFile, File sngFile, int songIndex) {
+        try (RandomAccessFile raf = new RandomAccessFile(msmFile, "rw")) {
+
+            raf.seek(0x20);
+            long chk2Offs = FileIO.readU32BE(raf);
+            long chk2Size = FileIO.readU32BE(raf);
+            long chk3Offs = FileIO.readU32BE(raf);
+            long chk3Size = FileIO.readU32BE(raf);
+
+            raf.skipBytes(8);
+            long chk5Offs = FileIO.readU32BE(raf);
+
+            int entryCount = (int) (chk3Size >> 4);
+
+            for (int i = 1; i < entryCount; i++) {
+                raf.seek(chk3Offs + (i << 4));
+                int sngGroupId = FileIO.readU16BE(raf);
+                raf.skipBytes(2);
+                long sngGroupOffset = FileIO.readU32BE(raf);
+                long sngGroupSize = FileIO.readU32BE(raf);
+
+                long cmpGroupOffset = -1;
+                raf.seek(chk2Offs);
+                for (int j = 0; j < (chk2Size >> 5); j++) {
+                    int cmpGroupId = FileIO.readU16BE(raf);
+                    if (cmpGroupId == sngGroupId) {
+                        raf.skipBytes(2);
+                        cmpGroupOffset = FileIO.readU32BE(raf);
+                        break;
+                    } else {
+                        raf.skipBytes(0x1E);
+                    }
+                }
+
+                if (cmpGroupOffset == -1) continue;
+
+                raf.seek(chk5Offs + cmpGroupOffset + 0xC);
+                long extraOffset = FileIO.readU32BE(raf);
+
+                raf.seek(chk5Offs + cmpGroupOffset + sngGroupOffset + extraOffset);
+
+                if (i == songIndex) {
+                    if (sngFile.length() > sngGroupSize) {
+                        JOptionPane.showMessageDialog(null, "Your replacement song is too big!");
+                        return;
+                    }
+
+                    //read sng audio data
+                    byte[] newSNGData;
+
+                    try (RandomAccessFile sngRaf = new RandomAccessFile(sngFile, "r")) {
+                        sngRaf.seek(0);
+                        long remainingBytes = sngRaf.length();
+                        newSNGData = new byte[(int) remainingBytes];
+                        sngRaf.readFully(newSNGData);
+                    }
+
+                    raf.seek(chk5Offs + cmpGroupOffset + sngGroupOffset + extraOffset);
+                    raf.write(newSNGData);
+                    raf.close();
+                    return;
+                }
+
+            }
+
+            JOptionPane.showMessageDialog(null, "Mario Party 4 sequenced songs have been dumped!");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static long readDSPNibbleCountFromFile(String songName, String selectedGame) {
         Scanner inputStream;
 

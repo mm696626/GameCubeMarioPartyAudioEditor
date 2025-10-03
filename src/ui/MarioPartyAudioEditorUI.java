@@ -22,7 +22,7 @@ import java.util.*;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpAllMP4SequencedSongs, dumpSoundBank, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpAllMP4SequencedSongs, modifyMP4SequencedSong, dumpSoundBank, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -162,6 +162,9 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         dumpAllMP4SequencedSongs = new JButton("Dump All Mario Party 4 Sequenced Songs");
         dumpAllMP4SequencedSongs.addActionListener(this);
 
+        modifyMP4SequencedSong = new JButton("Modify Mario Party 4 Sequenced Song");
+        modifyMP4SequencedSong.addActionListener(this);
+
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
 
@@ -178,6 +181,10 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         songGBC.gridx = 0; songGBC.gridy = 2;
         songGBC.gridwidth = 2;
         songPanel.add(modifySong, songGBC);
+
+        songGBC.gridx = 2; songGBC.gridy = 2;
+        songGBC.gridwidth = 1;
+        songPanel.add(modifyMP4SequencedSong, songGBC);
 
         songGBC.gridx = 0; songGBC.gridy = 3;
         songGBC.gridwidth = 1;
@@ -1341,8 +1348,8 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             msmFileChooser.setDialogTitle("Select MSM file");
             msmFileChooser.setAcceptAllFileFilterUsed(false);
 
-            FileNameExtensionFilter pdtFilter = new FileNameExtensionFilter("MSM Files", "msm");
-            msmFileChooser.setFileFilter(pdtFilter);
+            FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
+            msmFileChooser.setFileFilter(msmFilter);
 
             int userSelection = msmFileChooser.showOpenDialog(null);
 
@@ -1358,6 +1365,67 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
             if (msmFile.exists()) {
                 SongDumper.dumpMarioParty4SequencedSongs(msmFile, defaultDumpOutputFolder);
+            }
+        }
+
+        if (e.getSource() == modifyMP4SequencedSong) {
+            JFileChooser msmFileChooser = new JFileChooser();
+            msmFileChooser.setDialogTitle("Select MSM file");
+            msmFileChooser.setAcceptAllFileFilterUsed(false);
+
+            FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
+            msmFileChooser.setFileFilter(msmFilter);
+
+            int userSelection = msmFileChooser.showOpenDialog(null);
+
+            if (userSelection != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            JFileChooser sngFileChooser = new JFileChooser();
+            sngFileChooser.setDialogTitle("Select SNG file");
+            sngFileChooser.setAcceptAllFileFilterUsed(false);
+
+            FileNameExtensionFilter sngFilter = new FileNameExtensionFilter("SNG Files", "sng");
+            sngFileChooser.setFileFilter(sngFilter);
+
+            userSelection = sngFileChooser.showOpenDialog(null);
+
+            if (userSelection != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            File msmFile = msmFileChooser.getSelectedFile();
+            File sngFile = sngFileChooser.getSelectedFile();
+
+            String[] songOptions = MarioPartySongNames.MARIO_PARTY_4_SEQUENCED_TRACK_NAMES.values().toArray(new String[0]);
+            Arrays.sort(songOptions);
+
+            String selectedSongName = (String) JOptionPane.showInputDialog(
+                    null,
+                    "Select a song to replace:",
+                    "Choose Song",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    songOptions,
+                    songOptions[0]
+            );
+
+            if (selectedSongName == null) {
+                return;
+            }
+
+            int actualSongIndex = 0;
+
+            for (Map.Entry<Integer, String> entry : MarioPartySongNames.MARIO_PARTY_4_SEQUENCED_TRACK_NAMES.entrySet()) {
+                if (selectedSongName.equals(entry.getValue())) {
+                    actualSongIndex = entry.getKey();
+                    break;
+                }
+            }
+
+            if (msmFile.exists() && sngFile.exists()) {
+                SongModifier.replaceMarioParty4SequencedSong(msmFile, sngFile, actualSongIndex);
             }
         }
 
