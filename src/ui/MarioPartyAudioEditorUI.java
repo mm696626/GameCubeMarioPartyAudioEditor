@@ -183,10 +183,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         songGBC.gridwidth = 2;
         songPanel.add(modifySong, songGBC);
 
-        songGBC.gridx = 2; songGBC.gridy = 2;
-        songGBC.gridwidth = 1;
-        songPanel.add(modifyMP4SequencedSong, songGBC);
-
         songGBC.gridx = 0; songGBC.gridy = 3;
         songGBC.gridwidth = 1;
         songPanel.add(dumpSong, songGBC);
@@ -194,10 +190,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         songGBC.gridx = 1; songGBC.gridy = 3;
         songGBC.gridwidth = 1;
         songPanel.add(dumpAllSongs, songGBC);
-
-        songGBC.gridx = 2; songGBC.gridy = 3;
-        songGBC.gridwidth = 1;
-        songPanel.add(dumpAllMP4SequencedSongs, songGBC);
 
         selectGame = new JButton("Select PDT and Game");
         selectGame.addActionListener(this);
@@ -253,6 +245,26 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         songToolsPanel.add(Box.createVerticalStrut(10));
         songToolsPanel.add(queuePanel);
+
+        JPanel mp4SeqAudioPanel = new JPanel();
+        mp4SeqAudioPanel.setLayout(new BoxLayout(mp4SeqAudioPanel, BoxLayout.Y_AXIS));
+
+        JPanel mp4Panel = new JPanel(new GridBagLayout());
+        mp4Panel.setBorder(BorderFactory.createTitledBorder("MP4 Sequenced Song Tools"));
+        GridBagConstraints mp4GBC = new GridBagConstraints();
+        mp4GBC.insets = new Insets(5, 5, 5, 5);
+        mp4GBC.fill = GridBagConstraints.HORIZONTAL;
+
+        mp4GBC.gridx = 0; mp4GBC.gridy = 0;
+        mp4GBC.gridwidth = 1;
+        mp4Panel.add(modifyMP4SequencedSong, mp4GBC);
+
+        songGBC.gridx = 0; songGBC.gridy = 1;
+        songGBC.gridwidth = 1;
+        mp4Panel.add(dumpAllMP4SequencedSongs, songGBC);
+
+        mp4SeqAudioPanel.add(mp4Panel);
+        tabbedPane.addTab("MP4 Sequenced Audio", mp4SeqAudioPanel);
 
         JPanel soundToolsPanel = new JPanel();
         soundToolsPanel.setLayout(new BoxLayout(soundToolsPanel, BoxLayout.Y_AXIS));
