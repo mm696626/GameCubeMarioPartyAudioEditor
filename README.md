@@ -20,6 +20,7 @@
     * Honestly, this is fine since Mario Party songs don't play for more than a minute anyway and the music restarts on a new event
     * It's rare if there'd be a case where a long song is needed anyway
 * Not sure how to make SNG files that loop without dropping instruments since one track must have a terminator (so make sure you pick a song that is long enough to avoid this. Only really an issue with the board tracks)
+* To be fair, this was put in as a novelty and wasn't the main focus. Rather, it's just a bonus
 
 ### Sound Notes
 * Audio must be in DSP format (sounds are stored in mono DSPs within samp/sdir files so you need to rip them from their samp/sdirs first)
