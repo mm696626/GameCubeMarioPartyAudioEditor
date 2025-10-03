@@ -22,7 +22,7 @@ import java.util.*;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpSoundBank, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpAllMP4SequencedSongs, dumpSoundBank, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -159,6 +159,9 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         dumpAllSongs = new JButton("Dump All Songs");
         dumpAllSongs.addActionListener(this);
 
+        dumpAllMP4SequencedSongs = new JButton("Dump All Mario Party 4 Sequenced Songs");
+        dumpAllMP4SequencedSongs.addActionListener(this);
+
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
 
@@ -183,6 +186,10 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         songGBC.gridx = 1; songGBC.gridy = 3;
         songGBC.gridwidth = 1;
         songPanel.add(dumpAllSongs, songGBC);
+
+        songGBC.gridx = 2; songGBC.gridy = 3;
+        songGBC.gridwidth = 1;
+        songPanel.add(dumpAllMP4SequencedSongs, songGBC);
 
         selectGame = new JButton("Select PDT and Game");
         selectGame.addActionListener(this);
@@ -1327,6 +1334,31 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             }
 
             SongDumper.dumpAllSongs(pdtFile, defaultDumpOutputFolder);
+        }
+
+        if (e.getSource() == dumpAllMP4SequencedSongs) {
+            JFileChooser msmFileChooser = new JFileChooser();
+            msmFileChooser.setDialogTitle("Select MSM file");
+            msmFileChooser.setAcceptAllFileFilterUsed(false);
+
+            FileNameExtensionFilter pdtFilter = new FileNameExtensionFilter("MSM Files", "msm");
+            msmFileChooser.setFileFilter(pdtFilter);
+
+            int userSelection = msmFileChooser.showOpenDialog(null);
+
+            if (userSelection != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            File msmFile = msmFileChooser.getSelectedFile();
+
+            if (defaultDumpOutputFolder != null && !defaultDumpOutputFolder.exists()) {
+                defaultDumpOutputFolder = null;
+            }
+
+            if (msmFile.exists()) {
+                SongDumper.dumpMarioParty4SequencedSongs(msmFile, defaultDumpOutputFolder);
+            }
         }
 
         if (e.getSource() == modifySong) {
