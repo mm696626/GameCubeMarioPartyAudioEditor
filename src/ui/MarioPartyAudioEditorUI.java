@@ -157,10 +157,10 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         dumpAllSongs = new JButton("Dump All Songs");
         dumpAllSongs.addActionListener(this);
 
-        dumpAllMP4SequencedSongs = new JButton("Dump All Mario Party 4 Sequenced Songs");
+        dumpAllMP4SequencedSongs = new JButton("Dump All Sequenced Songs");
         dumpAllMP4SequencedSongs.addActionListener(this);
 
-        modifyMP4SequencedSong = new JButton("Modify Mario Party 4 Sequenced Song");
+        modifyMP4SequencedSong = new JButton("Modify Sequenced Song");
         modifyMP4SequencedSong.addActionListener(this);
 
         modifySong = new JButton("Modify Selected Song");
@@ -243,7 +243,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         mp4SeqAudioPanel.setLayout(new BoxLayout(mp4SeqAudioPanel, BoxLayout.Y_AXIS));
 
         JPanel mp4Panel = new JPanel(new GridBagLayout());
-        mp4Panel.setBorder(BorderFactory.createTitledBorder("Mario Party 4 Sequenced Song Tools"));
+        mp4Panel.setBorder(BorderFactory.createTitledBorder("Dump/Modify Sequenced Song"));
         GridBagConstraints mp4GBC = new GridBagConstraints();
         mp4GBC.insets = new Insets(5, 5, 5, 5);
         mp4GBC.fill = GridBagConstraints.HORIZONTAL;
