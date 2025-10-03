@@ -3,9 +3,6 @@
 ### GameCube Mario Party Audio Editor
 * A tool allows you to edit the music/sounds in Mario Parties 4-7
 
-### Why isn't most of Mario Party 4's soundtrack editable?
-* Simple! Most of the music in that game is sequenced, not streamed
-
 ### Music Notes
 * Audio must be in DSP format split into two channels
 * As of now, it's not possible to have songs that are larger in file size than the original be the replacement
@@ -14,6 +11,15 @@
 * This tool will attempt to auto select the other track of your song, so name it either with the same file name appended with _L and _R or (channel 0) and (channel 1)
   * Example: mario_L.dsp and mario_R.dsp or luigi (channel 0).dsp and luigi (channel 1).dsp
   * It will do the same with the PDT itself as well in order to identify what game it's for. Keep the file name untouched
+
+### Sequenced Music Notes
+* Audio must be in SNG format
+* You can convert a MIDI file to SNG with Amuse
+  * https://github.com/AxioDL/amuse
+* As of now, it's not possible to have songs that are larger in file size than the original be the replacement
+    * Honestly, this is fine since Mario Party songs don't play for more than a minute anyway and the music restarts on a new event
+    * It's rare if there'd be a case where a long song is needed anyway
+* Not sure how to make SNG files that loop (so make sure you pick a song that is long enough. Only really an issue with the board tracks)
 
 ### Sound Notes
 * Audio must be in DSP format (sounds are stored in mono DSPs within samp/sdir files so you need to rip them from their samp/sdirs first)

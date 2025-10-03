@@ -201,13 +201,11 @@ public class SongModifier {
                     raf.seek(chk5Offs + cmpGroupOffset + sngGroupOffset + extraOffset);
                     raf.write(newSNGData);
                     raf.close();
+                    JOptionPane.showMessageDialog(null, "Mario Party 4 sequenced song has been modified!");
                     return;
                 }
 
             }
-
-            JOptionPane.showMessageDialog(null, "Mario Party 4 sequenced songs have been dumped!");
-
         } catch (IOException e) {
             e.printStackTrace();
         }
