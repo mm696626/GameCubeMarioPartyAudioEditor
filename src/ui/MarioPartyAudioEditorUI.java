@@ -1,6 +1,7 @@
 package ui;
 
 import constants.MarioPartySongNames;
+import io.music.SNGLoopAdder;
 import io.music.SongDumper;
 import io.music.SongModifier;
 import io.sound.*;
@@ -156,7 +157,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         dumpSong = new JButton("Dump Selected Song");
         dumpSong.addActionListener(this);
 
-        dumpAllSongs = new JButton("Dump All Songs");
+        dumpAllSongs = new JButton("Dump All PDT Songs");
         dumpAllSongs.addActionListener(this);
 
         dumpAllMP4SequencedSongs = new JButton("Dump All Mario Party 4 Sequenced Songs");
@@ -1415,13 +1416,40 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            int actualSongIndex = 0;
+            int actualSongIndex = -1;
 
             for (Map.Entry<Integer, String> entry : MarioPartySongNames.MARIO_PARTY_4_SEQUENCED_TRACK_NAMES.entrySet()) {
                 if (selectedSongName.equals(entry.getValue())) {
                     actualSongIndex = entry.getKey();
                     break;
                 }
+            }
+
+            if (actualSongIndex == -1) {
+                JOptionPane.showMessageDialog(this, "Could not determine song index.");
+                return;
+            }
+
+            int response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Do you want to make a backup of the MSM file?",
+                    "Backup MSM",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (response == JOptionPane.YES_OPTION) {
+                backupMSM(msmFile);
+            }
+
+            response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Do you want to make your SNG file loop?\nNote that I haven't figured out how to make it loop 100% correctly, so one of the tracks has to drop after a full loop and it loop the song start to finish\nAre you sure you want to add looping?",
+                    "SNG File Loop",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (response == JOptionPane.YES_OPTION) {
+                SNGLoopAdder.loopSNG(sngFile);
             }
 
             if (msmFile.exists() && sngFile.exists()) {

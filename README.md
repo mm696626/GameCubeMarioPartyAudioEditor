@@ -19,7 +19,7 @@
 * As of now, it's not possible to have songs that are larger in file size than the original be the replacement
     * Honestly, this is fine since Mario Party songs don't play for more than a minute anyway and the music restarts on a new event
     * It's rare if there'd be a case where a long song is needed anyway
-* Not sure how to make SNG files that loop (so make sure you pick a song that is long enough. Only really an issue with the board tracks)
+* Not sure how to make SNG files that loop without dropping instruments since one track must have a terminator (so make sure you pick a song that is long enough to avoid this. Only really an issue with the board tracks)
 
 ### Sound Notes
 * Audio must be in DSP format (sounds are stored in mono DSPs within samp/sdir files so you need to rip them from their samp/sdirs first)
@@ -66,8 +66,9 @@
 ### Special Thanks/Credits
 * This project wouldn't be possible without the work of Yoshimaster96. Huge props to them! Their dumping code was crucial to get this project off the ground
   * https://github.com/Yoshimaster96/mpgc-sound-tools
-* Also, this documentation on the DSP format helped a lot too
+* Also, this documentation on the DSP and CSNG formats helped a lot too
   * https://www.metroid2002.com/retromodding/wiki/DSP_(File_Format)
+  * https://www.metroid2002.com/retromodding/wiki/CSNG_(File_Format)
 * Thanks to the Mario Wiki for pinpointing each song and catching a few I missed
   * https://www.mariowiki.com/Mario_Party_4_sound_test
   * https://www.mariowiki.com/Mario_Party_5_sound_test
