@@ -213,7 +213,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         songToolsPanel.add(Box.createVerticalStrut(10));
         songToolsPanel.add(songPanel);
 
-        tabbedPane.addTab("Song Tools", songToolsPanel);
+        tabbedPane.addTab("Streamed Audio Tools (PDT)", songToolsPanel);
 
         JPanel queuePanel = new JPanel(new BorderLayout());
         queuePanel.setBorder(BorderFactory.createTitledBorder("Batch Modification Job Queue"));
@@ -250,7 +250,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         mp4SeqAudioPanel.setLayout(new BoxLayout(mp4SeqAudioPanel, BoxLayout.Y_AXIS));
 
         JPanel mp4Panel = new JPanel(new GridBagLayout());
-        mp4Panel.setBorder(BorderFactory.createTitledBorder("MP4 Sequenced Song Tools"));
+        mp4Panel.setBorder(BorderFactory.createTitledBorder("Mario Party 4 Sequenced Song Tools"));
         GridBagConstraints mp4GBC = new GridBagConstraints();
         mp4GBC.insets = new Insets(5, 5, 5, 5);
         mp4GBC.fill = GridBagConstraints.HORIZONTAL;
@@ -264,7 +264,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         mp4Panel.add(dumpAllMP4SequencedSongs, songGBC);
 
         mp4SeqAudioPanel.add(mp4Panel);
-        tabbedPane.addTab("MP4 Sequenced Audio", mp4SeqAudioPanel);
+        tabbedPane.addTab("Sequenced Audio Tools (MSM) (Mario Party 4 only)", mp4SeqAudioPanel);
 
         JPanel soundToolsPanel = new JPanel();
         soundToolsPanel.setLayout(new BoxLayout(soundToolsPanel, BoxLayout.Y_AXIS));
@@ -331,7 +331,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         soundToolsPanel.add(Box.createVerticalStrut(10));
         soundToolsPanel.add(soundDSPPanel);
 
-        tabbedPane.addTab("Sound Tools", soundToolsPanel);
+        tabbedPane.addTab("Sound Tools (MSM)", soundToolsPanel);
 
 
         setLayout(new BorderLayout());
