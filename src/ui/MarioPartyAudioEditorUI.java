@@ -23,7 +23,7 @@ import java.util.*;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSong, dumpAllSongs, dumpAllMP4SequencedSongs, modifyMP4SequencedSong, dumpSoundBank, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpAllSongs, dumpAllMP4SequencedSongs, modifyMP4SequencedSong, dumpSoundBank, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -154,10 +154,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         pickRightChannel.addActionListener(this);
         rightChannelLabel = new JLabel("No file selected");
 
-        dumpSong = new JButton("Dump Selected Song");
-        dumpSong.addActionListener(this);
-
-        dumpAllSongs = new JButton("Dump All PDT Songs");
+        dumpAllSongs = new JButton("Dump All Songs");
         dumpAllSongs.addActionListener(this);
 
         dumpAllMP4SequencedSongs = new JButton("Dump All Mario Party 4 Sequenced Songs");
@@ -184,11 +181,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         songPanel.add(modifySong, songGBC);
 
         songGBC.gridx = 0; songGBC.gridy = 3;
-        songGBC.gridwidth = 1;
-        songPanel.add(dumpSong, songGBC);
-
-        songGBC.gridx = 1; songGBC.gridy = 3;
-        songGBC.gridwidth = 1;
+        songGBC.gridwidth = 2;
         songPanel.add(dumpAllSongs, songGBC);
 
         selectGame = new JButton("Select PDT and Game");
@@ -896,56 +889,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         if (e.getSource() == pickRightChannel) {
             chooseRightChannelPath();
-        }
-
-        if (e.getSource() == dumpSong) {
-            if (pdtPath.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No PDT file was chosen!");
-                return;
-            }
-
-            File pdtFile = new File(pdtPath);
-
-            if (!pdtFile.exists()) {
-                JOptionPane.showMessageDialog(this, "The chosen PDT file doesn't exist!");
-                return;
-            }
-
-            if (defaultDumpOutputFolder != null && !defaultDumpOutputFolder.exists()) {
-                defaultDumpOutputFolder = null;
-            }
-
-            String selectedSongName = (String) songNames.getSelectedItem();
-
-            Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
-
-            if (songNameMap == null) {
-                JOptionPane.showMessageDialog(this, "No game is selected! Please select one!");
-                return;
-            }
-
-            int actualSongIndex = -1;
-
-            if (selectedSongName != null) {
-                for (Map.Entry<Integer, String> entry : songNameMap.entrySet()) {
-                    if (selectedSongName.equals(entry.getValue())) {
-                        actualSongIndex = entry.getKey();
-                        break;
-                    }
-                }
-            }
-
-            if (actualSongIndex == -1) {
-                JOptionPane.showMessageDialog(this, "Could not determine song index.");
-                return;
-            }
-
-            SongDumper.dumpSong(
-                    pdtFile,
-                    actualSongIndex,
-                    selectedSongName,
-                    defaultDumpOutputFolder
-            );
         }
 
         if (e.getSource() == dumpSoundBank) {
