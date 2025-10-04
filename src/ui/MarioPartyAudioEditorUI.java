@@ -1326,6 +1326,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
             if (!isMarioParty4(msmFile)) {
                 JOptionPane.showMessageDialog(this, "This option is only designed for Mario Party 4! Please provide a MSM from that game!");
+                return;
             }
 
             if (msmFile.exists()) {
@@ -1396,6 +1397,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
             if (!isMarioParty4(msmFile)) {
                 JOptionPane.showMessageDialog(this, "This option is only designed for Mario Party 4! Please provide a MSM from that game!");
+                return;
             }
 
             int response = JOptionPane.showConfirmDialog(
