@@ -883,7 +883,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
     private boolean isMarioParty4(File msmFile) {
         String msmFileName = msmFile.getName().toLowerCase();
-        return msmFileName.equals("mpgcstr.pdt");
+        return msmFileName.equals("mpgcstr.msm");
     }
 
     @Override
