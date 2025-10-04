@@ -23,7 +23,7 @@ import java.util.*;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpAllSongs, dumpAllMP4SequencedSongs, modifyMP4SequencedSong, dumpSoundBank, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpAllSongs, dumpAllMP4SequencedSongs, modifyMP4SequencedSong, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -272,25 +272,20 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         soundBankGBC.gridx = 0;
         soundBankGBC.gridy = 0;
-        dumpSoundBank = new JButton("Dump Sound Bank");
-        dumpSoundBank.addActionListener(this);
-        soundBankPanel.add(dumpSoundBank, soundBankGBC);
-
-        soundBankGBC.gridy = 1;
         dumpAllSoundBanks = new JButton("Dump All Sound Banks");
         dumpAllSoundBanks.addActionListener(this);
         soundBankPanel.add(dumpAllSoundBanks, soundBankGBC);
 
-        soundBankGBC.gridy = 2;
+        soundBankGBC.gridy = 1;
         modifySoundBank = new JButton("Modify Sound Bank");
         modifySoundBank.addActionListener(this);
         soundBankPanel.add(modifySoundBank, soundBankGBC);
 
-        soundBankGBC.gridy = 3;
+        soundBankGBC.gridy = 2;
         dumpProjPool = new JCheckBox("Dump .proj and .pool files (not needed for modding)");
         soundBankPanel.add(dumpProjPool, soundBankGBC);
 
-        soundBankGBC.gridy = 4;
+        soundBankGBC.gridy = 3;
         padSoundOnModify = new JCheckBox("Pad .samp and .sdir to original file size on modify (this just writes padding bytes after the replacements in the MSM to match the original file size)");
         padSoundOnModify.setSelected(true);
         soundBankPanel.add(padSoundOnModify, soundBankGBC);
@@ -940,59 +935,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         if (e.getSource() == pickRightChannel) {
             chooseRightChannelPath();
-        }
-
-        if (e.getSource() == dumpSoundBank) {
-
-            File selectedMSM;
-
-            if (defaultMSMFile == null || !defaultMSMFile.exists()) {
-                JFileChooser msmFileChooser = new JFileChooser();
-                msmFileChooser.setDialogTitle("Select MSM file");
-                msmFileChooser.setAcceptAllFileFilterUsed(false);
-
-                FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
-                msmFileChooser.setFileFilter(msmFilter);
-
-                int userSelection = msmFileChooser.showOpenDialog(null);
-
-                if (userSelection != JFileChooser.APPROVE_OPTION) {
-                    return;
-                }
-                else {
-                    selectedMSM = msmFileChooser.getSelectedFile();
-                }
-            }
-
-            else {
-                selectedMSM = defaultMSMFile;
-            }
-
-            ArrayList<String> banks = SoundBankGetter.getBanks(selectedMSM);
-
-            if (banks != null) {
-                String[] bankArray = banks.toArray(new String[0]);
-                JComboBox<String> bankDropdown = new JComboBox<>(bankArray);
-
-                int result = JOptionPane.showConfirmDialog(
-                        null,
-                        bankDropdown,
-                        "Select a Bank",
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE
-                );
-
-                if (result == JOptionPane.OK_OPTION) {
-                    String selectedBank = (String) bankDropdown.getSelectedItem();
-
-                    if (selectedBank != null) {
-                        SoundDumper.dumpSoundBank(selectedMSM, Long.parseLong(selectedBank), defaultDumpOutputFolder, dumpProjPool.isSelected());
-                    }
-                    else {
-                        return;
-                    }
-                }
-            }
         }
 
         if (e.getSource() == dumpAllSoundBanks) {
