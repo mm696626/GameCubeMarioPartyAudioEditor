@@ -182,7 +182,7 @@ public class SongModifier {
             raf.seek(chk5Offs + cmpGroupOffset + sngGroupOffset + extraOffset);
 
             if (sngFile.length() > sngGroupSize) {
-                JOptionPane.showMessageDialog(null, "Your replacement song is too big!");
+                JOptionPane.showMessageDialog(null, String.format("Your replacement is %,d bytes and the original is %,d bytes! Try again!", sngFile.length(), sngGroupSize));
                 return;
             }
 
