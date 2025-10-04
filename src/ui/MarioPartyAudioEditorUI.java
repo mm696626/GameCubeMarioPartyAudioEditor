@@ -40,11 +40,13 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
     private JLabel defaultDSPFolderLabel;
     private JLabel defaultPDTFileLabel;
     private JLabel defaultMSMFileLabel;
+    private JLabel defaultSequencedAudioMSMFileLabel;
     private JLabel defaultDumpFolderLabel;
 
     private File defaultSavedDSPFolder = null;
     private File defaultPDTFile = null;
     private File defaultMSMFile = null;
+    private File defaultSequencedAudioMSMFile = null;
     private File defaultDumpOutputFolder = null;
 
     private DefaultListModel<ModifyJob> jobQueueModel;
@@ -433,10 +435,42 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         settingsGBC.gridx = 2;
         settingsPanel.add(chooseDefaultMSMButton, settingsGBC);
 
+        defaultSequencedAudioMSMFileLabel = new JLabel(defaultSequencedAudioMSMFile != null ? defaultSequencedAudioMSMFile.getAbsolutePath() : "None");
+
+        settingsGBC.gridx = 0;
+        settingsGBC.gridy = 4;
+        settingsGBC.gridwidth = 1;
+        settingsPanel.add(new JLabel("Default Sequenced Audio MSM File:"), settingsGBC);
+
+        settingsGBC.gridx = 1;
+        settingsPanel.add(defaultSequencedAudioMSMFileLabel, settingsGBC);
+
+        JButton chooseDefaultSequencedAudioMSMButton = new JButton("Change");
+        chooseDefaultSequencedAudioMSMButton.addActionListener(e -> {
+            JFileChooser msmChooser = new JFileChooser();
+            msmChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            msmChooser.setDialogTitle("Select Default Sequenced Audio MSM File");
+            FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
+            msmChooser.setFileFilter(msmFilter);
+            msmChooser.setAcceptAllFileFilterUsed(false);
+
+            int result = msmChooser.showOpenDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION && isMarioParty4(msmChooser.getSelectedFile())) {
+                defaultSequencedAudioMSMFile = msmChooser.getSelectedFile();
+                defaultSequencedAudioMSMFileLabel.setText(defaultSequencedAudioMSMFile.getAbsolutePath());
+                saveSettingsToFile();
+            }
+            else if (result == JFileChooser.APPROVE_OPTION && !isMarioParty4(msmChooser.getSelectedFile())) {
+                JOptionPane.showMessageDialog(this, "This feature is only designed for Mario Party 4! Try again!");
+            }
+        });
+        settingsGBC.gridx = 2;
+        settingsPanel.add(chooseDefaultSequencedAudioMSMButton, settingsGBC);
+
         JButton resetSettingsButton = new JButton("Reset Settings");
         resetSettingsButton.addActionListener(e -> resetSettings());
         settingsGBC.gridx = 0;
-        settingsGBC.gridy = 4;
+        settingsGBC.gridy = 5;
         settingsGBC.gridwidth = 3;
         settingsPanel.add(resetSettingsButton, settingsGBC);
 
@@ -457,6 +491,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             outputStream.println("defaultSavedDSPFolder:None");
             outputStream.println("defaultPDTFile:None");
             outputStream.println("defaultMSMFile:None");
+            outputStream.println("defaultSequencedAudioMSMFile:None");
             outputStream.println("defaultDumpOutputFolder:None");
             outputStream.close();
         }
@@ -481,6 +516,9 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                         break;
                     case "defaultMSMFile":
                         if (!value.equals("None")) defaultMSMFile = new File(value);
+                        break;
+                    case "defaultSequencedAudioMSMFile":
+                        if (!value.equals("None")) defaultSequencedAudioMSMFile = new File(value);
                         break;
                     case "defaultDumpOutputFolder":
                         if (!value.equals("None")) defaultDumpOutputFolder = new File(value);
@@ -549,6 +587,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             writer.println("defaultSavedDSPFolder:" + (defaultSavedDSPFolder != null ? defaultSavedDSPFolder.getAbsolutePath() : "None"));
             writer.println("defaultPDTFile:" + (defaultPDTFile != null ? defaultPDTFile.getAbsolutePath() : "None"));
             writer.println("defaultMSMFile:" + (defaultMSMFile != null ? defaultMSMFile.getAbsolutePath() : "None"));
+            writer.println("defaultSequencedAudioMSMFile:" + (defaultSequencedAudioMSMFile != null ? defaultSequencedAudioMSMFile.getAbsolutePath() : "None"));
             writer.println("defaultDumpOutputFolder:" + (defaultDumpOutputFolder != null ? defaultDumpOutputFolder.getAbsolutePath() : "None"));
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Failed to save settings: " + e.getMessage());
@@ -585,6 +624,12 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             defaultMSMFileLabel.setText("None");
         }
 
+        defaultSequencedAudioMSMFile = null;
+
+        if (defaultSequencedAudioMSMFileLabel != null) {
+            defaultSequencedAudioMSMFileLabel.setText("None");
+        }
+
         defaultDumpOutputFolder = null;
 
         if (defaultDumpFolderLabel != null) {
@@ -595,8 +640,9 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             writer.println("defaultSavedDSPFolder:None");
             writer.println("defaultPDTFile:None");
             writer.println("defaultMSMFile:None");
+            writer.println("defaultSequencedAudioMSMFile:None");
             writer.println("defaultDumpOutputFolder:None");
-            JOptionPane.showMessageDialog(this, "Setting reset to default.");
+            JOptionPane.showMessageDialog(this, "Settings reset to default.");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Failed to reset setting: " + e.getMessage());
         }
@@ -1305,20 +1351,29 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == dumpAllMP4SequencedSongs) {
-            JFileChooser msmFileChooser = new JFileChooser();
-            msmFileChooser.setDialogTitle("Select MSM file");
-            msmFileChooser.setAcceptAllFileFilterUsed(false);
 
-            FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
-            msmFileChooser.setFileFilter(msmFilter);
+            File msmFile;
 
-            int userSelection = msmFileChooser.showOpenDialog(null);
+            if (defaultSequencedAudioMSMFile == null || !defaultSequencedAudioMSMFile.exists()) {
+                JFileChooser msmFileChooser = new JFileChooser();
+                msmFileChooser.setDialogTitle("Select MSM file");
+                msmFileChooser.setAcceptAllFileFilterUsed(false);
 
-            if (userSelection != JFileChooser.APPROVE_OPTION) {
-                return;
+                FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
+                msmFileChooser.setFileFilter(msmFilter);
+
+                int userSelection = msmFileChooser.showOpenDialog(null);
+
+                if (userSelection != JFileChooser.APPROVE_OPTION) {
+                    return;
+                }
+
+                msmFile = msmFileChooser.getSelectedFile();
+            }
+            else {
+                msmFile = defaultSequencedAudioMSMFile;
             }
 
-            File msmFile = msmFileChooser.getSelectedFile();
 
             if (defaultDumpOutputFolder != null && !defaultDumpOutputFolder.exists()) {
                 defaultDumpOutputFolder = null;
@@ -1335,17 +1390,26 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == modifyMP4SequencedSong) {
-            JFileChooser msmFileChooser = new JFileChooser();
-            msmFileChooser.setDialogTitle("Select MSM file");
-            msmFileChooser.setAcceptAllFileFilterUsed(false);
+            File msmFile;
 
-            FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
-            msmFileChooser.setFileFilter(msmFilter);
+            if (defaultSequencedAudioMSMFile == null || !defaultSequencedAudioMSMFile.exists()) {
+                JFileChooser msmFileChooser = new JFileChooser();
+                msmFileChooser.setDialogTitle("Select MSM file");
+                msmFileChooser.setAcceptAllFileFilterUsed(false);
 
-            int userSelection = msmFileChooser.showOpenDialog(null);
+                FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
+                msmFileChooser.setFileFilter(msmFilter);
 
-            if (userSelection != JFileChooser.APPROVE_OPTION) {
-                return;
+                int msmUserSelection = msmFileChooser.showOpenDialog(null);
+
+                if (msmUserSelection != JFileChooser.APPROVE_OPTION) {
+                    return;
+                }
+
+                msmFile = msmFileChooser.getSelectedFile();
+            }
+            else {
+                msmFile = defaultSequencedAudioMSMFile;
             }
 
             JFileChooser sngFileChooser = new JFileChooser();
@@ -1355,13 +1419,12 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             FileNameExtensionFilter sngFilter = new FileNameExtensionFilter("SNG Files", "sng");
             sngFileChooser.setFileFilter(sngFilter);
 
-            userSelection = sngFileChooser.showOpenDialog(null);
+            int sngUserSelection = sngFileChooser.showOpenDialog(null);
 
-            if (userSelection != JFileChooser.APPROVE_OPTION) {
+            if (sngUserSelection != JFileChooser.APPROVE_OPTION) {
                 return;
             }
 
-            File msmFile = msmFileChooser.getSelectedFile();
             File sngFile = sngFileChooser.getSelectedFile();
 
             String[] songOptions = MarioPartySongNames.MARIO_PARTY_4_SEQUENCED_TRACK_NAMES.values().toArray(new String[0]);
