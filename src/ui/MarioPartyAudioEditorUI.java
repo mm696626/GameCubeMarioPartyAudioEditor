@@ -881,6 +881,11 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         }
     }
 
+    private boolean isMarioParty4(File msmFile) {
+        String msmFileName = msmFile.getName().toLowerCase();
+        return msmFileName.equals("mpgcstr.pdt");
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == pickLeftChannel) {
@@ -1319,6 +1324,10 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 defaultDumpOutputFolder = null;
             }
 
+            if (!isMarioParty4(msmFile)) {
+                JOptionPane.showMessageDialog(this, "This option is only designed for Mario Party 4! Please provide a MSM from that game!");
+            }
+
             if (msmFile.exists()) {
                 SongDumper.dumpMarioParty4SequencedSongs(msmFile, defaultDumpOutputFolder);
             }
@@ -1383,6 +1392,10 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             if (actualSongIndex == -1) {
                 JOptionPane.showMessageDialog(this, "Could not determine song index.");
                 return;
+            }
+
+            if (!isMarioParty4(msmFile)) {
+                JOptionPane.showMessageDialog(this, "This option is only designed for Mario Party 4! Please provide a MSM from that game!");
             }
 
             int response = JOptionPane.showConfirmDialog(
