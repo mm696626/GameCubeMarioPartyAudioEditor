@@ -419,8 +419,8 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             JFileChooser msmChooser = new JFileChooser();
             msmChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             msmChooser.setDialogTitle("Select Default MSM File");
-            FileNameExtensionFilter pdtFilter = new FileNameExtensionFilter("MSM Files", "msm");
-            msmChooser.setFileFilter(pdtFilter);
+            FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
+            msmChooser.setFileFilter(msmFilter);
             msmChooser.setAcceptAllFileFilterUsed(false);
 
             int result = msmChooser.showOpenDialog(this);
