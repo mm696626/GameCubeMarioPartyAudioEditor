@@ -849,11 +849,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         }
     }
 
-    private boolean isMarioParty4(File msmFile) {
-        String msmFileName = msmFile.getName().toLowerCase();
-        return msmFileName.equals("mpgcsnd.msm");
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == pickLeftChannel) {
