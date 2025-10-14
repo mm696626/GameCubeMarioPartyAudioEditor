@@ -12,18 +12,6 @@
   * Example: mario_L.dsp and mario_R.dsp or luigi (channel 0).dsp and luigi (channel 1).dsp
   * It will do the same with the PDT itself as well in order to identify what game it's for. Keep the file name untouched
 
-### Sequenced Music Notes
-* Audio must be in SNG format
-* You can convert a MIDI file to SNG with Amuse
-  * https://github.com/AxioDL/amuse
-* As of now, it's not possible to have songs that are larger in file size than the original be the replacement
-    * Honestly, this is fine since Mario Party songs don't play for more than a minute anyway and the music restarts on a new event
-    * It's rare if there'd be a case where a long song is needed anyway
-* Not sure how to make SNG files that loop without dropping instruments since one track must have a terminator (so make sure you pick a song that is long enough to avoid this. Only really an issue with the board tracks)
-  * You can try to add a blank track as the last track in the MIDI to get around this (since this tool will always drop the last one)
-* To be fair, this was put in as a novelty and wasn't the main focus. Rather, it's just a bonus
-* Results of this may wildly vary. Not sure why some songs break or sound off with this (hence why there's no batch modify option for sequenced audio)
-
 ### Sound Notes
 * Audio must be in DSP format (sounds are stored in mono DSPs within samp/sdir files so you need to rip them from their samp/sdirs first)
 * As of now, it's not possible to have sounds that are larger in file size than the original be the replacement

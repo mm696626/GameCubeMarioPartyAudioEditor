@@ -1,7 +1,6 @@
 package ui;
 
 import constants.MarioPartySongNames;
-import io.music.SNGLoopAdder;
 import io.music.SongDumper;
 import io.music.SongModifier;
 import io.sound.*;
@@ -23,7 +22,7 @@ import java.util.*;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpAllSongs, dumpAllMP4SequencedSongs, modifyMP4SequencedSong, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpAllSongs, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -40,13 +39,11 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
     private JLabel defaultDSPFolderLabel;
     private JLabel defaultPDTFileLabel;
     private JLabel defaultMSMFileLabel;
-    private JLabel defaultSequencedAudioMSMFileLabel;
     private JLabel defaultDumpFolderLabel;
 
     private File defaultSavedDSPFolder = null;
     private File defaultPDTFile = null;
     private File defaultMSMFile = null;
-    private File defaultSequencedAudioMSMFile = null;
     private File defaultDumpOutputFolder = null;
 
     private DefaultListModel<ModifyJob> jobQueueModel;
@@ -159,12 +156,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         dumpAllSongs = new JButton("Dump All Songs");
         dumpAllSongs.addActionListener(this);
 
-        dumpAllMP4SequencedSongs = new JButton("Dump All Sequenced Songs");
-        dumpAllMP4SequencedSongs.addActionListener(this);
-
-        modifyMP4SequencedSong = new JButton("Modify Sequenced Song");
-        modifyMP4SequencedSong.addActionListener(this);
-
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
 
@@ -208,7 +199,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         songToolsPanel.add(Box.createVerticalStrut(10));
         songToolsPanel.add(songPanel);
 
-        tabbedPane.addTab("Streamed Audio Tools (PDT)", songToolsPanel);
+        tabbedPane.addTab("Music Tools (PDT)", songToolsPanel);
 
         JPanel queuePanel = new JPanel(new BorderLayout());
         queuePanel.setBorder(BorderFactory.createTitledBorder("Batch Modification Job Queue"));
@@ -240,26 +231,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         songToolsPanel.add(Box.createVerticalStrut(10));
         songToolsPanel.add(queuePanel);
-
-        JPanel mp4SeqAudioPanel = new JPanel();
-        mp4SeqAudioPanel.setLayout(new BoxLayout(mp4SeqAudioPanel, BoxLayout.Y_AXIS));
-
-        JPanel mp4Panel = new JPanel(new GridBagLayout());
-        mp4Panel.setBorder(BorderFactory.createTitledBorder("Dump/Modify Sequenced Song"));
-        GridBagConstraints mp4GBC = new GridBagConstraints();
-        mp4GBC.insets = new Insets(5, 5, 5, 5);
-        mp4GBC.fill = GridBagConstraints.HORIZONTAL;
-
-        mp4GBC.gridx = 0; mp4GBC.gridy = 0;
-        mp4GBC.gridwidth = 1;
-        mp4Panel.add(modifyMP4SequencedSong, mp4GBC);
-
-        songGBC.gridx = 0; songGBC.gridy = 1;
-        songGBC.gridwidth = 1;
-        mp4Panel.add(dumpAllMP4SequencedSongs, songGBC);
-
-        mp4SeqAudioPanel.add(mp4Panel);
-        tabbedPane.addTab("Sequenced Audio Tools (MSM) (Mario Party 4 only)", mp4SeqAudioPanel);
 
         JPanel soundToolsPanel = new JPanel();
         soundToolsPanel.setLayout(new BoxLayout(soundToolsPanel, BoxLayout.Y_AXIS));
@@ -430,42 +401,10 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         settingsGBC.gridx = 2;
         settingsPanel.add(chooseDefaultMSMButton, settingsGBC);
 
-        defaultSequencedAudioMSMFileLabel = new JLabel(defaultSequencedAudioMSMFile != null ? defaultSequencedAudioMSMFile.getAbsolutePath() : "None");
-
-        settingsGBC.gridx = 0;
-        settingsGBC.gridy = 4;
-        settingsGBC.gridwidth = 1;
-        settingsPanel.add(new JLabel("Default Sequenced Audio MSM File:"), settingsGBC);
-
-        settingsGBC.gridx = 1;
-        settingsPanel.add(defaultSequencedAudioMSMFileLabel, settingsGBC);
-
-        JButton chooseDefaultSequencedAudioMSMButton = new JButton("Change");
-        chooseDefaultSequencedAudioMSMButton.addActionListener(e -> {
-            JFileChooser msmChooser = new JFileChooser();
-            msmChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            msmChooser.setDialogTitle("Select Default Sequenced Audio MSM File");
-            FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
-            msmChooser.setFileFilter(msmFilter);
-            msmChooser.setAcceptAllFileFilterUsed(false);
-
-            int result = msmChooser.showOpenDialog(this);
-            if (result == JFileChooser.APPROVE_OPTION && isMarioParty4(msmChooser.getSelectedFile())) {
-                defaultSequencedAudioMSMFile = msmChooser.getSelectedFile();
-                defaultSequencedAudioMSMFileLabel.setText(defaultSequencedAudioMSMFile.getAbsolutePath());
-                saveSettingsToFile();
-            }
-            else if (result == JFileChooser.APPROVE_OPTION && !isMarioParty4(msmChooser.getSelectedFile())) {
-                JOptionPane.showMessageDialog(this, "This feature is only designed for Mario Party 4! Try again!");
-            }
-        });
-        settingsGBC.gridx = 2;
-        settingsPanel.add(chooseDefaultSequencedAudioMSMButton, settingsGBC);
-
         JButton resetSettingsButton = new JButton("Reset Settings");
         resetSettingsButton.addActionListener(e -> resetSettings());
         settingsGBC.gridx = 0;
-        settingsGBC.gridy = 5;
+        settingsGBC.gridy = 4;
         settingsGBC.gridwidth = 3;
         settingsPanel.add(resetSettingsButton, settingsGBC);
 
@@ -486,7 +425,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             outputStream.println("defaultSavedDSPFolder:None");
             outputStream.println("defaultPDTFile:None");
             outputStream.println("defaultMSMFile:None");
-            outputStream.println("defaultSequencedAudioMSMFile:None");
             outputStream.println("defaultDumpOutputFolder:None");
             outputStream.close();
         }
@@ -511,9 +449,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                         break;
                     case "defaultMSMFile":
                         if (!value.equals("None")) defaultMSMFile = new File(value);
-                        break;
-                    case "defaultSequencedAudioMSMFile":
-                        if (!value.equals("None")) defaultSequencedAudioMSMFile = new File(value);
                         break;
                     case "defaultDumpOutputFolder":
                         if (!value.equals("None")) defaultDumpOutputFolder = new File(value);
@@ -582,7 +517,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             writer.println("defaultSavedDSPFolder:" + (defaultSavedDSPFolder != null ? defaultSavedDSPFolder.getAbsolutePath() : "None"));
             writer.println("defaultPDTFile:" + (defaultPDTFile != null ? defaultPDTFile.getAbsolutePath() : "None"));
             writer.println("defaultMSMFile:" + (defaultMSMFile != null ? defaultMSMFile.getAbsolutePath() : "None"));
-            writer.println("defaultSequencedAudioMSMFile:" + (defaultSequencedAudioMSMFile != null ? defaultSequencedAudioMSMFile.getAbsolutePath() : "None"));
             writer.println("defaultDumpOutputFolder:" + (defaultDumpOutputFolder != null ? defaultDumpOutputFolder.getAbsolutePath() : "None"));
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Failed to save settings: " + e.getMessage());
@@ -619,12 +553,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             defaultMSMFileLabel.setText("None");
         }
 
-        defaultSequencedAudioMSMFile = null;
-
-        if (defaultSequencedAudioMSMFileLabel != null) {
-            defaultSequencedAudioMSMFileLabel.setText("None");
-        }
-
         defaultDumpOutputFolder = null;
 
         if (defaultDumpFolderLabel != null) {
@@ -635,7 +563,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             writer.println("defaultSavedDSPFolder:None");
             writer.println("defaultPDTFile:None");
             writer.println("defaultMSMFile:None");
-            writer.println("defaultSequencedAudioMSMFile:None");
             writer.println("defaultDumpOutputFolder:None");
             JOptionPane.showMessageDialog(this, "Settings reset to default.");
         } catch (IOException e) {
@@ -1290,146 +1217,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             }
 
             SongDumper.dumpAllSongs(pdtFile, defaultDumpOutputFolder);
-        }
-
-        if (e.getSource() == dumpAllMP4SequencedSongs) {
-
-            File msmFile;
-
-            if (defaultSequencedAudioMSMFile == null || !defaultSequencedAudioMSMFile.exists()) {
-                JFileChooser msmFileChooser = new JFileChooser();
-                msmFileChooser.setDialogTitle("Select MSM file");
-                msmFileChooser.setAcceptAllFileFilterUsed(false);
-
-                FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
-                msmFileChooser.setFileFilter(msmFilter);
-
-                int userSelection = msmFileChooser.showOpenDialog(null);
-
-                if (userSelection != JFileChooser.APPROVE_OPTION) {
-                    return;
-                }
-
-                msmFile = msmFileChooser.getSelectedFile();
-            }
-            else {
-                msmFile = defaultSequencedAudioMSMFile;
-            }
-
-
-            if (defaultDumpOutputFolder != null && !defaultDumpOutputFolder.exists()) {
-                defaultDumpOutputFolder = null;
-            }
-
-            if (!isMarioParty4(msmFile)) {
-                JOptionPane.showMessageDialog(this, "This option is only designed for Mario Party 4! Please provide a MSM from that game!");
-                return;
-            }
-
-            if (msmFile.exists()) {
-                SongDumper.dumpMarioParty4SequencedSongs(msmFile, defaultDumpOutputFolder);
-            }
-        }
-
-        if (e.getSource() == modifyMP4SequencedSong) {
-            File msmFile;
-
-            if (defaultSequencedAudioMSMFile == null || !defaultSequencedAudioMSMFile.exists()) {
-                JFileChooser msmFileChooser = new JFileChooser();
-                msmFileChooser.setDialogTitle("Select MSM file");
-                msmFileChooser.setAcceptAllFileFilterUsed(false);
-
-                FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
-                msmFileChooser.setFileFilter(msmFilter);
-
-                int msmUserSelection = msmFileChooser.showOpenDialog(null);
-
-                if (msmUserSelection != JFileChooser.APPROVE_OPTION) {
-                    return;
-                }
-
-                msmFile = msmFileChooser.getSelectedFile();
-            }
-            else {
-                msmFile = defaultSequencedAudioMSMFile;
-            }
-
-            JFileChooser sngFileChooser = new JFileChooser();
-            sngFileChooser.setDialogTitle("Select SNG file");
-            sngFileChooser.setAcceptAllFileFilterUsed(false);
-
-            FileNameExtensionFilter sngFilter = new FileNameExtensionFilter("SNG Files", "sng");
-            sngFileChooser.setFileFilter(sngFilter);
-
-            int sngUserSelection = sngFileChooser.showOpenDialog(null);
-
-            if (sngUserSelection != JFileChooser.APPROVE_OPTION) {
-                return;
-            }
-
-            File sngFile = sngFileChooser.getSelectedFile();
-
-            String[] songOptions = MarioPartySongNames.MARIO_PARTY_4_SEQUENCED_TRACK_NAMES.values().toArray(new String[0]);
-            Arrays.sort(songOptions);
-
-            String selectedSongName = (String) JOptionPane.showInputDialog(
-                    null,
-                    "Select a song to replace:",
-                    "Choose Song",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    songOptions,
-                    songOptions[0]
-            );
-
-            if (selectedSongName == null) {
-                return;
-            }
-
-            int actualSongIndex = -1;
-
-            for (Map.Entry<Integer, String> entry : MarioPartySongNames.MARIO_PARTY_4_SEQUENCED_TRACK_NAMES.entrySet()) {
-                if (selectedSongName.equals(entry.getValue())) {
-                    actualSongIndex = entry.getKey();
-                    break;
-                }
-            }
-
-            if (actualSongIndex == -1) {
-                JOptionPane.showMessageDialog(this, "Could not determine song index.");
-                return;
-            }
-
-            if (!isMarioParty4(msmFile)) {
-                JOptionPane.showMessageDialog(this, "This option is only designed for Mario Party 4! Please provide a MSM from that game!");
-                return;
-            }
-
-            int response = JOptionPane.showConfirmDialog(
-                    null,
-                    "Do you want to make a backup of the MSM file?",
-                    "Backup MSM",
-                    JOptionPane.YES_NO_OPTION
-            );
-
-            if (response == JOptionPane.YES_OPTION) {
-                backupMSM(msmFile);
-            }
-
-            response = JOptionPane.showConfirmDialog(
-                    null,
-                    "Do you want to make your SNG file loop?\nNote that I haven't figured out how to make it loop 100% correctly, so one of the tracks has to drop after a full loop and it loop the song start to finish\nAre you sure you want to add looping?",
-                    "SNG File Loop",
-                    JOptionPane.YES_NO_OPTION
-            );
-
-            if (response == JOptionPane.YES_OPTION) {
-                SNGLoopAdder.loopSNG(sngFile);
-            }
-
-            if (msmFile.exists() && sngFile.exists()) {
-                SongModifier.replaceMarioParty4SequencedSong(msmFile, sngFile, actualSongIndex);
-            }
         }
 
         if (e.getSource() == modifySong) {

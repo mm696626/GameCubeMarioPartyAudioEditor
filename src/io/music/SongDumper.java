@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.file.Files;
 
 public class SongDumper {
 
@@ -163,71 +162,6 @@ public class SongDumper {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
-        }
-    }
-
-    public static void dumpMarioParty4SequencedSongs(File msmFile, File defaultDumpOutputFolder) {
-        File outputDir;
-
-        if (defaultDumpOutputFolder == null || !defaultDumpOutputFolder.exists()) {
-            outputDir = promptForOutputFolder();
-            if (outputDir == null) return;
-        }
-        else {
-            outputDir = defaultDumpOutputFolder;
-        }
-
-        try (RandomAccessFile raf = new RandomAccessFile(msmFile, "r")) {
-
-            raf.seek(0x20);
-            long chk2Offs = FileIO.readU32BE(raf);
-            long chk2Size = FileIO.readU32BE(raf);
-            long chk3Offs = FileIO.readU32BE(raf);
-            long chk3Size = FileIO.readU32BE(raf);
-
-            raf.skipBytes(8);
-            long chk5Offs = FileIO.readU32BE(raf);
-
-            int entryCount = (int) (chk3Size >> 4);
-
-            for (int i = 1; i < entryCount; i++) {
-                raf.seek(chk3Offs + (i << 4));
-                int sngGroupId = FileIO.readU16BE(raf);
-                raf.skipBytes(2);
-                long sngGroupOffset = FileIO.readU32BE(raf);
-                long sngGroupSize = FileIO.readU32BE(raf);
-
-                long cmpGroupOffset = -1;
-                raf.seek(chk2Offs);
-                for (int j = 0; j < (chk2Size >> 5); j++) {
-                    int cmpGroupId = FileIO.readU16BE(raf);
-                    if (cmpGroupId == sngGroupId) {
-                        raf.skipBytes(2);
-                        cmpGroupOffset = FileIO.readU32BE(raf);
-                        break;
-                    } else {
-                        raf.skipBytes(0x1E);
-                    }
-                }
-
-                if (cmpGroupOffset == -1) continue;
-
-                raf.seek(chk5Offs + cmpGroupOffset + 0xC);
-                long extraOffset = FileIO.readU32BE(raf);
-
-                raf.seek(chk5Offs + cmpGroupOffset + sngGroupOffset + extraOffset);
-                byte[] buffer = new byte[(int) sngGroupSize];
-                raf.readFully(buffer);
-
-                String sngFileName = String.format("%04d.sng", i);
-                File sngFile = new File(outputDir, sngFileName);
-                Files.write(sngFile.toPath(), buffer);
-            }
-
-            JOptionPane.showMessageDialog(null, "Mario Party 4 sequenced songs have been dumped!");
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
