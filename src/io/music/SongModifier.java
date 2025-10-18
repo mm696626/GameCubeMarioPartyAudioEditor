@@ -12,6 +12,9 @@ public class SongModifier {
     //This code is largely derived from Yoshimaster96's C PDT dumping code, so huge credit and kudos to them!
     //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
+    private static long ch1Pointer;
+    private static long ch2Pointer;
+
     public static boolean modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, String songName, String selectedGame) {
         try (RandomAccessFile pdtRaf = new RandomAccessFile(pdtFile, "rw")) {
             int unk00 = FileIO.readU16BE(pdtRaf);
@@ -40,17 +43,20 @@ public class SongModifier {
             long sampleRate = FileIO.readU32BE(pdtRaf);
             long nibbleCount = FileIO.readU32BE(pdtRaf);
             long loopStart = FileIO.readU32BE(pdtRaf);
+            ch1Pointer = pdtRaf.getFilePointer();
             long ch1Start = FileIO.readU32BE(pdtRaf);
             int ch1CoefEntry = FileIO.readU16BE(pdtRaf);
             int unk116 = FileIO.readU16BE(pdtRaf);
             long ch1CoefOffs = coeffOffs + (ch1CoefEntry << 5);
 
+            ch2Pointer = ch1Pointer;
             long ch2Start = ch1Start;
             int ch2CoefEntry = ch1CoefEntry;
             long ch2CoefOffs = coeffOffs + (ch2CoefEntry << 5);
             int chanCount = 1;
 
             if ((flags & 0x01000000) != 0) {
+                ch2Pointer = pdtRaf.getFilePointer();
                 ch2Start = FileIO.readU32BE(pdtRaf);
                 ch2CoefEntry = FileIO.readU16BE(pdtRaf);
                 int unk11A = FileIO.readU16BE(pdtRaf);
@@ -121,7 +127,7 @@ public class SongModifier {
                 nibbleCount = originalNibbleCount;
             }
 
-            if (isInvalidSize(newDSPNibbleCount, nibbleCount, songName)) return false;
+            boolean writeToEOF = isInvalidSize(newDSPNibbleCount, nibbleCount, songName);
 
             //if the nibble count here is -1, then the song hasn't been replaced yet, so write it
             if (originalNibbleCount == -1) {
@@ -132,7 +138,13 @@ public class SongModifier {
             long newDSPNibbleCountOffset = thisHeaderOffs + 8;
             long newDSPLoopStartOffset = thisHeaderOffs + 12;
 
-            writeDSPToPDT(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, ch1Start, newDSPLeftChannelAudio, ch2Start, newDSPRightChannelAudio);
+            if (writeToEOF) {
+                writeDSPToPDTEOF(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, ch1Start, newDSPLeftChannelAudio, ch2Start, newDSPRightChannelAudio);
+            }
+            else {
+                writeDSPToPDT(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, ch1Start, newDSPLeftChannelAudio, ch2Start, newDSPRightChannelAudio);
+            }
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -187,7 +199,6 @@ public class SongModifier {
                 | (dspNibbleCount[3] & 0xFF));
 
         if (newDSPSize > nibbleCount) {
-            JOptionPane.showMessageDialog(null, String.format("Your replacement for %s is %,d nibbles and the original is %,d nibbles! Try again!", songName, newDSPSize, nibbleCount));
             return true;
         }
         return false;
@@ -214,5 +225,65 @@ public class SongModifier {
 
         pdtRaf.seek(ch2Start);
         pdtRaf.write(newDSPRightChannelAudio);
+    }
+
+    private static void writeDSPToPDTEOF(RandomAccessFile pdtRaf, long newDSPSampleRateOffset, byte[] newDSPSampleRate, long newDSPNibbleCountOffset, byte[] newDSPNibbleCount, long newDSPLoopStartOffset, byte[] newDSPLoopStart, long ch1CoefOffs, byte[] newDSPLeftChannelDecodingCoeffs, long ch2CoefOffs, byte[] newDSPRightChannelDecodingCoeffs, long ch1Start, byte[] newDSPLeftChannelAudio, long ch2Start, byte[] newDSPRightChannelAudio) throws IOException {
+        pdtRaf.seek(newDSPSampleRateOffset);
+        pdtRaf.write(newDSPSampleRate);
+
+        pdtRaf.seek(newDSPNibbleCountOffset);
+        pdtRaf.write(newDSPNibbleCount);
+
+        pdtRaf.seek(newDSPLoopStartOffset);
+        pdtRaf.write(newDSPLoopStart);
+
+        pdtRaf.seek(ch1CoefOffs);
+        pdtRaf.write(newDSPLeftChannelDecodingCoeffs);
+
+        pdtRaf.seek(ch2CoefOffs);
+        pdtRaf.write(newDSPRightChannelDecodingCoeffs);
+
+        pdtRaf.seek(ch1Pointer);
+        pdtRaf.writeInt((int)pdtRaf.length());
+
+        pdtRaf.seek(pdtRaf.length());
+        pdtRaf.write(newDSPLeftChannelAudio);
+
+        //make sure file size is even (idk why, but the game will freak out otherwise)
+        if (pdtRaf.length() % 2 == 0) {
+            pdtRaf.write(0);
+            pdtRaf.write(0);
+        }
+        else {
+            pdtRaf.write(0);
+        }
+
+        //make sure file size is divisible by 0x10 (idk why, but the game will freak out otherwise)
+        int blockSize = 0x10;
+        int paddingNeeded = (int) (0x10 - (pdtRaf.length() % blockSize));
+
+        for (int i=0; i<paddingNeeded; i++) {
+            pdtRaf.write(0);
+        }
+
+        pdtRaf.seek(ch2Pointer);
+        pdtRaf.writeInt((int)pdtRaf.length());
+        pdtRaf.seek(pdtRaf.length());
+        pdtRaf.write(newDSPRightChannelAudio);
+
+        //do the same here
+        if (pdtRaf.length() % 2 == 0) {
+            pdtRaf.write(0);
+            pdtRaf.write(0);
+        }
+        else {
+            pdtRaf.write(0);
+        }
+
+        paddingNeeded = (int) (blockSize - (pdtRaf.length() % blockSize));
+
+        for (int i=0; i<paddingNeeded; i++) {
+            pdtRaf.write(0);
+        }
     }
 }
