@@ -261,6 +261,7 @@ public class SongModifier {
 
         pdtRaf.seek(ch2Pointer);
         pdtRaf.writeInt((int)pdtRaf.length());
+
         pdtRaf.seek(pdtRaf.length());
         pdtRaf.write(newDSPRightChannelAudio);
 
