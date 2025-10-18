@@ -48,7 +48,6 @@
   * https://www.metroid2002.com/retromodding/wiki/DSP_(File_Format)
   * https://www.metroid2002.com/retromodding/wiki/CSNG_(File_Format)
 * Thanks to the Mario Wiki for pinpointing each song and catching a few I missed
-  * https://www.mariowiki.com/Mario_Party_4_sound_test
   * https://www.mariowiki.com/Mario_Party_5_sound_test
   * https://www.mariowiki.com/Mario_Party_6_sound_test
   * https://www.mariowiki.com/Mario_Party_7_sound_test
