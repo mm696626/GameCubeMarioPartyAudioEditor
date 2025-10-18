@@ -44,9 +44,8 @@
 ### Special Thanks/Credits
 * This project wouldn't be possible without the work of Yoshimaster96. Huge props to them! Their dumping code was crucial to get this project off the ground
   * https://github.com/Yoshimaster96/mpgc-sound-tools
-* Also, this documentation on the DSP and CSNG formats helped a lot too
+* Also, this documentation on the DSP format helped a lot too
   * https://www.metroid2002.com/retromodding/wiki/DSP_(File_Format)
-  * https://www.metroid2002.com/retromodding/wiki/CSNG_(File_Format)
 * Thanks to the Mario Wiki for pinpointing each song and catching a few I missed
   * https://www.mariowiki.com/Mario_Party_5_sound_test
   * https://www.mariowiki.com/Mario_Party_6_sound_test
