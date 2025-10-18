@@ -243,6 +243,11 @@ public class SongModifier {
         pdtRaf.seek(ch2CoefOffs);
         pdtRaf.write(newDSPRightChannelDecodingCoeffs);
 
+        //if file size isn't divisible by 0x10, then make it so before writing to EOF
+        if (pdtRaf.length() % 0x10 != 0) {
+            padFileSize(pdtRaf);
+        }
+
         pdtRaf.seek(ch1Pointer);
         pdtRaf.writeInt((int)pdtRaf.length());
 
@@ -250,21 +255,9 @@ public class SongModifier {
         pdtRaf.write(newDSPLeftChannelAudio);
 
         //make sure file size is even (idk why, but the game will freak out otherwise)
-        if (pdtRaf.length() % 2 == 0) {
-            pdtRaf.write(0);
-            pdtRaf.write(0);
-        }
-        else {
-            pdtRaf.write(0);
-        }
-
         //make sure file size is divisible by 0x10 (idk why, but the game will freak out otherwise)
-        int blockSize = 0x10;
-        int paddingNeeded = (int) (0x10 - (pdtRaf.length() % blockSize));
-
-        for (int i=0; i<paddingNeeded; i++) {
-            pdtRaf.write(0);
-        }
+        makePDTFileSizeEven(pdtRaf);
+        padFileSize(pdtRaf);
 
         pdtRaf.seek(ch2Pointer);
         pdtRaf.writeInt((int)pdtRaf.length());
@@ -272,17 +265,27 @@ public class SongModifier {
         pdtRaf.write(newDSPRightChannelAudio);
 
         //do the same here
+        makePDTFileSizeEven(pdtRaf);
+        padFileSize(pdtRaf);
+    }
+
+    private static void padFileSize(RandomAccessFile pdtRaf) throws IOException {
+        pdtRaf.seek(pdtRaf.length());
+        int paddingNeeded = (int) (0x10 - (pdtRaf.length() % 0x10));
+
+        for (int i=0; i < paddingNeeded; i++) {
+            pdtRaf.write(0);
+        }
+    }
+
+    private static void makePDTFileSizeEven(RandomAccessFile pdtRaf) throws IOException {
+        pdtRaf.seek(pdtRaf.length());
+
         if (pdtRaf.length() % 2 == 0) {
             pdtRaf.write(0);
             pdtRaf.write(0);
         }
         else {
-            pdtRaf.write(0);
-        }
-
-        paddingNeeded = (int) (blockSize - (pdtRaf.length() % blockSize));
-
-        for (int i=0; i<paddingNeeded; i++) {
             pdtRaf.write(0);
         }
     }
