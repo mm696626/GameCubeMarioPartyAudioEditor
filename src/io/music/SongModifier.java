@@ -211,20 +211,7 @@ public class SongModifier {
     }
 
     private static void writeDSPToPDT(RandomAccessFile pdtRaf, long newDSPSampleRateOffset, byte[] newDSPSampleRate, long newDSPNibbleCountOffset, byte[] newDSPNibbleCount, long newDSPLoopStartOffset, byte[] newDSPLoopStart, long ch1CoefOffs, byte[] newDSPLeftChannelDecodingCoeffs, long ch2CoefOffs, byte[] newDSPRightChannelDecodingCoeffs, long ch1Start, byte[] newDSPLeftChannelAudio, long ch2Start, byte[] newDSPRightChannelAudio) throws IOException {
-        pdtRaf.seek(newDSPSampleRateOffset);
-        pdtRaf.write(newDSPSampleRate);
-
-        pdtRaf.seek(newDSPNibbleCountOffset);
-        pdtRaf.write(newDSPNibbleCount);
-
-        pdtRaf.seek(newDSPLoopStartOffset);
-        pdtRaf.write(newDSPLoopStart);
-
-        pdtRaf.seek(ch1CoefOffs);
-        pdtRaf.write(newDSPLeftChannelDecodingCoeffs);
-
-        pdtRaf.seek(ch2CoefOffs);
-        pdtRaf.write(newDSPRightChannelDecodingCoeffs);
+        writeDSPHeaderDataToPDT(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs);
 
         pdtRaf.seek(ch1Start);
         pdtRaf.write(newDSPLeftChannelAudio);
@@ -239,20 +226,7 @@ public class SongModifier {
             padFileSize(pdtRaf);
         }
 
-        pdtRaf.seek(newDSPSampleRateOffset);
-        pdtRaf.write(newDSPSampleRate);
-
-        pdtRaf.seek(newDSPNibbleCountOffset);
-        pdtRaf.write(newDSPNibbleCount);
-
-        pdtRaf.seek(newDSPLoopStartOffset);
-        pdtRaf.write(newDSPLoopStart);
-
-        pdtRaf.seek(ch1CoefOffs);
-        pdtRaf.write(newDSPLeftChannelDecodingCoeffs);
-
-        pdtRaf.seek(ch2CoefOffs);
-        pdtRaf.write(newDSPRightChannelDecodingCoeffs);
+        writeDSPHeaderDataToPDT(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs);
 
         pdtRaf.seek(ch1Pointer);
         pdtRaf.writeInt((int)pdtRaf.length());
@@ -274,6 +248,23 @@ public class SongModifier {
         //do the same here
         makePDTFileSizeEven(pdtRaf);
         padFileSize(pdtRaf);
+    }
+
+    private static void writeDSPHeaderDataToPDT(RandomAccessFile pdtRaf, long newDSPSampleRateOffset, byte[] newDSPSampleRate, long newDSPNibbleCountOffset, byte[] newDSPNibbleCount, long newDSPLoopStartOffset, byte[] newDSPLoopStart, long ch1CoefOffs, byte[] newDSPLeftChannelDecodingCoeffs, long ch2CoefOffs, byte[] newDSPRightChannelDecodingCoeffs) throws IOException {
+        pdtRaf.seek(newDSPSampleRateOffset);
+        pdtRaf.write(newDSPSampleRate);
+
+        pdtRaf.seek(newDSPNibbleCountOffset);
+        pdtRaf.write(newDSPNibbleCount);
+
+        pdtRaf.seek(newDSPLoopStartOffset);
+        pdtRaf.write(newDSPLoopStart);
+
+        pdtRaf.seek(ch1CoefOffs);
+        pdtRaf.write(newDSPLeftChannelDecodingCoeffs);
+
+        pdtRaf.seek(ch2CoefOffs);
+        pdtRaf.write(newDSPRightChannelDecodingCoeffs);
     }
 
     private static void padFileSize(RandomAccessFile pdtRaf) throws IOException {
