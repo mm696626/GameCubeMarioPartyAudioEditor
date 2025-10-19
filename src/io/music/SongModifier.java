@@ -228,6 +228,11 @@ public class SongModifier {
     }
 
     private static void writeDSPToPDTEOF(RandomAccessFile pdtRaf, long newDSPSampleRateOffset, byte[] newDSPSampleRate, long newDSPNibbleCountOffset, byte[] newDSPNibbleCount, long newDSPLoopStartOffset, byte[] newDSPLoopStart, long ch1CoefOffs, byte[] newDSPLeftChannelDecodingCoeffs, long ch2CoefOffs, byte[] newDSPRightChannelDecodingCoeffs, long ch1Start, byte[] newDSPLeftChannelAudio, long ch2Start, byte[] newDSPRightChannelAudio) throws IOException {
+        //if file size isn't divisible by 0x10, then make it so before writing to EOF
+        if (pdtRaf.length() % 0x10 != 0) {
+            padFileSize(pdtRaf);
+        }
+
         pdtRaf.seek(newDSPSampleRateOffset);
         pdtRaf.write(newDSPSampleRate);
 
@@ -242,11 +247,6 @@ public class SongModifier {
 
         pdtRaf.seek(ch2CoefOffs);
         pdtRaf.write(newDSPRightChannelDecodingCoeffs);
-
-        //if file size isn't divisible by 0x10, then make it so before writing to EOF
-        if (pdtRaf.length() % 0x10 != 0) {
-            padFileSize(pdtRaf);
-        }
 
         pdtRaf.seek(ch1Pointer);
         pdtRaf.writeInt((int)pdtRaf.length());
