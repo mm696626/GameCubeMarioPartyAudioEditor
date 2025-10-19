@@ -12,9 +12,6 @@ public class SongModifier {
     //This code is largely derived from Yoshimaster96's C PDT dumping code, so huge credit and kudos to them!
     //Code: https://github.com/Yoshimaster96/mpgc-sound-tools
 
-    private static long ch1Pointer;
-    private static long ch2Pointer;
-
     public static boolean modifySong(File pdtFile, File leftChannel, File rightChannel, int songIndex, String songName, String selectedGame) {
         try (RandomAccessFile pdtRaf = new RandomAccessFile(pdtFile, "rw")) {
             int unk00 = FileIO.readU16BE(pdtRaf);
@@ -43,19 +40,24 @@ public class SongModifier {
             long sampleRate = FileIO.readU32BE(pdtRaf);
             long nibbleCount = FileIO.readU32BE(pdtRaf);
             long loopStart = FileIO.readU32BE(pdtRaf);
-            ch1Pointer = pdtRaf.getFilePointer();
+
+            //grab the pointer to the start of the left channel
+            long ch1Pointer = pdtRaf.getFilePointer();
             long ch1Start = FileIO.readU32BE(pdtRaf);
+
             int ch1CoefEntry = FileIO.readU16BE(pdtRaf);
             int unk116 = FileIO.readU16BE(pdtRaf);
             long ch1CoefOffs = coeffOffs + (ch1CoefEntry << 5);
 
-            ch2Pointer = ch1Pointer;
+            long ch2Pointer = ch1Pointer;
+
             long ch2Start = ch1Start;
             int ch2CoefEntry = ch1CoefEntry;
             long ch2CoefOffs = coeffOffs + (ch2CoefEntry << 5);
             int chanCount = 1;
 
             if ((flags & 0x01000000) != 0) {
+                //grab the pointer to the start of the right channel
                 ch2Pointer = pdtRaf.getFilePointer();
                 ch2Start = FileIO.readU32BE(pdtRaf);
                 ch2CoefEntry = FileIO.readU16BE(pdtRaf);
@@ -139,7 +141,7 @@ public class SongModifier {
             long newDSPLoopStartOffset = thisHeaderOffs + 12;
 
             if (writeToEOF) {
-                writeDSPToPDTEOF(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, ch1Start, newDSPLeftChannelAudio, ch2Start, newDSPRightChannelAudio);
+                writeDSPToPDTEOF(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, newDSPLeftChannelAudio, newDSPRightChannelAudio, ch1Pointer, ch2Pointer);
             }
             else {
                 writeDSPToPDT(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, ch1Start, newDSPLeftChannelAudio, ch2Start, newDSPRightChannelAudio);
@@ -227,7 +229,7 @@ public class SongModifier {
         pdtRaf.write(newDSPRightChannelAudio);
     }
 
-    private static void writeDSPToPDTEOF(RandomAccessFile pdtRaf, long newDSPSampleRateOffset, byte[] newDSPSampleRate, long newDSPNibbleCountOffset, byte[] newDSPNibbleCount, long newDSPLoopStartOffset, byte[] newDSPLoopStart, long ch1CoefOffs, byte[] newDSPLeftChannelDecodingCoeffs, long ch2CoefOffs, byte[] newDSPRightChannelDecodingCoeffs, long ch1Start, byte[] newDSPLeftChannelAudio, long ch2Start, byte[] newDSPRightChannelAudio) throws IOException {
+    private static void writeDSPToPDTEOF(RandomAccessFile pdtRaf, long newDSPSampleRateOffset, byte[] newDSPSampleRate, long newDSPNibbleCountOffset, byte[] newDSPNibbleCount, long newDSPLoopStartOffset, byte[] newDSPLoopStart, long ch1CoefOffs, byte[] newDSPLeftChannelDecodingCoeffs, long ch2CoefOffs, byte[] newDSPRightChannelDecodingCoeffs, byte[] newDSPLeftChannelAudio, byte[] newDSPRightChannelAudio, long ch1Pointer, long ch2Pointer) throws IOException {
         //if file size isn't divisible by 0x10, then make it so before writing to EOF
         if (pdtRaf.length() % 0x10 != 0) {
             padFileSize(pdtRaf);
