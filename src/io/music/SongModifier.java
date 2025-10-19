@@ -5,7 +5,9 @@ import io.FileIO;
 
 import javax.swing.*;
 import java.io.*;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class SongModifier {
 
@@ -302,54 +304,35 @@ public class SongModifier {
         }
 
         File logFile = new File(songReplacementsFolder, selectedGame + ".txt");
-        File tempFile = new File(songReplacementsFolder, selectedGame + "_temp.txt");
 
-        Scanner inputStream = null;
-        PrintWriter outputStream = null;
-        boolean songAlreadyLogged = false;
+        Map<String, String> songMap = new TreeMap<>();
 
-        try {
-            if (logFile.exists()) {
-                inputStream = new Scanner(new FileInputStream(logFile));
-            }
-
-            outputStream = new PrintWriter(new FileOutputStream(tempFile));
-
-            if (inputStream != null) {
+        if (logFile.exists()) {
+            try (Scanner inputStream = new Scanner(new FileInputStream(logFile))) {
                 while (inputStream.hasNextLine()) {
                     String line = inputStream.nextLine();
                     String[] parts = line.split("\\|");
 
-                    if (parts.length >= 1 && parts[0].equals(songName)) {
-                        outputStream.println(songName + "|" + leftChannel.getName() + "|" + rightChannel.getName());
-                        songAlreadyLogged = true;
-                    } else {
-                        outputStream.println(line);
+                    if (parts.length >= 3) {
+                        String existingSongName = parts[0];
+                        String left = parts[1];
+                        String right = parts[2];
+                        songMap.put(existingSongName, left + "|" + right);
                     }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        }
 
-            if (!songAlreadyLogged) {
-                outputStream.println(songName + "|" + leftChannel.getName() + "|" + rightChannel.getName());
+        songMap.put(songName, leftChannel.getName() + "|" + rightChannel.getName());
+
+        try (PrintWriter outputStream = new PrintWriter(new FileOutputStream(logFile))) {
+            for (Map.Entry<String, String> entry : songMap.entrySet()) {
+                outputStream.println(entry.getKey() + "|" + entry.getValue());
             }
-
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-            if (outputStream != null) {
-                outputStream.close();
-            }
-        }
-
-        if (logFile.exists() && !logFile.delete()) {
-            System.out.println("Failed to delete old replacement log for " + selectedGame);
-        }
-
-        if (!tempFile.renameTo(logFile)) {
-            System.out.println("Failed to rename temp log file for " + selectedGame);
         }
     }
 }
