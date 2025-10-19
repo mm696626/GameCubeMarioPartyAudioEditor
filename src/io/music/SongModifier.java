@@ -147,6 +147,8 @@ public class SongModifier {
                 writeDSPToPDT(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, ch1Start, newDSPLeftChannelAudio, ch2Start, newDSPRightChannelAudio);
             }
 
+            logSongReplacement(songName, leftChannel, rightChannel, selectedGame);
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -290,6 +292,64 @@ public class SongModifier {
         }
         else {
             pdtRaf.write(0);
+        }
+    }
+
+    private static void logSongReplacement(String songName, File leftChannel, File rightChannel, String selectedGame) {
+        File songReplacementsFolder = new File("song_replacements");
+        if (!songReplacementsFolder.exists()) {
+            songReplacementsFolder.mkdirs();
+        }
+
+        File logFile = new File(songReplacementsFolder, selectedGame + ".txt");
+        File tempFile = new File(songReplacementsFolder, selectedGame + "_temp.txt");
+
+        Scanner inputStream = null;
+        PrintWriter outputStream = null;
+        boolean songAlreadyLogged = false;
+
+        try {
+            if (logFile.exists()) {
+                inputStream = new Scanner(new FileInputStream(logFile));
+            }
+
+            outputStream = new PrintWriter(new FileOutputStream(tempFile));
+
+            if (inputStream != null) {
+                while (inputStream.hasNextLine()) {
+                    String line = inputStream.nextLine();
+                    String[] parts = line.split("\\|");
+
+                    if (parts.length >= 1 && parts[0].equals(songName)) {
+                        outputStream.println(songName + "|" + leftChannel.getName() + "|" + rightChannel.getName());
+                        songAlreadyLogged = true;
+                    } else {
+                        outputStream.println(line);
+                    }
+                }
+            }
+
+            if (!songAlreadyLogged) {
+                outputStream.println(songName + "|" + leftChannel.getName() + "|" + rightChannel.getName());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (outputStream != null) {
+                outputStream.close();
+            }
+        }
+
+        if (logFile.exists() && !logFile.delete()) {
+            System.out.println("Failed to delete old replacement log for " + selectedGame);
+        }
+
+        if (!tempFile.renameTo(logFile)) {
+            System.out.println("Failed to rename temp log file for " + selectedGame);
         }
     }
 }
