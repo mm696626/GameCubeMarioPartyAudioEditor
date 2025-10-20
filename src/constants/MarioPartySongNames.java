@@ -196,7 +196,7 @@ public class MarioPartySongNames {
             Map.entry(84, "Fast and Furious"),
             Map.entry(85, "Night Duel"),
             Map.entry(86, "Time to Duel"),
-            Map.entry(87, "Duel for Prizes"),
+            Map.entry(87, "Dueling for Prizes"),
             Map.entry(88, "Gaming with Bowser"),
             Map.entry(89, "Gaming with DK"),
             Map.entry(90, "Seer Terror"),
