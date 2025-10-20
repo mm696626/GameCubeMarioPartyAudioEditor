@@ -4,7 +4,6 @@ import java.util.Map;
 
 public class MarioPartySongNames {
 
-
     public static final Map<Integer, String> MARIO_PARTY_5_TRACK_NAMES = Map.ofEntries(
             Map.entry(2, "Dream Party"),
             Map.entry(3, "Inside the Dream"),
