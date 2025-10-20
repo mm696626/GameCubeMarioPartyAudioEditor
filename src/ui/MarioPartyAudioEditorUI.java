@@ -486,6 +486,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
     private void chooseDefaultDumpFolder() {
         JFileChooser defaultDumpFolderChooser = new JFileChooser();
         defaultDumpFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        defaultDumpFolderChooser.setDialogTitle("Select Default Dump Output Folder");
         defaultDumpFolderChooser.setAcceptAllFileFilterUsed(false);
         int result = defaultDumpFolderChooser.showOpenDialog(this);
 
@@ -499,6 +500,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
     private void chooseDefaultDSPFolder() {
         JFileChooser defaultDSPFolderChooser = new JFileChooser();
         defaultDSPFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        defaultDSPFolderChooser.setDialogTitle("Select Default DSP Folder");
         defaultDSPFolderChooser.setAcceptAllFileFilterUsed(false);
         int result = defaultDSPFolderChooser.showOpenDialog(this);
 
