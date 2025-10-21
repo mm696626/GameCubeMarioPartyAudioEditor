@@ -79,7 +79,7 @@ public class SongDumper {
     }
 
     private static void writeDSPAudioData(long nibbleCount, RandomAccessFile raf, FileOutputStream out) throws IOException {
-        long bytesToCopy = nibbleCount / 2;
+        long bytesToCopy = (nibbleCount + 1) / 2;
 
         byte[] buffer = new byte[8192];
 
