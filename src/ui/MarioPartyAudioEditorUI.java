@@ -264,7 +264,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         soundBankGBC.gridy = 3;
         padSoundOnModify = new JCheckBox("Pad .samp and .sdir to original file size on modify (this just writes padding bytes after the replacements in the MSM to match the original file size)");
-        padSoundOnModify.setSelected(true);
         soundBankPanel.add(padSoundOnModify, soundBankGBC);
 
         JPanel soundDSPPanel = new JPanel(new GridBagLayout());
