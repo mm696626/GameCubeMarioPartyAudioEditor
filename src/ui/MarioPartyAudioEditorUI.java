@@ -52,6 +52,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
     private JCheckBox dumpProjPool = null;
     private JCheckBox padSoundOnModify = null;
+    private JCheckBox deleteDSPAfterModify = null;
 
 
     public MarioPartyAudioEditorUI() {
@@ -185,14 +186,19 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             selectedGameLabel = new JLabel("No game selected");
         }
 
+        deleteDSPAfterModify = new JCheckBox("Delete Source DSPs after Modify");
+
         songGBC.gridx = 0; songGBC.gridy = 4;
         songGBC.gridwidth = 2;
         songPanel.add(selectGame, songGBC);
 
         songGBC.gridy = 5;
-        songPanel.add(pdtFilePathLabel, songGBC);
+        songPanel.add(deleteDSPAfterModify, songGBC);
 
         songGBC.gridy = 6;
+        songPanel.add(pdtFilePathLabel, songGBC);
+
+        songGBC.gridy = 7;
         songPanel.add(selectedGameLabel, songGBC);
 
         songToolsPanel.add(songSelectionPanel);
@@ -1278,7 +1284,8 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                     rightChannelFile,
                     actualSongIndex,
                     selectedSongName,
-                    selectedGame
+                    selectedGame,
+                    deleteDSPAfterModify.isSelected()
             );
 
             if (modifySuccessful) {
@@ -1371,7 +1378,8 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                         rightDSP,
                         songIndex,
                         modifyJob.getSongName(),
-                        selectedGame
+                        selectedGame,
+                        deleteDSPAfterModify.isSelected()
                 );
             }
 
