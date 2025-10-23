@@ -12,10 +12,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -773,6 +770,51 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         });
 
         final DSPPair[] selectedPair = {null};
+
+        dspList.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && dspList.getSelectedValue() != null) {
+                    selectedPair[0] = dspList.getSelectedValue();
+                    dialog.dispose();
+                }
+            }
+        });
+
+        searchField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && dspList.getSelectedValue() != null) {
+                    selectedPair[0] = dspList.getSelectedValue();
+                    dialog.dispose();
+                }
+            }
+        });
+
+        searchField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int code = e.getKeyCode();
+                int size = dspList.getModel().getSize();
+                int index = dspList.getSelectedIndex();
+
+                if (code == KeyEvent.VK_DOWN) {
+                    if (size > 0) {
+                        if (index < size - 1) dspList.setSelectedIndex(index + 1);
+                        else dspList.setSelectedIndex(0);
+                        dspList.ensureIndexIsVisible(dspList.getSelectedIndex());
+                    }
+                    e.consume();
+                } else if (code == KeyEvent.VK_UP) {
+                    if (size > 0) {
+                        if (index > 0) dspList.setSelectedIndex(index - 1);
+                        else dspList.setSelectedIndex(size - 1);
+                        dspList.ensureIndexIsVisible(dspList.getSelectedIndex());
+                    }
+                    e.consume();
+                }
+            }
+        });
 
         okButton.addActionListener(e -> {
             selectedPair[0] = dspList.getSelectedValue();
