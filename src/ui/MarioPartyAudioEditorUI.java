@@ -186,7 +186,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             selectedGameLabel = new JLabel("No game selected");
         }
 
-        autoAddToQueue = new JCheckBox("Automatically Add DSP Pairs from Saved DSP Folder to Queue");
+        autoAddToQueue = new JCheckBox("Automatically Add DSP Pairs from DSP Folder to Queue");
         deleteDSPAfterModify = new JCheckBox("Delete Source DSPs after Modify");
 
         songGBC.gridx = 0; songGBC.gridy = 4;
