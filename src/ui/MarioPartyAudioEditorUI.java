@@ -634,6 +634,15 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(this, "Please select song and both DSP channels before adding.");
             return;
         }
+
+        for (int i = 0; i < jobQueueModel.getSize(); i++) {
+            ModifyJob job = jobQueueModel.getElementAt(i);
+            if (job.getSongName().equals(songName)) {
+                JOptionPane.showMessageDialog(this, "You already have a job in the queue for this song!");
+                return;
+            }
+        }
+
         jobQueueModel.addElement(new ModifyJob(songName, leftChannelPath, rightChannelPath));
     }
 
