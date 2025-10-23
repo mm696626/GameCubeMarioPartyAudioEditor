@@ -52,6 +52,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
     private JCheckBox dumpProjPool = null;
     private JCheckBox padSoundOnModify = null;
+    private JCheckBox autoAddToQueue = null;
     private JCheckBox deleteDSPAfterModify = null;
 
 
@@ -186,6 +187,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             selectedGameLabel = new JLabel("No game selected");
         }
 
+        autoAddToQueue = new JCheckBox("Automatically Add DSP Pairs from Saved DSP Folder to Queue");
         deleteDSPAfterModify = new JCheckBox("Delete Source DSPs after Modify");
 
         songGBC.gridx = 0; songGBC.gridy = 4;
@@ -193,12 +195,15 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         songPanel.add(selectGame, songGBC);
 
         songGBC.gridy = 5;
-        songPanel.add(deleteDSPAfterModify, songGBC);
+        songPanel.add(autoAddToQueue, songGBC);
 
         songGBC.gridy = 6;
-        songPanel.add(pdtFilePathLabel, songGBC);
+        songPanel.add(deleteDSPAfterModify, songGBC);
 
         songGBC.gridy = 7;
+        songPanel.add(pdtFilePathLabel, songGBC);
+
+        songGBC.gridy = 8;
         songPanel.add(selectedGameLabel, songGBC);
 
         songToolsPanel.add(songSelectionPanel);
@@ -624,6 +629,15 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         selectedGameLabel.setText("Selected Game: " + selectedGame);
     }
 
+    private void addToQueue() {
+        String songName = (String) songNames.getSelectedItem();
+        if (songName == null || leftChannelPath.isEmpty() || rightChannelPath.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please select song and both DSP channels before adding.");
+            return;
+        }
+        jobQueueModel.addElement(new ModifyJob(songName, leftChannelPath, rightChannelPath));
+    }
+
     private void chooseLeftChannelPath() {
         if (savedDSPFolder != null) {
             useSavedDSPFolder();
@@ -708,6 +722,10 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             rightChannelPath = selectedPair.getRight().getAbsolutePath();
             leftChannelLabel.setText(selectedPair.getLeft().getName());
             rightChannelLabel.setText(selectedPair.getRight().getName());
+
+            if (autoAddToQueue.isSelected()) {
+                addToQueue();
+            }
         }
     }
 
@@ -1297,12 +1315,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == addToQueueButton) {
-            String songName = (String) songNames.getSelectedItem();
-            if (songName == null || leftChannelPath.isEmpty() || rightChannelPath.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please select song and both DSP channels before adding.");
-                return;
-            }
-            jobQueueModel.addElement(new ModifyJob(songName, leftChannelPath, rightChannelPath));
+            addToQueue();
         }
 
         if (e.getSource() == removeQueueButton) {
