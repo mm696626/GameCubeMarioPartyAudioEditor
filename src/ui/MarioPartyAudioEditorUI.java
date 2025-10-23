@@ -14,6 +14,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -707,16 +709,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             return;
         }
 
-        DSPPair selectedPair = (DSPPair) JOptionPane.showInputDialog(
-                this,
-                "Select DSP Pair:",
-                "Select DSP Song",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                dspPairs.toArray(),
-                dspPairs.getFirst()
-        );
-
+        DSPPair selectedPair = showSearchableDSPDialog(dspPairs);
         if (selectedPair != null) {
             leftChannelPath = selectedPair.getLeft().getAbsolutePath();
             rightChannelPath = selectedPair.getRight().getAbsolutePath();
@@ -727,6 +720,79 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 addToQueue();
             }
         }
+    }
+
+    private DSPPair showSearchableDSPDialog(ArrayList<DSPPair> dspPairs) {
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Select DSP Pair", true);
+        dialog.setLayout(new BorderLayout());
+        dialog.setSize(400, 300);
+        dialog.setLocationRelativeTo(this);
+
+        JTextField searchField = new JTextField();
+        dialog.add(searchField, BorderLayout.NORTH);
+
+        DefaultListModel<DSPPair> listModel = new DefaultListModel<>();
+        dspPairs.forEach(listModel::addElement);
+
+        JList<DSPPair> dspList = new JList<>(listModel);
+        dspList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        dspList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof DSPPair pair) {
+                    setText(pair.getLeft().getName() + " / " + pair.getRight().getName());
+                }
+                return this;
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(dspList);
+        dialog.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton okButton = new JButton("OK");
+        JButton cancelButton = new JButton("Cancel");
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+        dialog.add(buttonPanel, BorderLayout.SOUTH);
+
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            private void update() {
+                String filter = searchField.getText().trim().toLowerCase();
+                listModel.clear();
+                for (DSPPair pair : dspPairs) {
+                    String name = pair.getLeft().getName().toLowerCase() + " " + pair.getRight().getName().toLowerCase();
+                    if (name.contains(filter)) listModel.addElement(pair);
+                }
+            }
+            public void insertUpdate(DocumentEvent e) { update(); }
+            public void removeUpdate(DocumentEvent e) { update(); }
+            public void changedUpdate(DocumentEvent e) { update(); }
+        });
+
+        final DSPPair[] selectedPair = {null};
+
+        okButton.addActionListener(e -> {
+            selectedPair[0] = dspList.getSelectedValue();
+            dialog.dispose();
+        });
+
+        cancelButton.addActionListener(e -> dialog.dispose());
+
+        dspList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2 && dspList.getSelectedValue() != null) {
+                    selectedPair[0] = dspList.getSelectedValue();
+                    dialog.dispose();
+                }
+            }
+        });
+
+        dialog.setVisible(true);
+        return selectedPair[0];
     }
 
     private void chooseDSP(boolean isLeft) {
