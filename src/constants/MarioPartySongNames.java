@@ -203,7 +203,7 @@ public class MarioPartySongNames {
             Map.entry(92, "Star Gathering"),
             Map.entry(93, "Quiz Master"),
             Map.entry(94, "Miracle Book"),
-            Map.entry(95, "Speak Up Intro"),
+            Map.entry(95, "Speak Up Theme"),
             Map.entry(96, "Quiz Song"),
             Map.entry(97, "Bowser Quiz"),
             Map.entry(98, "Bowser Quiz (without Intro)"),
