@@ -1600,7 +1600,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             sortedSongs.sort(Map.Entry.comparingByValue(String.CASE_INSENSITIVE_ORDER));
 
             for (Map.Entry<Integer, String> entry : sortedSongs) {
-                JCheckBox checkBox = new JCheckBox(entry.getValue(), true); // checked by default
+                JCheckBox checkBox = new JCheckBox(entry.getValue(), true);
                 songCheckboxes.put(entry.getKey(), checkBox);
                 checkboxPanel.add(checkBox);
             }
