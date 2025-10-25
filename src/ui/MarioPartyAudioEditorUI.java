@@ -21,7 +21,7 @@ import java.util.*;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSelectedSong, dumpAllSongs, dumpSoundBank, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, modifyWithRandomSongs, dumpSelectedSong, dumpAllSongs, dumpSoundBank, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -163,6 +163,9 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
 
+        modifyWithRandomSongs = new JButton("Randomize Songs (uses the DSP Folder)");
+        modifyWithRandomSongs.addActionListener(this);
+
         songGBC.gridx = 0; songGBC.gridy = 0;
         songPanel.add(pickLeftChannel, songGBC);
         songGBC.gridx = 1;
@@ -179,9 +182,13 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         songGBC.gridx = 0; songGBC.gridy = 3;
         songGBC.gridwidth = 2;
-        songPanel.add(dumpSelectedSong, songGBC);
+        songPanel.add(modifyWithRandomSongs, songGBC);
 
         songGBC.gridx = 0; songGBC.gridy = 4;
+        songGBC.gridwidth = 2;
+        songPanel.add(dumpSelectedSong, songGBC);
+
+        songGBC.gridx = 0; songGBC.gridy = 5;
         songGBC.gridwidth = 2;
         songPanel.add(dumpAllSongs, songGBC);
 
@@ -196,20 +203,20 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         autoAddToQueue = new JCheckBox("Automatically Add DSP Pairs from DSP Folder to Queue");
         deleteDSPAfterModify = new JCheckBox("Delete Source DSPs after Modify");
 
-        songGBC.gridx = 0; songGBC.gridy = 5;
+        songGBC.gridx = 0; songGBC.gridy = 6;
         songGBC.gridwidth = 2;
         songPanel.add(selectGame, songGBC);
 
-        songGBC.gridy = 6;
+        songGBC.gridy = 7;
         songPanel.add(autoAddToQueue, songGBC);
 
-        songGBC.gridy = 7;
+        songGBC.gridy = 8;
         songPanel.add(deleteDSPAfterModify, songGBC);
 
-        songGBC.gridy = 8;
+        songGBC.gridy = 9;
         songPanel.add(pdtFilePathLabel, songGBC);
 
-        songGBC.gridy = 9;
+        songGBC.gridy = 10;
         songPanel.add(selectedGameLabel, songGBC);
 
         songToolsPanel.add(songSelectionPanel);
@@ -1540,6 +1547,73 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             if (modifySuccessful) {
                 JOptionPane.showMessageDialog(null, "Finished modifying PDT file for " + selectedSongName);
             }
+        }
+
+        if (e.getSource() == modifyWithRandomSongs) {
+
+            if (savedDSPFolder == null || !savedDSPFolder.exists()) {
+                JOptionPane.showMessageDialog(this, "No DSP folder was set!");
+                return;
+            }
+
+            ArrayList<DSPPair> dspPairs = DSPPair.detectDSPPairs(savedDSPFolder);
+
+            if (dspPairs.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No DSP pairs exist in the DSP folder!");
+                return;
+            }
+
+            if (pdtPath.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No PDT file was chosen!");
+                return;
+            }
+
+            File pdtFile = new File(pdtPath);
+
+            if (!pdtFile.exists()) {
+                JOptionPane.showMessageDialog(this, "The chosen PDT file doesn't exist!");
+                return;
+            }
+
+            int response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Do you want to make a backup of the PDT file?",
+                    "Backup PDT",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (response == JOptionPane.YES_OPTION) {
+                backupPDT(pdtFile);
+            }
+
+            Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
+
+            if (songNameMap == null) {
+                JOptionPane.showMessageDialog(this, "No game is selected! Please select one!");
+                return;
+            }
+
+            Random rng = new Random();
+
+            for (Map.Entry<Integer, String> entry : songNameMap.entrySet()) {
+                Integer songIndex = entry.getKey();
+                String songName = entry.getValue();
+
+                int randomSongIndex = rng.nextInt(dspPairs.size());
+                DSPPair chosenSongPair = dspPairs.get(randomSongIndex);
+
+                SongModifier.modifySong(
+                        pdtFile,
+                        chosenSongPair.getLeft(),
+                        chosenSongPair.getRight(),
+                        songIndex,
+                        songName,
+                        selectedGame,
+                        deleteDSPAfterModify.isSelected()
+                );
+            }
+
+            JOptionPane.showMessageDialog(this, "Randomization completed.");
         }
 
         if (e.getSource() == selectGame) {
