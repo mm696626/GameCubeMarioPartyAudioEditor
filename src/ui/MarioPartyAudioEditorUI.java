@@ -1666,7 +1666,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
             int minimizeRepeatsResponse = JOptionPane.showConfirmDialog(
                     null,
-                    "Do you want to minimize repeats?",
+                    "Do you want to minimize repeat replacement songs?",
                     "Minimize Repeats",
                     JOptionPane.YES_NO_OPTION
             );
