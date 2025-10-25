@@ -164,7 +164,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
 
-        modifyWithRandomSongs = new JButton("Randomize Songs (uses the DSP Folder)");
+        modifyWithRandomSongs = new JButton("Randomize Songs");
         modifyWithRandomSongs.addActionListener(this);
 
         songGBC.gridx = 0; songGBC.gridy = 0;
@@ -1552,12 +1552,28 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         if (e.getSource() == modifyWithRandomSongs) {
 
+            File dspFolderForRandomization = null;
+
             if (savedDSPFolder == null || !savedDSPFolder.exists()) {
-                JOptionPane.showMessageDialog(this, "No DSP folder was set!");
-                return;
+                JFileChooser dspFolderChooser = new JFileChooser();
+                dspFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                dspFolderChooser.setDialogTitle("Select DSP Folder for Randomization");
+                dspFolderChooser.setAcceptAllFileFilterUsed(false);
+                int result = dspFolderChooser.showOpenDialog(this);
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    dspFolderForRandomization = dspFolderChooser.getSelectedFile();
+                }
+            }
+            else {
+                dspFolderForRandomization = savedDSPFolder;
             }
 
-            ArrayList<DSPPair> dspPairs = DSPPair.detectDSPPairs(savedDSPFolder);
+            ArrayList<DSPPair> dspPairs = new ArrayList<>();
+
+            if (dspFolderForRandomization != null) {
+                dspPairs = DSPPair.detectDSPPairs(dspFolderForRandomization);
+            }
 
             if (dspPairs.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "No DSP pairs exist in the DSP folder!");
