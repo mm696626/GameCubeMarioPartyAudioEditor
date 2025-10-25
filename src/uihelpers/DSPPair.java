@@ -2,6 +2,7 @@ package uihelpers;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class DSPPair {
@@ -28,7 +29,7 @@ public class DSPPair {
         File[] files = folder.listFiles((_, name) -> name.toLowerCase().endsWith(".dsp"));
         if (files == null) return pairs;
 
-        Map<String, File> fileMap = new java.util.HashMap<>();
+        Map<String, File> fileMap = new HashMap<>();
         for (File f : files) {
             fileMap.put(f.getName(), f);
         }
@@ -39,6 +40,11 @@ public class DSPPair {
                 String rightName = name.replace("_L.dsp", "_R.dsp");
                 if (fileMap.containsKey(rightName)) {
                     pairs.add(new DSPPair(f, fileMap.get(rightName), name.replace("_L.dsp", "")));
+                }
+            } else if (name.endsWith("_l.dsp")) {
+                String rightName = name.replace("_l.dsp", "_r.dsp");
+                if (fileMap.containsKey(rightName)) {
+                    pairs.add(new DSPPair(f, fileMap.get(rightName), name.replace("_l.dsp", "")));
                 }
             } else if (name.endsWith("(channel 0).dsp")) {
                 String rightName = name.replace("(channel 0).dsp", "(channel 1).dsp");
