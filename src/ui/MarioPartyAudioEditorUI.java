@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
@@ -1593,11 +1594,68 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
+            JPanel mainPanel = new JPanel(new BorderLayout());
+
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            JButton selectAllButton = new JButton("Select All");
+            JButton selectNoneButton = new JButton("Select None");
+            buttonPanel.add(selectAllButton);
+            buttonPanel.add(selectNoneButton);
+
+            JPanel checkboxPanel = new JPanel();
+            checkboxPanel.setLayout(new BoxLayout(checkboxPanel, BoxLayout.Y_AXIS));
+
+            Map<Integer, JCheckBox> songCheckboxes = new HashMap<>();
+
+            List<Map.Entry<Integer, String>> sortedSongs = new ArrayList<>(songNameMap.entrySet());
+            sortedSongs.sort(Map.Entry.comparingByValue(String.CASE_INSENSITIVE_ORDER));
+
+            for (Map.Entry<Integer, String> entry : sortedSongs) {
+                JCheckBox checkBox = new JCheckBox(entry.getValue(), true); // checked by default
+                songCheckboxes.put(entry.getKey(), checkBox);
+                checkboxPanel.add(checkBox);
+            }
+
+            JScrollPane scrollPane = new JScrollPane(checkboxPanel);
+            scrollPane.setPreferredSize(new Dimension(400, 400));
+
+            mainPanel.add(buttonPanel, BorderLayout.NORTH);
+            mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+            selectAllButton.addActionListener(ev -> {
+                for (JCheckBox cb : songCheckboxes.values()) {
+                    cb.setSelected(true);
+                }
+            });
+
+            selectNoneButton.addActionListener(ev -> {
+                for (JCheckBox cb : songCheckboxes.values()) {
+                    cb.setSelected(false);
+                }
+            });
+
+            int confirm = JOptionPane.showConfirmDialog(
+                    null,
+                    mainPanel,
+                    "Select Songs to Randomize",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE
+            );
+
+            if (confirm != JOptionPane.OK_OPTION) {
+                return;
+            }
+
             Random rng = new Random();
 
             for (Map.Entry<Integer, String> entry : songNameMap.entrySet()) {
                 Integer songIndex = entry.getKey();
                 String songName = entry.getValue();
+
+                JCheckBox willRandomize = songCheckboxes.get(songIndex);
+                if (willRandomize == null || !willRandomize.isSelected()) {
+                    continue;
+                }
 
                 int randomSongIndex = rng.nextInt(dspPairs.size());
                 DSPPair chosenSongPair = dspPairs.get(randomSongIndex);
