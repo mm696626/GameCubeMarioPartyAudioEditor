@@ -1653,40 +1653,88 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            int response = JOptionPane.showConfirmDialog(
+            int backupPDTResponse = JOptionPane.showConfirmDialog(
                     null,
                     "Do you want to make a backup of the PDT file?",
                     "Backup PDT",
                     JOptionPane.YES_NO_OPTION
             );
 
-            if (response == JOptionPane.YES_OPTION) {
+            if (backupPDTResponse == JOptionPane.YES_OPTION) {
                 backupPDT(pdtFile);
+            }
+
+            int minimizeRepeatsResponse = JOptionPane.showConfirmDialog(
+                    null,
+                    "Do you want to minimize repeats?",
+                    "Minimize Repeats",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            boolean minimizeRepeats;
+
+            if (minimizeRepeatsResponse == JOptionPane.YES_OPTION) {
+                minimizeRepeats = true;
+            }
+            else {
+                minimizeRepeats = false;
             }
 
             Random rng = new Random();
 
-            for (Map.Entry<Integer, String> entry : songNameMap.entrySet()) {
-                Integer songIndex = entry.getKey();
-                String songName = entry.getValue();
+            if (minimizeRepeats) {
+                List<DSPPair> dspPool = new ArrayList<>(dspPairs);
 
-                JCheckBox willRandomize = songCheckboxes.get(songIndex);
-                if (willRandomize == null || !willRandomize.isSelected()) {
-                    continue;
+                for (Map.Entry<Integer, String> entry : songNameMap.entrySet()) {
+                    Integer songIndex = entry.getKey();
+                    String songName = entry.getValue();
+
+                    JCheckBox willRandomize = songCheckboxes.get(songIndex);
+                    if (willRandomize == null || !willRandomize.isSelected()) {
+                        continue;
+                    }
+
+                    if (dspPool.isEmpty()) {
+                        dspPool.addAll(dspPairs);
+                    }
+
+                    int randomIndex = rng.nextInt(dspPool.size());
+                    DSPPair chosenSongPair = dspPool.remove(randomIndex);
+
+                    SongModifier.modifySong(
+                            pdtFile,
+                            chosenSongPair.getLeft(),
+                            chosenSongPair.getRight(),
+                            songIndex,
+                            songName,
+                            selectedGame,
+                            deleteDSPAfterModify.isSelected()
+                    );
                 }
+            }
+            else {
+                for (Map.Entry<Integer, String> entry : songNameMap.entrySet()) {
+                    Integer songIndex = entry.getKey();
+                    String songName = entry.getValue();
 
-                int randomSongIndex = rng.nextInt(dspPairs.size());
-                DSPPair chosenSongPair = dspPairs.get(randomSongIndex);
+                    JCheckBox willRandomize = songCheckboxes.get(songIndex);
+                    if (willRandomize == null || !willRandomize.isSelected()) {
+                        continue;
+                    }
 
-                SongModifier.modifySong(
-                        pdtFile,
-                        chosenSongPair.getLeft(),
-                        chosenSongPair.getRight(),
-                        songIndex,
-                        songName,
-                        selectedGame,
-                        deleteDSPAfterModify.isSelected()
-                );
+                    int randomSongIndex = rng.nextInt(dspPairs.size());
+                    DSPPair chosenSongPair = dspPairs.get(randomSongIndex);
+
+                    SongModifier.modifySong(
+                            pdtFile,
+                            chosenSongPair.getLeft(),
+                            chosenSongPair.getRight(),
+                            songIndex,
+                            songName,
+                            selectedGame,
+                            deleteDSPAfterModify.isSelected()
+                    );
+                }
             }
 
             JOptionPane.showMessageDialog(this, "Randomization completed.");
