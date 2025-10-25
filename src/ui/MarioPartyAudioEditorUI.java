@@ -1576,17 +1576,6 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 return;
             }
 
-            int response = JOptionPane.showConfirmDialog(
-                    null,
-                    "Do you want to make a backup of the PDT file?",
-                    "Backup PDT",
-                    JOptionPane.YES_NO_OPTION
-            );
-
-            if (response == JOptionPane.YES_OPTION) {
-                backupPDT(pdtFile);
-            }
-
             Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
 
             if (songNameMap == null) {
@@ -1644,6 +1633,17 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
             if (confirm != JOptionPane.OK_OPTION) {
                 return;
+            }
+
+            int response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Do you want to make a backup of the PDT file?",
+                    "Backup PDT",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (response == JOptionPane.YES_OPTION) {
+                backupPDT(pdtFile);
             }
 
             Random rng = new Random();
