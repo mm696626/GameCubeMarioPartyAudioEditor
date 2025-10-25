@@ -1552,7 +1552,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         if (e.getSource() == modifyWithRandomSongs) {
 
-            File dspFolderForRandomization = null;
+            File dspFolderForRandomization;
 
             if (savedDSPFolder == null || !savedDSPFolder.exists()) {
                 JFileChooser dspFolderChooser = new JFileChooser();
@@ -1561,9 +1561,11 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                 dspFolderChooser.setAcceptAllFileFilterUsed(false);
                 int result = dspFolderChooser.showOpenDialog(this);
 
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    dspFolderForRandomization = dspFolderChooser.getSelectedFile();
+                if (result != JFileChooser.APPROVE_OPTION) {
+                    return;
                 }
+
+                dspFolderForRandomization = dspFolderChooser.getSelectedFile();
             }
             else {
                 dspFolderForRandomization = savedDSPFolder;
