@@ -96,6 +96,76 @@ public class SongDumper {
         }
     }
 
+    public static void dumpSong(File selectedFile, int songIndex, String songName, File defaultDumpOutputFolder) {
+        File outputDir;
+
+        if (defaultDumpOutputFolder == null || !defaultDumpOutputFolder.exists()) {
+            outputDir = promptForOutputFolder();
+            if (outputDir == null) return;
+        }
+        else {
+            outputDir = defaultDumpOutputFolder;
+        }
+
+        try (RandomAccessFile raf = new RandomAccessFile(selectedFile, "r")) {
+            int unk00 = FileIO.readU16BE(raf);
+            int numFiles = FileIO.readU16BE(raf);
+            long unk04 = FileIO.readU32BE(raf);
+            long unk08 = FileIO.readU32BE(raf);
+            long unk0C = FileIO.readU32BE(raf);
+            long entryOffs = FileIO.readU32BE(raf);
+            long coeffOffs = FileIO.readU32BE(raf);
+            long headerOffs = FileIO.readU32BE(raf);
+            long streamOffs = FileIO.readU32BE(raf);
+
+            if (songIndex < 0 || songIndex >= numFiles) {
+                return;
+            }
+
+            raf.seek(entryOffs + (songIndex << 2));
+            long thisHeaderOffs = FileIO.readU32BE(raf);
+            if (thisHeaderOffs == 0) {
+                return;
+            }
+
+            raf.seek(thisHeaderOffs);
+            long flags = FileIO.readU32BE(raf);
+            long sampleRate = FileIO.readU32BE(raf);
+            long nibbleCount = FileIO.readU32BE(raf);
+            long loopStart = FileIO.readU32BE(raf);
+            long ch1Start = FileIO.readU32BE(raf);
+            int ch1CoefEntry = FileIO.readU16BE(raf);
+            int unk116 = FileIO.readU16BE(raf);
+            long ch1CoefOffs = coeffOffs + (ch1CoefEntry << 5);
+
+            long ch2Start = ch1Start;
+            int ch2CoefEntry = ch1CoefEntry;
+            long ch2CoefOffs = coeffOffs + (ch2CoefEntry << 5);
+            int chanCount = 1;
+
+            if ((flags & 0x01000000) != 0) {
+                ch2Start = FileIO.readU32BE(raf);
+                ch2CoefEntry = FileIO.readU16BE(raf);
+                int unk11A = FileIO.readU16BE(raf);
+                ch2CoefOffs = coeffOffs + (ch2CoefEntry << 5);
+                chanCount = 2;
+            }
+
+            int loopFlag = ((flags & 0x02000000) != 0) ? 1 : 0;
+
+            for (int j = 0; j < chanCount; j++) {
+                String fileName = getFileName(songName, chanCount, j);
+                File outputFile = new File(outputDir, fileName);
+                writeDSP(outputFile.getAbsolutePath(), nibbleCount, sampleRate, loopFlag, loopStart, j, raf, ch1CoefOffs, ch1Start, ch2CoefOffs, ch2Start);
+            }
+
+            JOptionPane.showMessageDialog(null, "Finished dumping DSP file for " + songName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage());
+        }
+    }
+
     public static void dumpAllSongs(File selectedFile, File defaultDumpOutputFolder) {
         File outputDir;
 
@@ -177,6 +247,23 @@ public class SongDumper {
         } else {
             return null;
         }
+    }
+
+    private static String getFileName(String songName, int chanCount, int j) {
+        String fileName;
+
+        String sanitizedSongName = songName.replace(" ", "_").replaceAll("[^A-Za-z0-9_]", "");
+
+        if (chanCount == 2) {
+            if (j == 0) {
+                fileName = String.format("%s_L.dsp", sanitizedSongName);
+            } else {
+                fileName = String.format("%s_R.dsp", sanitizedSongName);
+            }
+        } else {
+            fileName = String.format("%s.dsp", sanitizedSongName);
+        }
+        return fileName;
     }
 
     private static String getFileNameForIndex(int chanCount, int j, int i) {

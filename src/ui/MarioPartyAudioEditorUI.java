@@ -21,7 +21,7 @@ import java.util.*;
 
 public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
-    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpAllSongs, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
+    private JButton pickLeftChannel, pickRightChannel, modifySong, dumpSelectedSong, dumpAllSongs, dumpSoundBank, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
     private String pdtPath = "";
     private String leftChannelPath = "";
     private String rightChannelPath = "";
@@ -154,6 +154,9 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         pickRightChannel.addActionListener(this);
         rightChannelLabel = new JLabel("No file selected");
 
+        dumpSelectedSong = new JButton("Dump Selected Song");
+        dumpSelectedSong.addActionListener(this);
+
         dumpAllSongs = new JButton("Dump All Songs");
         dumpAllSongs.addActionListener(this);
 
@@ -176,6 +179,10 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         songGBC.gridx = 0; songGBC.gridy = 3;
         songGBC.gridwidth = 2;
+        songPanel.add(dumpSelectedSong, songGBC);
+
+        songGBC.gridx = 0; songGBC.gridy = 4;
+        songGBC.gridwidth = 2;
         songPanel.add(dumpAllSongs, songGBC);
 
         selectGame = new JButton("Select PDT and Game");
@@ -189,20 +196,20 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         autoAddToQueue = new JCheckBox("Automatically Add DSP Pairs from DSP Folder to Queue");
         deleteDSPAfterModify = new JCheckBox("Delete Source DSPs after Modify");
 
-        songGBC.gridx = 0; songGBC.gridy = 4;
+        songGBC.gridx = 0; songGBC.gridy = 5;
         songGBC.gridwidth = 2;
         songPanel.add(selectGame, songGBC);
 
-        songGBC.gridy = 5;
+        songGBC.gridy = 6;
         songPanel.add(autoAddToQueue, songGBC);
 
-        songGBC.gridy = 6;
+        songGBC.gridy = 7;
         songPanel.add(deleteDSPAfterModify, songGBC);
 
-        songGBC.gridy = 7;
+        songGBC.gridy = 8;
         songPanel.add(pdtFilePathLabel, songGBC);
 
-        songGBC.gridy = 8;
+        songGBC.gridy = 9;
         songPanel.add(selectedGameLabel, songGBC);
 
         songToolsPanel.add(songSelectionPanel);
@@ -258,15 +265,20 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         soundBankPanel.add(dumpAllSoundBanks, soundBankGBC);
 
         soundBankGBC.gridy = 1;
+        dumpSoundBank = new JButton("Dump Sound Bank");
+        dumpSoundBank.addActionListener(this);
+        soundBankPanel.add(dumpSoundBank, soundBankGBC);
+
+        soundBankGBC.gridy = 2;
         modifySoundBank = new JButton("Modify Sound Bank");
         modifySoundBank.addActionListener(this);
         soundBankPanel.add(modifySoundBank, soundBankGBC);
 
-        soundBankGBC.gridy = 2;
+        soundBankGBC.gridy = 3;
         dumpProjPool = new JCheckBox("Dump .proj and .pool files (not needed for modding)");
         soundBankPanel.add(dumpProjPool, soundBankGBC);
 
-        soundBankGBC.gridy = 3;
+        soundBankGBC.gridy = 4;
         padSoundOnModify = new JCheckBox("Pad .samp and .sdir to original file size on modify (this just writes padding bytes after the replacements in the MSM to match the original file size)");
         soundBankPanel.add(padSoundOnModify, soundBankGBC);
 
@@ -996,6 +1008,59 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             chooseRightChannelPath();
         }
 
+        if (e.getSource() == dumpSoundBank) {
+
+            File selectedMSM;
+
+            if (defaultMSMFile == null || !defaultMSMFile.exists()) {
+                JFileChooser msmFileChooser = new JFileChooser();
+                msmFileChooser.setDialogTitle("Select MSM file");
+                msmFileChooser.setAcceptAllFileFilterUsed(false);
+
+                FileNameExtensionFilter msmFilter = new FileNameExtensionFilter("MSM Files", "msm");
+                msmFileChooser.setFileFilter(msmFilter);
+
+                int userSelection = msmFileChooser.showOpenDialog(null);
+
+                if (userSelection != JFileChooser.APPROVE_OPTION) {
+                    return;
+                }
+                else {
+                    selectedMSM = msmFileChooser.getSelectedFile();
+                }
+            }
+
+            else {
+                selectedMSM = defaultMSMFile;
+            }
+
+            ArrayList<String> banks = SoundBankGetter.getBanks(selectedMSM);
+
+            if (banks != null) {
+                String[] bankArray = banks.toArray(new String[0]);
+                JComboBox<String> bankDropdown = new JComboBox<>(bankArray);
+
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        bankDropdown,
+                        "Select a Bank",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
+
+                if (result == JOptionPane.OK_OPTION) {
+                    String selectedBank = (String) bankDropdown.getSelectedItem();
+
+                    if (selectedBank != null) {
+                        SoundDumper.dumpSoundBank(selectedMSM, Long.parseLong(selectedBank), defaultDumpOutputFolder, dumpProjPool.isSelected());
+                    }
+                    else {
+                        return;
+                    }
+                }
+            }
+        }
+
         if (e.getSource() == dumpAllSoundBanks) {
             File selectedMSM;
 
@@ -1313,6 +1378,56 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             if (paddedFiles) {
                 JOptionPane.showMessageDialog(this, "DSP files have been padded!");
             }
+        }
+
+        if (e.getSource() == dumpSelectedSong) {
+            if (pdtPath.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No PDT file was chosen!");
+                return;
+            }
+
+            File pdtFile = new File(pdtPath);
+
+            if (!pdtFile.exists()) {
+                JOptionPane.showMessageDialog(this, "The chosen PDT file doesn't exist!");
+                return;
+            }
+
+            if (defaultDumpOutputFolder != null && !defaultDumpOutputFolder.exists()) {
+                defaultDumpOutputFolder = null;
+            }
+
+            String selectedSongName = (String) songNames.getSelectedItem();
+
+            Map<Integer, String> songNameMap = getSongNameMapForSelectedGame();
+
+            if (songNameMap == null) {
+                JOptionPane.showMessageDialog(this, "No game is selected! Please select one!");
+                return;
+            }
+
+            int actualSongIndex = -1;
+
+            if (selectedSongName != null) {
+                for (Map.Entry<Integer, String> entry : songNameMap.entrySet()) {
+                    if (selectedSongName.equals(entry.getValue())) {
+                        actualSongIndex = entry.getKey();
+                        break;
+                    }
+                }
+            }
+
+            if (actualSongIndex == -1) {
+                JOptionPane.showMessageDialog(this, "Could not determine song index.");
+                return;
+            }
+
+            SongDumper.dumpSong(
+                    pdtFile,
+                    actualSongIndex,
+                    selectedSongName,
+                    defaultDumpOutputFolder
+            );
         }
 
         if (e.getSource() == dumpAllSongs) {
