@@ -142,14 +142,40 @@ public class SongModifier {
             long newDSPNibbleCountOffset = thisHeaderOffs + 8;
             long newDSPLoopStartOffset = thisHeaderOffs + 12;
 
-            if (writeToEOF) {
-                writeDSPToPDTEOF(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, newDSPLeftChannelAudio, newDSPRightChannelAudio, ch1Pointer, ch2Pointer);
+            String doesSongExist = checkIfSongExists(leftChannel, rightChannel, selectedGame, pdtFile.getName());
+
+            //if the song has already been used in the PDT, just write its header data to the new location and point to the audio data
+            if (!doesSongExist.isEmpty()) {
+                writeDSPHeaderDataToPDT(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs);
+
+                String[] doesSongExistParts = doesSongExist.split("\\|");
+
+                String leftPointer = doesSongExistParts[3];
+                String rightPointer = doesSongExistParts[4];
+
+                pdtRaf.seek(ch1Pointer);
+                pdtRaf.writeInt(Integer.parseInt(leftPointer));
+
+                pdtRaf.seek(ch2Pointer);
+                pdtRaf.writeInt(Integer.parseInt(rightPointer));
             }
             else {
-                writeDSPToPDT(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, ch1Start, newDSPLeftChannelAudio, ch2Start, newDSPRightChannelAudio);
+                if (writeToEOF) {
+                    writeDSPToPDTEOF(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, newDSPLeftChannelAudio, newDSPRightChannelAudio, ch1Pointer, ch2Pointer);
+                }
+                else {
+                    writeDSPToPDT(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, ch1Start, newDSPLeftChannelAudio, ch2Start, newDSPRightChannelAudio);
+                }
             }
 
-            logSongReplacement(songName, leftChannel, rightChannel, selectedGame, pdtFile.getName());
+            //write new pointers to log file
+            pdtRaf.seek(ch1Pointer);
+            long newLeftChannelPointer = FileIO.readU32BE(pdtRaf);
+
+            pdtRaf.seek(ch2Pointer);
+            long newRightChannelPointer = FileIO.readU32BE(pdtRaf);
+
+            logSongReplacement(songName, leftChannel, rightChannel, selectedGame, pdtFile.getName(), newLeftChannelPointer, newRightChannelPointer);
 
             if (deleteDSPAfterModify) {
                 leftChannel.delete();
@@ -306,7 +332,7 @@ public class SongModifier {
         }
     }
 
-    private static void logSongReplacement(String songName, File leftChannel, File rightChannel, String selectedGame, String pdtFileName) {
+    private static void logSongReplacement(String songName, File leftChannel, File rightChannel, String selectedGame, String pdtFileName, long leftChannelPointer, long rightChannelPointer) {
         File songReplacementsFolder = new File("song_replacements");
         if (!songReplacementsFolder.exists()) {
             songReplacementsFolder.mkdirs();
@@ -330,11 +356,13 @@ public class SongModifier {
                     String line = inputStream.nextLine();
                     String[] parts = line.split("\\|");
 
-                    if (parts.length >= 3) {
+                    if (parts.length >= 5) {
                         String existingSongName = parts[0];
                         String left = parts[1];
                         String right = parts[2];
-                        songMap.put(existingSongName, left + "|" + right);
+                        String leftPointer = parts[3];
+                        String rightPointer = parts[4];
+                        songMap.put(existingSongName, left + "|" + right + "|" + leftPointer + "|" + rightPointer);
                     }
                 }
             } catch (IOException e) {
@@ -342,7 +370,7 @@ public class SongModifier {
             }
         }
 
-        songMap.put(songName, leftChannel.getName() + "|" + rightChannel.getName());
+        songMap.put(songName, leftChannel.getName() + "|" + rightChannel.getName() + "|" + leftChannelPointer + "|" + rightChannelPointer);
 
         try (PrintWriter outputStream = new PrintWriter(new FileOutputStream(logFile))) {
             for (Map.Entry<String, String> entry : songMap.entrySet()) {
@@ -351,5 +379,41 @@ public class SongModifier {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String checkIfSongExists(File leftChannel, File rightChannel, String selectedGame, String pdtFileName) {
+        File songReplacementsFolder = new File("song_replacements");
+        if (!songReplacementsFolder.exists()) {
+            songReplacementsFolder.mkdirs();
+        }
+
+        File logFile;
+
+        if (!selectedGame.equals("Other")) {
+            logFile = new File(songReplacementsFolder, selectedGame + ".txt");
+        }
+        else {
+            String baseFileName = pdtFileName.substring(0, pdtFileName.length() - 4);
+            logFile = new File(songReplacementsFolder, baseFileName + ".txt");
+        }
+
+        if (logFile.exists()) {
+            try (Scanner inputStream = new Scanner(new FileInputStream(logFile))) {
+                while (inputStream.hasNextLine()) {
+                    String line = inputStream.nextLine();
+                    String[] parts = line.split("\\|");
+
+                    if (parts[1].equals(leftChannel.getName()) && parts[2].equals(rightChannel.getName())) {
+                        return line;
+                    }
+                }
+
+                return "";
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return "";
     }
 }
