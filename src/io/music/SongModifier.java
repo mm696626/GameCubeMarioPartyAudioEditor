@@ -341,7 +341,7 @@ public class SongModifier {
 
         File logFile;
 
-        String sanitizedFilePath = pdtFilePath.replace(" ", "_").replaceAll("[^A-Za-z0-9_]", "");
+        String sanitizedFilePath = pdtFilePath.replaceAll("[^A-Za-z0-9]", "");
         String baseFileName = sanitizedFilePath.substring(0, sanitizedFilePath.length() - 3);
         logFile = new File(songReplacementsFolder, baseFileName + ".txt");
 
@@ -386,7 +386,7 @@ public class SongModifier {
 
         File logFile;
 
-        String sanitizedFilePath = pdtFilePath.replace(" ", "_").replaceAll("[^A-Za-z0-9_]", "");
+        String sanitizedFilePath = pdtFilePath.replaceAll("[^A-Za-z0-9]", "");
         String baseFileName = sanitizedFilePath.substring(0, sanitizedFilePath.length() - 3);
         logFile = new File(songReplacementsFolder, baseFileName + ".txt");
 
