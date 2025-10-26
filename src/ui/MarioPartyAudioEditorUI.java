@@ -1603,11 +1603,18 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
             JPanel mainPanel = new JPanel(new BorderLayout());
 
+            JPanel topPanel = new JPanel(new BorderLayout());
+
+            JTextField searchField = new JTextField();
+            searchField.setToolTipText("Search songs...");
+            topPanel.add(searchField, BorderLayout.NORTH);
+
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
             JButton selectAllButton = new JButton("Select All");
             JButton selectNoneButton = new JButton("Select None");
             buttonPanel.add(selectAllButton);
             buttonPanel.add(selectNoneButton);
+            topPanel.add(buttonPanel, BorderLayout.SOUTH);
 
             JPanel checkboxPanel = new JPanel();
             checkboxPanel.setLayout(new BoxLayout(checkboxPanel, BoxLayout.Y_AXIS));
@@ -1626,8 +1633,33 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             JScrollPane scrollPane = new JScrollPane(checkboxPanel);
             scrollPane.setPreferredSize(new Dimension(400, 400));
 
-            mainPanel.add(buttonPanel, BorderLayout.NORTH);
+            mainPanel.add(topPanel, BorderLayout.NORTH);
             mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+            searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+                private void filter() {
+                    String query = searchField.getText().trim().toLowerCase();
+                    checkboxPanel.removeAll();
+
+                    for (Map.Entry<Integer, String> entry : sortedSongs) {
+                        String songName = entry.getValue().toLowerCase();
+                        JCheckBox cb = songCheckboxes.get(entry.getKey());
+                        if (query.isEmpty() || songName.contains(query)) {
+                            checkboxPanel.add(cb);
+                        }
+                    }
+
+                    checkboxPanel.revalidate();
+                    checkboxPanel.repaint();
+                }
+
+                @Override
+                public void insertUpdate(javax.swing.event.DocumentEvent e) { filter(); }
+                @Override
+                public void removeUpdate(javax.swing.event.DocumentEvent e) { filter(); }
+                @Override
+                public void changedUpdate(javax.swing.event.DocumentEvent e) { filter(); }
+            });
 
             selectAllButton.addActionListener(ev -> {
                 for (JCheckBox cb : songCheckboxes.values()) {
