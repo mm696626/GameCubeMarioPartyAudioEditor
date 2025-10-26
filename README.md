@@ -2,7 +2,7 @@
 
 ### GameCube Mario Party Audio Editor
 * A tool allows you to edit the music/sounds in Mario Parties 4-7
-* Music isn't supported for Mario Party 4 due to it being sequenced and the streamed music in that game are jingles
+* Music supported is very limited for Mario Party 4 due to it being sequenced and the streamed music in that game are jingles
 
 ### Music Notes
 * Audio must be in DSP format split into two channels

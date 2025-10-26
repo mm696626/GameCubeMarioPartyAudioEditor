@@ -387,6 +387,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
                 String name = defaultPDTFile.getName().toLowerCase();
                 switch (name) {
+                    case "mpgcstr.pdt": selectedGame = "Mario Party 4"; break;
                     case "mp5_str.pdt": selectedGame = "Mario Party 5"; break;
                     case "mp6_str.pdt": selectedGame = "Mario Party 6"; break;
                     case "mp7_str.pdt": selectedGame = "Mario Party 7"; break;
@@ -497,6 +498,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
                 String pdtFileName = defaultPDTFile.getName().toLowerCase();
                 switch (pdtFileName) {
+                    case "mpgcstr.pdt": selectedGame = "Mario Party 4"; break;
                     case "mp5_str.pdt": selectedGame = "Mario Party 5"; break;
                     case "mp6_str.pdt": selectedGame = "Mario Party 6"; break;
                     case "mp7_str.pdt": selectedGame = "Mario Party 7"; break;
@@ -622,7 +624,9 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         String pdtFileName = selectedPDT.getName().toLowerCase();
 
-        if (pdtFileName.equals("mp5_str.pdt")) {
+        if (pdtFileName.equals("mpgcstr.pdt")) {
+            selectedGame = "Mario Party 4";
+        } else if (pdtFileName.equals("mp5_str.pdt")) {
             selectedGame = "Mario Party 5";
         } else if (pdtFileName.equals("mp6_str.pdt")) {
             selectedGame = "Mario Party 6";
@@ -637,8 +641,8 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                         "Game Selection",
                         JOptionPane.QUESTION_MESSAGE,
                         null,
-                        new String[]{"Mario Party 5", "Mario Party 6", "Mario Party 7", "Other"},
-                        "Mario Party 5"
+                        new String[]{"Mario Party 4", "Mario Party 5", "Mario Party 6", "Mario Party 7", "Other"},
+                        "Mario Party 4"
                 );
 
                 if (selectedGame == null) {
@@ -956,6 +960,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
     private Map<Integer, String> getSongNameMapForSelectedGame() {
         switch (selectedGame) {
+            case "Mario Party 4": return MarioPartySongNames.MARIO_PARTY_4_TRACK_NAMES;
             case "Mario Party 5": return MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
             case "Mario Party 6": return MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
             case "Mario Party 7": return MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
