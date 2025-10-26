@@ -1683,23 +1683,23 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             Random rng = new Random();
 
             if (minimizeRepeats) {
-                List<DSPPair> dspPool = new ArrayList<>(dspPairs);
+                List<DSPPair> dspPairPool = new ArrayList<>(dspPairs);
 
                 for (Map.Entry<Integer, String> entry : songNameMap.entrySet()) {
                     Integer songIndex = entry.getKey();
                     String songName = entry.getValue();
 
-                    JCheckBox willRandomize = songCheckboxes.get(songIndex);
-                    if (willRandomize == null || !willRandomize.isSelected()) {
+                    JCheckBox songRandomized = songCheckboxes.get(songIndex);
+                    if (songRandomized == null || !songRandomized.isSelected()) {
                         continue;
                     }
 
-                    if (dspPool.isEmpty()) {
-                        dspPool.addAll(dspPairs);
+                    if (dspPairPool.isEmpty()) {
+                        dspPairPool.addAll(dspPairs);
                     }
 
-                    int randomIndex = rng.nextInt(dspPool.size());
-                    DSPPair chosenSongPair = dspPool.remove(randomIndex);
+                    int randomIndex = rng.nextInt(dspPairPool.size());
+                    DSPPair chosenSongPair = dspPairPool.remove(randomIndex);
 
                     SongModifier.modifySong(
                             pdtFile,
