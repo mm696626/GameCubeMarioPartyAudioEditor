@@ -341,9 +341,10 @@ public class SongModifier {
 
         File logFile;
 
-        String sanitizedFilePath = pdtFilePath.replaceAll("[^A-Za-z0-9]", "");
-        String baseFileName = sanitizedFilePath.substring(0, sanitizedFilePath.length() - 3);
-        logFile = new File(songReplacementsFolder, baseFileName + ".txt");
+        String sanitized = pdtFilePath.replaceAll("[^A-Za-z0-9]", "");
+        String hash = Integer.toHexString(pdtFilePath.hashCode());
+        String baseFileName = sanitized + "_" + hash;
+        logFile = new File("song_replacements", baseFileName + ".txt");
 
         Map<String, String> songMap = new TreeMap<>();
 
@@ -386,9 +387,10 @@ public class SongModifier {
 
         File logFile;
 
-        String sanitizedFilePath = pdtFilePath.replaceAll("[^A-Za-z0-9]", "");
-        String baseFileName = sanitizedFilePath.substring(0, sanitizedFilePath.length() - 3);
-        logFile = new File(songReplacementsFolder, baseFileName + ".txt");
+        String sanitized = pdtFilePath.replaceAll("[^A-Za-z0-9]", "");
+        String hash = Integer.toHexString(pdtFilePath.hashCode());
+        String baseFileName = sanitized + "_" + hash;
+        logFile = new File("song_replacements", baseFileName + ".txt");
 
         if (logFile.exists()) {
             try (Scanner inputStream = new Scanner(new FileInputStream(logFile))) {
