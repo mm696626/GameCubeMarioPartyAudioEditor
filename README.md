@@ -1,7 +1,7 @@
 # GameCubeMarioPartyAudioEditor
 
 ### GameCube Mario Party Audio Editor
-* A tool allows you to edit the music/sounds in Mario Parties 4-7
+* A tool allows you to edit the music/sounds in Mario Parties 4-7 (and other games with the format such as DDR Mario Mix and Adventure Island (GC) as a bonus)
 * Music supported is very limited for Mario Party 4 due to it being sequenced and the streamed music in that game are jingles
 
 ### Music Notes
@@ -47,6 +47,7 @@
 * Also, this documentation on the DSP format helped a lot too
   * https://www.metroid2002.com/retromodding/wiki/DSP_(File_Format)
 * Thanks to the Mario Wiki for pinpointing each song and catching a few I missed
+  * https://www.mariowiki.com/Mario_Party_4_sound_test
   * https://www.mariowiki.com/Mario_Party_5_sound_test
   * https://www.mariowiki.com/Mario_Party_6_sound_test
   * https://www.mariowiki.com/Mario_Party_7_sound_test
