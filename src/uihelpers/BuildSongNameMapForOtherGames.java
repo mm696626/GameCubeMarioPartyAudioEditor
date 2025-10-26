@@ -8,10 +8,10 @@ import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BuildFileMapForOtherGames {
+public class BuildSongNameMapForOtherGames {
 
-    public static Map<Integer, String> buildFileMap(File pdtFile) {
-        Map<Integer, String> fileMap = new HashMap<>();
+    public static Map<Integer, String> buildSongNameMap(File pdtFile) {
+        Map<Integer, String> songNameMap = new HashMap<>();
 
         try (RandomAccessFile raf = new RandomAccessFile(pdtFile, "r")) {
             int unk00 = FileIO.readU16BE(raf);
@@ -32,10 +32,10 @@ public class BuildFileMapForOtherGames {
                     continue;
                 }
 
-                fileMap.put(i, "Song " + String.format("%04d", i));
+                songNameMap.put(i, "Song " + String.format("%04d", i));
             }
 
-            return fileMap;
+            return songNameMap;
 
         } catch (Exception e) {
             e.printStackTrace();

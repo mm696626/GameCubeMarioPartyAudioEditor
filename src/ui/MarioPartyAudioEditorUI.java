@@ -4,7 +4,7 @@ import constants.MarioPartySongNames;
 import io.music.SongDumper;
 import io.music.SongModifier;
 import io.sound.*;
-import uihelpers.BuildFileMapForOtherGames;
+import uihelpers.BuildSongNameMapForOtherGames;
 import uihelpers.DSPPair;
 import uihelpers.ModifyJob;
 
@@ -964,7 +964,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             case "Mario Party 5": return MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
             case "Mario Party 6": return MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
             case "Mario Party 7": return MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
-            case "Other": return BuildFileMapForOtherGames.buildFileMap(new File(pdtPath));
+            case "Other": return BuildSongNameMapForOtherGames.buildSongNameMap(new File(pdtPath));
             default:
                 JOptionPane.showMessageDialog(this, "No game selected.");
                 return null;
