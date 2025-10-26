@@ -1618,7 +1618,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             sortedSongs.sort(Map.Entry.comparingByValue(String.CASE_INSENSITIVE_ORDER));
 
             for (Map.Entry<Integer, String> entry : sortedSongs) {
-                JCheckBox checkBox = new JCheckBox(entry.getValue(), true);
+                JCheckBox checkBox = new JCheckBox(entry.getValue());
                 songCheckboxes.put(entry.getKey(), checkBox);
                 checkboxPanel.add(checkBox);
             }
@@ -1650,6 +1650,18 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             );
 
             if (confirm != JOptionPane.OK_OPTION) {
+                return;
+            }
+
+            boolean atLeastOneSelected = false;
+            for (JCheckBox cb : songCheckboxes.values()) {
+                if (cb.isSelected()) {
+                    atLeastOneSelected = true;
+                    break;
+                }
+            }
+            if (!atLeastOneSelected) {
+                JOptionPane.showMessageDialog(this, "You must select at least one song");
                 return;
             }
 
