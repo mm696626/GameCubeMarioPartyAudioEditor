@@ -125,7 +125,7 @@ public class SongModifier {
 
             //read the original nibble count (which was read from header) if the song has been replaced before (for edge case)
             //use that to compare instead of the header value
-            long originalNibbleCount = readDSPNibbleCountFromFile(songName, selectedGame);
+            long originalNibbleCount = readDSPNibbleCountFromFile(songName, selectedGame, pdtFile.getName());
 
             if (originalNibbleCount != -1) {
                 nibbleCount = originalNibbleCount;
@@ -135,7 +135,7 @@ public class SongModifier {
 
             //if the nibble count here is -1, then the song hasn't been replaced yet, so write it
             if (originalNibbleCount == -1) {
-                writeDSPNibbleCountToFile(songName, nibbleCount, selectedGame);
+                writeDSPNibbleCountToFile(songName, nibbleCount, selectedGame, pdtFile.getName());
             }
 
             long newDSPSampleRateOffset = thisHeaderOffs + 4;
@@ -149,7 +149,7 @@ public class SongModifier {
                 writeDSPToPDT(pdtRaf, newDSPSampleRateOffset, newDSPSampleRate, newDSPNibbleCountOffset, newDSPNibbleCount, newDSPLoopStartOffset, newDSPLoopStart, ch1CoefOffs, newDSPLeftChannelDecodingCoeffs, ch2CoefOffs, newDSPRightChannelDecodingCoeffs, ch1Start, newDSPLeftChannelAudio, ch2Start, newDSPRightChannelAudio);
             }
 
-            logSongReplacement(songName, leftChannel, rightChannel, selectedGame);
+            logSongReplacement(songName, leftChannel, rightChannel, selectedGame, pdtFile.getName());
 
             if (deleteDSPAfterModify) {
                 leftChannel.delete();
@@ -164,11 +164,17 @@ public class SongModifier {
         }
     }
 
-    private static long readDSPNibbleCountFromFile(String songName, String selectedGame) {
+    private static long readDSPNibbleCountFromFile(String songName, String selectedGame, String pdtFileName) {
         Scanner inputStream;
 
         try {
-            inputStream = new Scanner(new FileInputStream("original_song_sizes/" + selectedGame + ".txt"));
+            if (!selectedGame.equals("Other")) {
+                inputStream = new Scanner(new FileInputStream("original_song_sizes/" + selectedGame + ".txt"));
+            }
+            else {
+                String baseFileName = pdtFileName.substring(0, pdtFileName.length() - 4);
+                inputStream = new Scanner(new FileInputStream("original_song_sizes/" + baseFileName + ".txt"));
+            }
         }
         catch (FileNotFoundException e) {
             return -1;
@@ -184,7 +190,7 @@ public class SongModifier {
         return -1;
     }
 
-    private static void writeDSPNibbleCountToFile(String songName, long nibbleCount, String selectedGame) {
+    private static void writeDSPNibbleCountToFile(String songName, long nibbleCount, String selectedGame, String pdtFileName) {
         PrintWriter outputStream;
 
         try {
@@ -192,7 +198,14 @@ public class SongModifier {
             if (!originalSizesFolder.exists()) {
                 originalSizesFolder.mkdirs();
             }
-            outputStream = new PrintWriter(new FileOutputStream(new File(originalSizesFolder, selectedGame + ".txt"), true));
+
+            if (!selectedGame.equals("Other")) {
+                outputStream = new PrintWriter(new FileOutputStream(new File(originalSizesFolder, selectedGame + ".txt"), true));
+            }
+            else {
+                String baseFileName = pdtFileName.substring(0, pdtFileName.length() - 4);
+                outputStream = new PrintWriter(new FileOutputStream(new File(originalSizesFolder, baseFileName + ".txt"), true));
+            }
         }
         catch (FileNotFoundException f) {
             return;
@@ -293,13 +306,21 @@ public class SongModifier {
         }
     }
 
-    private static void logSongReplacement(String songName, File leftChannel, File rightChannel, String selectedGame) {
+    private static void logSongReplacement(String songName, File leftChannel, File rightChannel, String selectedGame, String pdtFileName) {
         File songReplacementsFolder = new File("song_replacements");
         if (!songReplacementsFolder.exists()) {
             songReplacementsFolder.mkdirs();
         }
 
-        File logFile = new File(songReplacementsFolder, selectedGame + ".txt");
+        File logFile;
+
+        if (!selectedGame.equals("Other")) {
+            logFile = new File(songReplacementsFolder, selectedGame + ".txt");
+        }
+        else {
+            String baseFileName = pdtFileName.substring(0, pdtFileName.length() - 4);
+            logFile = new File(songReplacementsFolder, baseFileName + ".txt");
+        }
 
         Map<String, String> songMap = new TreeMap<>();
 

@@ -4,6 +4,7 @@ import constants.MarioPartySongNames;
 import io.music.SongDumper;
 import io.music.SongModifier;
 import io.sound.*;
+import uihelpers.BuildFileMapForOtherGames;
 import uihelpers.DSPPair;
 import uihelpers.ModifyJob;
 
@@ -389,6 +390,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                     case "mp5_str.pdt": selectedGame = "Mario Party 5"; break;
                     case "mp6_str.pdt": selectedGame = "Mario Party 6"; break;
                     case "mp7_str.pdt": selectedGame = "Mario Party 7"; break;
+                    default: selectedGame = "Other"; break;
                 }
 
                 selectedGameLabel.setText("Selected Game: " + selectedGame);
@@ -498,6 +500,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                     case "mp5_str.pdt": selectedGame = "Mario Party 5"; break;
                     case "mp6_str.pdt": selectedGame = "Mario Party 6"; break;
                     case "mp7_str.pdt": selectedGame = "Mario Party 7"; break;
+                    default: selectedGame = "Other"; break;
                 }
 
                 if (selectedGame != null) {
@@ -634,7 +637,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
                         "Game Selection",
                         JOptionPane.QUESTION_MESSAGE,
                         null,
-                        new String[]{"Mario Party 5", "Mario Party 6", "Mario Party 7"},
+                        new String[]{"Mario Party 5", "Mario Party 6", "Mario Party 7", "Other"},
                         "Mario Party 5"
                 );
 
@@ -956,6 +959,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             case "Mario Party 5": return MarioPartySongNames.MARIO_PARTY_5_TRACK_NAMES;
             case "Mario Party 6": return MarioPartySongNames.MARIO_PARTY_6_TRACK_NAMES;
             case "Mario Party 7": return MarioPartySongNames.MARIO_PARTY_7_TRACK_NAMES;
+            case "Other": return BuildFileMapForOtherGames.buildFileMap(new File(pdtPath));
             default:
                 JOptionPane.showMessageDialog(this, "No game selected.");
                 return null;
