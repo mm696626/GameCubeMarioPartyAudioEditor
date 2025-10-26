@@ -432,12 +432,12 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         settingsGBC.gridx = 2;
         settingsPanel.add(chooseDefaultMSMButton, settingsGBC);
 
-        JButton resetSettingsButton = new JButton("Reset Settings");
-        resetSettingsButton.addActionListener(e -> resetSettings());
+        JButton resetEditorButton = new JButton("Reset Editor");
+        resetEditorButton.addActionListener(e -> resetEditor());
         settingsGBC.gridx = 0;
         settingsGBC.gridy = 4;
         settingsGBC.gridwidth = 3;
-        settingsPanel.add(resetSettingsButton, settingsGBC);
+        settingsPanel.add(resetEditorButton, settingsGBC);
 
         tabbedPane.addTab("Settings", settingsPanel);
     }
@@ -557,10 +557,10 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         }
     }
 
-    private void resetSettings() {
+    private void resetEditor() {
         int confirm = JOptionPane.showConfirmDialog(
                 this,
-                "Are you sure you want to reset the settings?\nThis will also reset the editor as if it was never run before.",
+                "Are you sure you want to reset the editor along with the settings?\nThis will reset the editor as if it was never run before.",
                 "Confirm Reset",
                 JOptionPane.YES_NO_OPTION
         );
@@ -610,9 +610,9 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             writer.println("defaultPDTFile:None");
             writer.println("defaultMSMFile:None");
             writer.println("defaultDumpOutputFolder:None");
-            JOptionPane.showMessageDialog(this, "Settings reset to default.");
+            JOptionPane.showMessageDialog(this, "Editor has been reset.");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Failed to reset setting: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Failed to reset editor: " + e.getMessage());
         }
     }
 
