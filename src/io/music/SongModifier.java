@@ -150,6 +150,7 @@ public class SongModifier {
 
                 String[] doesSongExistParts = doesSongExist.split("\\|");
 
+                //string is split into song name|left channel name|right channel name|left channel pointer|right channel pointer
                 String leftPointer = doesSongExistParts[3];
                 String rightPointer = doesSongExistParts[4];
 
@@ -403,6 +404,7 @@ public class SongModifier {
                     String line = inputStream.nextLine();
                     String[] parts = line.split("\\|");
 
+                    //string is split into song name|left channel name|right channel name|left channel pointer|right channel pointer
                     if (parts[1].equals(leftChannel.getName()) && parts[2].equals(rightChannel.getName())) {
                         return line;
                     }
