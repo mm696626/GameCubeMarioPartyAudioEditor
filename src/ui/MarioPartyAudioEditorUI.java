@@ -165,7 +165,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         modifySong = new JButton("Modify Selected Song");
         modifySong.addActionListener(this);
 
-        modifyWithRandomSongs = new JButton("Randomize Songs");
+        modifyWithRandomSongs = new JButton("Modify Songs with Random Songs");
         modifyWithRandomSongs.addActionListener(this);
 
         songGBC.gridx = 0; songGBC.gridy = 0;
