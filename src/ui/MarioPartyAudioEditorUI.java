@@ -560,7 +560,7 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
     private void resetSettings() {
         int confirm = JOptionPane.showConfirmDialog(
                 this,
-                "Are you sure you want to reset the settings?",
+                "Are you sure you want to reset the settings?\nThis will also reset the editor as if it was never run before.",
                 "Confirm Reset",
                 JOptionPane.YES_NO_OPTION
         );
@@ -593,6 +593,18 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
             defaultDumpFolderLabel.setText("None");
         }
 
+        File originalSongSizesFolder = new File("original_song_sizes");
+        File songReplacementsFolder = new File("song_replacements");
+
+        if (originalSongSizesFolder.exists()) {
+            deleteFolder(originalSongSizesFolder);
+        }
+
+        if (songReplacementsFolder.exists()) {
+            deleteFolder(songReplacementsFolder);
+        }
+
+
         try (PrintWriter writer = new PrintWriter(new FileOutputStream("settings.txt"))) {
             writer.println("defaultSavedDSPFolder:None");
             writer.println("defaultPDTFile:None");
@@ -602,6 +614,20 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Failed to reset setting: " + e.getMessage());
         }
+    }
+
+    public static void deleteFolder(File folder) {
+        File[] files = folder.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    deleteFolder(f);
+                } else {
+                    f.delete();
+                }
+            }
+        }
+        folder.delete();
     }
 
     private void initPDTPath() {
