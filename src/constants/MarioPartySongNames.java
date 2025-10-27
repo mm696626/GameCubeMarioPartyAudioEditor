@@ -317,7 +317,7 @@ public class MarioPartySongNames {
             Map.entry(97, "You Win More"),
             Map.entry(98, "Magic"),
             Map.entry(99, "Fun For All"),
-            Map.entry(100, "An Angry Bowser"),
+            Map.entry(100, "Angry Bowser"),
             Map.entry(103, "It's a New Record"),
             Map.entry(104, "Minigame Victory"),
             Map.entry(105, "Minigame Defeat"),
