@@ -236,14 +236,14 @@ public class SongDumper {
     }
 
     private static File chooseOutputDirectory() {
-        JFileChooser dumpedSongsOutputFolderChooser = new JFileChooser();
-        dumpedSongsOutputFolderChooser.setDialogTitle("Select the dumped songs output folder");
-        dumpedSongsOutputFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        dumpedSongsOutputFolderChooser.setAcceptAllFileFilterUsed(false);
+        JFileChooser dumpedSongOutputFolderChooser = new JFileChooser();
+        dumpedSongOutputFolderChooser.setDialogTitle("Select the dumped song output folder");
+        dumpedSongOutputFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        dumpedSongOutputFolderChooser.setAcceptAllFileFilterUsed(false);
 
-        int result = dumpedSongsOutputFolderChooser.showSaveDialog(null);
+        int result = dumpedSongOutputFolderChooser.showSaveDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
-            return dumpedSongsOutputFolderChooser.getSelectedFile();
+            return dumpedSongOutputFolderChooser.getSelectedFile();
         } else {
             return null;
         }
