@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
-public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
+public class GamecubeMarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
     private JButton pickLeftChannel, pickRightChannel, modifySong, modifyWithRandomSongs, dumpSelectedSong, dumpAllSongs, dumpSoundBank, dumpAllSoundBanks, modifySoundBank, fixSoundDSPHeader, fixSoundDSPHeaderFolder, padSoundDSP, padSoundDSPs, selectGame;
     private String pdtPath = "";
@@ -57,8 +57,8 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
     private JCheckBox deleteDSPAfterModify = null;
 
 
-    public MarioPartyAudioEditorUI() {
-        setTitle("Mario Party GameCube Audio Editor");
+    public GamecubeMarioPartyAudioEditorUI() {
+        setTitle("GameCube Mario Party Audio Editor");
         initSettingsFile();
         loadSettingsFile();
         generateUI();
