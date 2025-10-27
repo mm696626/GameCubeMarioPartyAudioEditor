@@ -179,19 +179,15 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         songPanel.add(rightChannelLabel, songGBC);
 
         songGBC.gridx = 0; songGBC.gridy = 2;
-        songGBC.gridwidth = 2;
         songPanel.add(modifySong, songGBC);
 
-        songGBC.gridx = 0; songGBC.gridy = 3;
-        songGBC.gridwidth = 2;
+        songGBC.gridx = 1; songGBC.gridy = 2;
         songPanel.add(modifyWithRandomSongs, songGBC);
 
-        songGBC.gridx = 0; songGBC.gridy = 4;
-        songGBC.gridwidth = 2;
+        songGBC.gridx = 0; songGBC.gridy = 3;
         songPanel.add(dumpSelectedSong, songGBC);
 
-        songGBC.gridx = 0; songGBC.gridy = 5;
-        songGBC.gridwidth = 2;
+        songGBC.gridx = 1; songGBC.gridy = 3;
         songPanel.add(dumpAllSongs, songGBC);
 
         selectGame = new JButton("Select PDT and Game");
@@ -205,20 +201,20 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
         autoAddToQueue = new JCheckBox("Automatically Add DSP Pairs from DSP Folder to Queue");
         deleteDSPAfterModify = new JCheckBox("Delete Source DSPs after Modify");
 
-        songGBC.gridx = 0; songGBC.gridy = 6;
+        songGBC.gridx = 0; songGBC.gridy = 4;
         songGBC.gridwidth = 2;
         songPanel.add(selectGame, songGBC);
 
-        songGBC.gridy = 7;
+        songGBC.gridy = 5;
         songPanel.add(autoAddToQueue, songGBC);
 
-        songGBC.gridy = 8;
+        songGBC.gridy = 6;
         songPanel.add(deleteDSPAfterModify, songGBC);
 
-        songGBC.gridy = 9;
+        songGBC.gridy = 7;
         songPanel.add(pdtFilePathLabel, songGBC);
 
-        songGBC.gridy = 10;
+        songGBC.gridy = 8;
         songPanel.add(selectedGameLabel, songGBC);
 
         songToolsPanel.add(songSelectionPanel);
@@ -269,14 +265,14 @@ public class MarioPartyAudioEditorUI extends JFrame implements ActionListener {
 
         soundBankGBC.gridx = 0;
         soundBankGBC.gridy = 0;
-        dumpAllSoundBanks = new JButton("Dump All Sound Banks");
-        dumpAllSoundBanks.addActionListener(this);
-        soundBankPanel.add(dumpAllSoundBanks, soundBankGBC);
-
-        soundBankGBC.gridy = 1;
         dumpSoundBank = new JButton("Dump Sound Bank");
         dumpSoundBank.addActionListener(this);
         soundBankPanel.add(dumpSoundBank, soundBankGBC);
+
+        soundBankGBC.gridy = 1;
+        dumpAllSoundBanks = new JButton("Dump All Sound Banks");
+        dumpAllSoundBanks.addActionListener(this);
+        soundBankPanel.add(dumpAllSoundBanks, soundBankGBC);
 
         soundBankGBC.gridy = 2;
         modifySoundBank = new JButton("Modify Sound Bank");
