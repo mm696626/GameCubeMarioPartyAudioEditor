@@ -142,7 +142,7 @@ public class SongModifier {
             long newDSPNibbleCountOffset = thisHeaderOffs + 8;
             long newDSPLoopStartOffset = thisHeaderOffs + 12;
 
-            String doesSongExist = checkIfSongExists(leftChannel, rightChannel, pdtFile.getAbsolutePath());
+            String doesSongExist = checkIfSongExists(leftChannel, rightChannel, selectedGame, pdtFile.getAbsolutePath());
 
             //if the song has already been used in the PDT, just write its header data to the new location and point to the audio data
             if (!doesSongExist.isEmpty()) {
@@ -176,7 +176,7 @@ public class SongModifier {
             pdtRaf.seek(ch2Pointer);
             long newRightChannelPointer = FileIO.readU32BE(pdtRaf);
 
-            logSongReplacement(songName, leftChannel, rightChannel, pdtFile.getAbsolutePath(), newLeftChannelPointer, newRightChannelPointer);
+            logSongReplacement(songName, leftChannel, rightChannel, selectedGame, pdtFile.getAbsolutePath(), newLeftChannelPointer, newRightChannelPointer);
 
             if (deleteDSPAfterModify) {
                 leftChannel.delete();
@@ -333,7 +333,7 @@ public class SongModifier {
         }
     }
 
-    private static void logSongReplacement(String songName, File leftChannel, File rightChannel, String pdtFilePath, long leftChannelPointer, long rightChannelPointer) {
+    private static void logSongReplacement(String songName, File leftChannel, File rightChannel, String selectedGame, String pdtFilePath, long leftChannelPointer, long rightChannelPointer) {
         File songReplacementsFolder = new File("song_replacements");
         if (!songReplacementsFolder.exists()) {
             songReplacementsFolder.mkdirs();
@@ -341,9 +341,8 @@ public class SongModifier {
 
         File logFile;
 
-        String sanitized = pdtFilePath.replaceAll("[^A-Za-z0-9]", "");
         String hash = Integer.toHexString(pdtFilePath.hashCode());
-        String baseFileName = sanitized + "_" + hash;
+        String baseFileName = selectedGame + "_" + hash;
         logFile = new File("song_replacements", baseFileName + ".txt");
 
         Map<String, String> songMap = new TreeMap<>();
@@ -379,7 +378,7 @@ public class SongModifier {
         }
     }
 
-    private static String checkIfSongExists(File leftChannel, File rightChannel, String pdtFilePath) {
+    private static String checkIfSongExists(File leftChannel, File rightChannel, String selectedGame, String pdtFilePath) {
         File songReplacementsFolder = new File("song_replacements");
         if (!songReplacementsFolder.exists()) {
             songReplacementsFolder.mkdirs();
@@ -387,9 +386,8 @@ public class SongModifier {
 
         File logFile;
 
-        String sanitized = pdtFilePath.replaceAll("[^A-Za-z0-9]", "");
         String hash = Integer.toHexString(pdtFilePath.hashCode());
-        String baseFileName = sanitized + "_" + hash;
+        String baseFileName = selectedGame + "_" + hash;
         logFile = new File("song_replacements", baseFileName + ".txt");
 
         if (logFile.exists()) {
