@@ -4,9 +4,9 @@ import constants.MarioPartySongNames;
 import io.music.SongDumper;
 import io.music.SongModifier;
 import io.sound.*;
-import uihelpers.BuildSongNameMapForOtherGames;
-import uihelpers.DSPPair;
-import uihelpers.ModifyJob;
+import helpers.BuildSongNameMapForOtherGames;
+import helpers.DSPPair;
+import helpers.ModifyJob;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -951,6 +951,10 @@ public class GamecubeMarioPartyAudioEditorUI extends JFrame implements ActionLis
             otherChannelName = fileName.replace("(channel 0).dsp", "(channel 1).dsp");
         } else if (fileName.endsWith("(channel 1).dsp") && !isLeftSelected) {
             otherChannelName = fileName.replace("(channel 1).dsp", "(channel 0).dsp");
+        } else if (fileName.endsWith("_l.dsp") && isLeftSelected) {
+            otherChannelName = fileName.replace("_l.dsp", "_r.dsp");
+        } else if (fileName.endsWith("_r.dsp") && !isLeftSelected) {
+            otherChannelName = fileName.replace("_r.dsp", "_l.dsp");
         }
 
         if (otherChannelName != null) {
