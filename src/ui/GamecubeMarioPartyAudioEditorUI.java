@@ -982,6 +982,8 @@ public class GamecubeMarioPartyAudioEditorUI extends JFrame implements ActionLis
         } else {
             songNames.setModel(new DefaultComboBoxModel<>(new String[]{}));
         }
+
+        jobQueueModel.clear();
     }
 
     private Map<Integer, String> getSongNameMapForSelectedGame() {
